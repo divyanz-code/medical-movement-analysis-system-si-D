@@ -1,3 +1,4 @@
+import time
 from io import BytesIO
 from pathlib import Path
 
@@ -6,6 +7,7 @@ from fastapi.testclient import TestClient
 
 from app.core.config import Settings
 from app.main import create_app
+from app.services.analysis_engine import AnalysisResult
 from app.services.storage_service import UploadResult
 
 
@@ -21,11 +23,31 @@ class FakeVideoStorage:
         )
 
 
-def build_client(tmp_path: Path, *, max_video_size_mb: int = 50) -> TestClient:
+class FakeAnalyzer:
+    def analyze(self, *, video_url: str) -> AnalysisResult:
+        return AnalysisResult(
+            min_angle=21.0,
+            max_angle=88.0,
+            movement_score=0.83,
+            raw_json={'engine': 'fake', 'video_url': video_url},
+        )
+
+
+class FailingAnalyzer:
+    def analyze(self, *, video_url: str) -> AnalysisResult:
+        raise ValueError('mock analysis failure')
+
+
+def build_client(
+    tmp_path: Path,
+    *,
+    max_video_size_mb: int = 50,
+    analyzer: object | None = None,
+) -> TestClient:
     db_file = tmp_path / 'test_phase.db'
     settings = Settings(
         app_name='mma-backend-test',
-        app_version='0.3.0-test',
+        app_version='0.4.0-test',
         environment='test',
         database_url=f'sqlite+pysqlite:///{db_file}',
         jwt_secret='test-secret-value-1234',
@@ -33,7 +55,7 @@ def build_client(tmp_path: Path, *, max_video_size_mb: int = 50) -> TestClient:
         max_video_size_mb=max_video_size_mb,
         cloudinary_folder='mma/test-videos',
     )
-    app = create_app(settings, video_storage=FakeVideoStorage())
+    app = create_app(settings, video_storage=FakeVideoStorage(), analysis_engine=analyzer or FakeAnalyzer())
     return TestClient(app)
 
 
@@ -58,6 +80,17 @@ def register_and_login(client: TestClient, email: str) -> str:
     )
     assert login_response.status_code == 200
     return login_response.json()['access_token']
+
+
+def wait_for_analysis_completion(client: TestClient, token: str, video_id: int) -> dict:
+    for _ in range(8):
+        response = client.get(f'/api/v1/analysis/{video_id}', headers=auth_headers(token))
+        assert response.status_code == 200
+        payload = response.json()
+        if payload['status'] in {'SUCCEEDED', 'FAILED'}:
+            return payload
+        time.sleep(0.05)
+    return payload
 
 
 def test_health(tmp_path: Path) -> None:
@@ -219,3 +252,44 @@ def test_video_multiple_uploads_same_user(tmp_path: Path) -> None:
 
         assert len(created_ids) == 3
         assert len(set(created_ids)) == 3
+
+
+def test_analysis_succeeds_after_upload(tmp_path: Path) -> None:
+    with build_client(tmp_path) as client:
+        token = register_and_login(client, 'analysis-ok@example.com')
+
+        upload = client.post(
+            '/api/v1/videos',
+            headers=auth_headers(token),
+            files={'video': ('knee.mp4', BytesIO(b'video-bytes'), 'video/mp4')},
+            data={'duration_seconds': '10'},
+        )
+        video_id = upload.json()['video_id']
+
+        analysis = wait_for_analysis_completion(client, token, video_id)
+        assert analysis['status'] == 'SUCCEEDED'
+        assert analysis['min_angle'] == 21.0
+        assert analysis['max_angle'] == 88.0
+        assert analysis['range_of_motion'] == 67.0
+
+        history = client.get('/api/v1/analysis/history', headers=auth_headers(token))
+        assert history.status_code == 200
+        assert len(history.json()['items']) >= 1
+
+
+def test_analysis_failure_path_is_safe(tmp_path: Path) -> None:
+    with build_client(tmp_path, analyzer=FailingAnalyzer()) as client:
+        token = register_and_login(client, 'analysis-fail@example.com')
+
+        upload = client.post(
+            '/api/v1/videos',
+            headers=auth_headers(token),
+            files={'video': ('knee.mp4', BytesIO(b'video-bytes'), 'video/mp4')},
+            data={'duration_seconds': '10'},
+        )
+        video_id = upload.json()['video_id']
+
+        analysis = wait_for_analysis_completion(client, token, video_id)
+        assert analysis['status'] == 'FAILED'
+        assert analysis['error_code'] == 'ANALYSIS_PROCESSING_FAILED'
+        assert analysis['error_message'] == 'Failed to process movement analysis'

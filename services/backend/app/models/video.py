@@ -19,3 +19,4 @@ class Video(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=func.now())
 
     user = relationship('User', back_populates='videos')
+    analysis = relationship('Analysis', back_populates='video', uselist=False, cascade='all,delete-orphan')

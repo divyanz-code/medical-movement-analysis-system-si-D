@@ -1,3 +1,3 @@
-from app.api import analyze, auth, profile, videos
+from app.api import analysis, analyze, auth, profile, videos
 
-__all__ = ['auth', 'profile', 'videos', 'analyze']
+__all__ = ['auth', 'profile', 'videos', 'analysis', 'analyze']

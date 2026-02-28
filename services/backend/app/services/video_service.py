@@ -8,12 +8,15 @@ from app.services.storage_service import VideoStorage
 
 
 class VideoService:
-    def __init__(self, repo: VideoRepository, storage: VideoStorage, settings: Settings) -> None:
+    def __init__(self, repo: VideoRepository, storage: VideoStorage | None, settings: Settings) -> None:
         self.repo = repo
         self.storage = storage
         self.settings = settings
 
     async def upload_video(self, *, user_id: int, file: UploadFile, duration_seconds: int) -> Video:
+        if self.storage is None:
+            raise DomainError(status_code=500, code='STORAGE_UNAVAILABLE', message='Video storage unavailable')
+
         if duration_seconds < self.settings.min_video_duration_seconds or duration_seconds > self.settings.max_video_duration_seconds:
             raise DomainError(
                 status_code=400,
