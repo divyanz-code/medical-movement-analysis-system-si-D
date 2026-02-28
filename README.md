@@ -3,15 +3,13 @@
 Monorepo for Phase 1 MVP:
 
 - Mobile app: React Native + Expo
-- Backend API: Node.js + Express
-- AI service: Python + FastAPI
+- Backend API + Analysis: Python + FastAPI (single server)
 - Data: PostgreSQL
 
 ## Repository Structure
 
 - `apps/mobile`
-- `apps/backend`
-- `services/ai`
+- `services/backend`
 - `infra`
 - `docs`
 

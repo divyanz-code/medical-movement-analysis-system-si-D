@@ -3,47 +3,42 @@
 Date: 2026-02-28  
 Input baseline: [`SRD.md`](/Users/shauryaagrawal/Desktop/CVProject/SRD.md) (v1.0, dated 2026-02-28)
 
-## 1. Baseline Review (Completed Before Planning)
+## 1. Baseline Review (Updated)
 
-- Local codebase reviewed: only [`SRD.md`](/Users/shauryaagrawal/Desktop/CVProject/SRD.md) exists.
-- Local configs reviewed: none found.
-- Local tests reviewed: none found.
-- Remote repository created with GitHub CLI:
-  - URL: <https://github.com/Shauryacious/medical-movement-analysis-system>
-  - Command used: `gh repo create medical-movement-analysis-system --private --source=. --remote=origin`
+- Local codebase reviewed.
+- Architecture decision updated for MVP simplicity:
+  - Single backend server in Python/FastAPI.
+  - One frontend (React Native + Expo).
+  - Dockerized backend + PostgreSQL.
+- Node/Express backend scaffold removed.
 
 ## 2. Research-Driven Decisions (Current Official Docs)
 
-1. Use `expo-camera` for capture, and `expo-video` for preview playback.
-Reason: Expo docs show `expo-camera` for recording and also show `expo-av` video package as deprecated while `expo-video` is current.
-2. Use `expo-secure-store` for token persistence.
-Reason: It stores Android values encrypted via Keystore and iOS via Keychain; however, server remains source of truth.
-3. Enforce strict Express production hardening.
-Reason: Express production security guidance explicitly recommends TLS and Helmet.
-4. Restrict upload middleware to target routes + set hard file limits.
-Reason: Multer docs warn against global middleware and advise limits to reduce DoS risk.
-5. Use server-side signed Cloudinary uploads for production.
-Reason: Cloudinary docs mark unsigned uploads as for low-security/prototyping and document signed upload flow.
-6. Keep FastAPI error contracts explicit and async work isolated.
-Reason: FastAPI recommends `HTTPException`; background tasks are supported and useful for non-blocking operations.
-7. Enforce relational integrity and uniqueness in PostgreSQL schema.
-Reason: PostgreSQL docs confirm `UNIQUE` constraints auto-create unique B-tree indexes.
-8. Plan optional row-level security for future hardening.
-Reason: PostgreSQL row security has default-deny behavior when enabled without matching policies.
-9. Avoid CORS wildcard with credentials.
-Reason: FastAPI CORS docs note wildcard excludes credentialed flows (auth headers/cookies).
-10. Build container images with multi-stage, pinned bases, ephemeral runtime expectations.
-Reason: Docker best-practices documentation recommends all three.
+1. Use one FastAPI backend for auth, profile, upload, analysis orchestration, and history.
+Reason: reduces operational complexity for MVP while keeping typed API contracts via Pydantic.
+2. Use `UploadFile` for streaming uploads and enforce payload limits in backend/proxy.
+Reason: FastAPI docs support efficient file handling for multipart uploads.
+3. Keep explicit error contracts via `HTTPException` and typed responses.
+Reason: FastAPI error-handling guidance supports predictable API behavior.
+4. Use strict CORS allowlist and avoid wildcard with credentials.
+Reason: FastAPI CORS guidance for auth-bearing requests.
+5. Use server-side signed Cloudinary uploads.
+Reason: Cloudinary docs position signed uploads for secure production usage.
+6. Use PostgreSQL constraints for integrity and unique email guarantees.
+Reason: PostgreSQL docs confirm `UNIQUE` and FK constraints for domain safety.
+7. Use JWT auth and strong password hashing.
+Reason: aligns with SRD and OWASP password-storage guidance.
+8. Keep Docker images minimal and deterministic.
+Reason: Docker best-practice docs recommend pinned/minimal multi-stage builds.
 
 ## 3. Architecture Blueprint (Phase 1 MVP)
 
 ### 3.1 Services
 
 - Mobile app: React Native + Expo.
-- Backend API: Node.js + Express + TypeScript.
+- Backend API: Python + FastAPI.
 - Database: PostgreSQL.
 - Object storage: Cloudinary.
-- AI service: Python + FastAPI (`POST /analyze`).
 
 ### 3.2 Core Backend API Surface (v1)
 
@@ -52,7 +47,7 @@ Reason: Docker best-practices documentation recommends all three.
 - `GET /api/v1/profile`
 - `PUT /api/v1/profile`
 - `POST /api/v1/videos` (multipart, max 50 MB)
-- `GET /api/v1/analysis/:videoId`
+- `GET /api/v1/analysis/{video_id}`
 - `GET /api/v1/analysis/history`
 
 ### 3.3 Data Model (MVP + reliability fields)
@@ -69,13 +64,13 @@ Status enum proposal:
 
 - Typed request/response contracts and validation at all boundaries.
 - Separation of concerns:
-  - controllers -> services -> repositories -> integrations.
+  - API routers -> services -> repositories -> integrations.
 - Config via environment variables with strict startup validation.
 - Structured logging with request correlation IDs.
 - Secure-by-default:
-  - TLS everywhere outside local dev.
+  - TLS outside local dev.
   - JWT auth on protected routes.
-  - Password hashing via bcrypt (SRD requirement), with configurable work factor.
+  - Password hashing with bcrypt-compatible strategy.
   - Explicit CORS origin allowlist.
   - Authorization checks for user-owned resources.
 
@@ -84,7 +79,7 @@ Status enum proposal:
 1. A phase cannot start until previous checkpoint is `PASS`.
 2. Every checkpoint must include a doc update before sign-off.
 3. If any acceptance test fails, phase status is `BLOCKED`.
-4. If uncertainty remains, add a short tradeoff note to the phase doc and resolve before progressing.
+4. If uncertainty remains, add tradeoff notes and resolve before progression.
 5. No production deploy until all Phase 1 acceptance criteria are traceably passed.
 
 ## 5. Phase Plan (With Subphases and Checkpoints)
@@ -93,26 +88,22 @@ Status enum proposal:
 
 ### 1.1 Repository and workspace bootstrap
 
-- Establish monorepo layout:
+- Monorepo layout:
   - `apps/mobile`
-  - `apps/backend`
-  - `services/ai`
+  - `services/backend`
   - `infra`
   - `docs`
 
 ### 1.2 Tooling and quality baseline
 
-- TypeScript strict mode in backend.
-- Lint/format/typecheck scripts.
-- Test harness setup:
-  - Backend unit + integration.
-  - AI service unit + API tests.
-  - Mobile unit/component smoke tests.
+- Mobile TypeScript strict mode.
+- Backend pytest and FastAPI test harness.
+- Lint/format/typecheck/test scripts wired at root.
 
 ### 1.3 Architecture artifacts
 
 - API contract draft.
-- Sequence diagram for upload -> AI -> result.
+- Sequence diagram for upload -> analysis -> result.
 - Risk register (security/performance/reliability).
 
 ### Checkpoint CP-1 (Gate)
@@ -125,36 +116,34 @@ Status enum proposal:
   - `docs/phases/phase-1-checkpoint.md`
   - `docs/architecture/overview.md`
 
-## Phase 2 - Identity, Auth, and Profile Domain
+## Phase 2 - Identity, Auth, and Profile Domain (FastAPI)
 
 ### 2.1 Schema and migrations
 
 - Create `users` and `profiles`.
-- Enforce `users.email` uniqueness.
-- Add ownership foreign keys and timestamps.
+- Enforce unique email and FK ownership.
 
 ### 2.2 Auth APIs
 
-- Implement register/login endpoints.
-- Hash passwords with bcrypt.
-- Issue JWT with bounded expiry and explicit claims.
+- Register/login endpoints.
+- Password hashing and JWT issuance.
 
 ### 2.3 Profile APIs
 
-- Implement get/update profile.
-- Validate domain values (age bounds, limb enum, gender enum).
+- Get/update profile.
+- Validation for age/gender/affected limb.
 
 ### 2.4 Tests
 
-- Unit tests for services and validators.
-- Integration tests for auth/profile routes.
-- Negative-path tests (duplicate email, invalid token, invalid profile payload).
+- Unit tests for validation and services.
+- API integration tests for auth/profile routes.
+- Negative-path tests.
 
 ### Checkpoint CP-2 (Gate)
 
 - Required pass:
-  - Auth + profile test suite green.
-  - Security checks: no plaintext password writes, protected endpoints enforced.
+  - Auth + profile suites green.
+  - Security checks pass.
 - Required docs update:
   - `docs/phases/phase-2-checkpoint.md`
   - `docs/api/auth-profile.md`
@@ -164,112 +153,104 @@ Status enum proposal:
 
 ### 3.1 Upload endpoint and validation
 
-- Add `POST /api/v1/videos` multipart endpoint.
-- Configure Multer only on upload route.
-- Enforce limits:
-  - Max size 50 MB.
-  - MIME whitelist for supported video types.
+- Implement multipart upload route.
+- Enforce max 50 MB and MIME allowlist.
 
 ### 3.2 Cloudinary integration
 
-- Implement signed upload from backend.
-- Capture and persist cloud URL + public ID.
-- Add retry/timeout/error mapping for cloud failures.
+- Signed server-side uploads.
+- Persist URL + public ID.
+- Retry/timeout/error mapping.
 
 ### 3.3 Persistence and ownership
 
-- Create `videos` records with user ownership.
-- Ensure users can only access their own uploads.
+- Persist user-owned `videos` records.
+- Enforce cross-user access restrictions.
 
 ### 3.4 Tests
 
-- Multipart upload tests with valid and invalid payloads.
-- Cloud adapter tests (success, timeout, provider error).
-- Authorization tests for cross-user access.
+- Valid/invalid upload tests.
+- Cloud failure-path tests.
+- Authorization tests.
 
 ### Checkpoint CP-3 (Gate)
 
 - Required pass:
-  - Upload flow stable under repeated uploads.
-  - All file cleanup and error-path tests pass.
+  - Upload flow stable and tested.
+  - Cleanup and error paths pass.
 - Required docs update:
   - `docs/phases/phase-3-checkpoint.md`
   - `docs/api/video-upload.md`
   - `docs/integrations/cloudinary.md`
 
-## Phase 4 - AI Analysis Orchestration
+## Phase 4 - Analysis Orchestration (Within Same Backend)
 
 ### 4.1 Analysis workflow model
 
-- Add `analysis` table with status lifecycle.
-- Persist request/response metadata and safe error fields.
+- `analysis` table with status lifecycle.
+- Persist result payload and safe error details.
 
-### 4.2 Backend orchestration
+### 4.2 Backend processing
 
-- After upload, create analysis job (`PENDING` -> `PROCESSING`).
-- Call FastAPI service with timeout and retry policy.
-- Parse and validate expected response fields:
+- Create analysis job on upload (`PENDING` -> `PROCESSING`).
+- Run analysis pipeline and validate output fields:
   - `min_angle`, `max_angle`, `movement_score`, `raw_json`.
 
 ### 4.3 Failure behavior and resilience
 
-- Graceful handling for AI timeout or malformed response.
-- Mark `FAILED` with non-sensitive diagnostic codes.
-- Guarantee no data loss for already uploaded videos.
+- Handle timeout/malformed input safely.
+- Mark `FAILED` with stable diagnostics.
+- Preserve uploaded media references.
 
 ### 4.4 Tests and performance checks
 
-- Integration tests with mocked AI:
-  - success
-  - timeout
-  - malformed payload
-- Validate API responses stay under 500 ms excluding analysis wait.
-- Validate analysis completion target under 30 seconds for normal payloads.
+- Success/failure integration tests.
+- API latency and analysis-duration target checks.
 
 ### Checkpoint CP-4 (Gate)
 
 - Required pass:
-  - AI workflow tests green.
-  - Failure paths return safe, deterministic API responses.
+  - Analysis workflow tests green.
+  - Failure responses deterministic and safe.
 - Required docs update:
   - `docs/phases/phase-4-checkpoint.md`
   - `docs/api/analysis.md`
-  - `docs/integrations/ai-service.md`
+  - `docs/integrations/analysis-pipeline.md`
 
 ## Phase 5 - Mobile App MVP Flows
 
 ### 5.1 Auth and profile screens
 
 - Register/login UI and token lifecycle.
-- Profile create/edit with validation feedback.
+- Profile create/edit UX.
 
 ### 5.2 Video capture flow
 
-- Record 5-15 second video via `expo-camera`.
-- Client-side duration check.
-- Preview using `expo-video`.
+- Record 5-15 second video with `expo-camera`.
+- Client-side duration validation.
+- Preview with `expo-video`.
 
-### 5.3 Upload and analysis UX
+### 5.3 Upload and result UX
 
-- Upload progress + retry UX.
-- Poll or refresh analysis status.
-- Display safe error states to user.
+- Upload progress and retry flows.
+- Analysis status polling/refresh.
+- Safe error messaging.
 
-### 5.4 Results and history screens
+### 5.4 Results and history
 
-- Show min/max angle, ROM, movement score.
-- List historical analyses.
+- Display min/max angle, ROM, score.
+- Show history list.
 
 ### 5.5 Tests
 
-- Component and flow tests for key screens.
-- Critical-path E2E smoke (auth -> record -> upload -> result).
+- Component tests for critical screens.
+- E2E smoke path.
 
 ### Checkpoint CP-5 (Gate)
 
 - Required pass:
-  - End-to-end patient flow is demonstrably working.
-  - All MVP functional requirements FR-1 to FR-16 mapped to test evidence.
+  - End-to-end patient flow works.
+  - FR-1 to FR-16 mapped to tests.
 - Required docs update:
   - `docs/phases/phase-5-checkpoint.md`
   - `docs/mobile/user-flows.md`
@@ -279,31 +260,27 @@ Status enum proposal:
 
 ### 6.1 Security hardening
 
-- Helmet, strict CORS origins, request size guards.
-- Rate limiting for auth and upload endpoints.
-- Input validation for all externally sourced data.
+- Security middleware, strict CORS, request limits.
+- Rate limiting on auth/upload.
+- Input validation everywhere.
 
 ### 6.2 Observability
 
-- Structured logs for backend and AI service.
-- Correlation IDs across upload/analysis flow.
-- OpenTelemetry traces and core metrics:
-  - request latency
-  - upload failure rate
-  - analysis duration
-  - AI error rate
+- Structured logs with request IDs.
+- Metrics for latency, failure rates, and analysis duration.
+- Tracing for critical request paths.
 
 ### 6.3 Reliability
 
 - Health/readiness endpoints.
-- Backup and restore procedure for PostgreSQL.
-- Cloudinary object integrity checks and retry policy validation.
+- PostgreSQL backup/restore runbook.
+- Upload integrity and retry verification.
 
 ### Checkpoint CP-6 (Gate)
 
 - Required pass:
-  - Security checklist complete with no critical findings.
-  - Telemetry dashboards/alerts verified.
+  - Security checklist has no critical findings.
+  - Telemetry and alerts verified.
   - Backup restore drill successful.
 - Required docs update:
   - `docs/phases/phase-6-checkpoint.md`
@@ -315,26 +292,25 @@ Status enum proposal:
 
 ### 7.1 Containerization and deployment
 
-- Dockerize backend and AI service with multi-stage builds.
-- Pin base image versions/digests.
-- Validate ephemeral runtime assumptions.
+- Dockerize FastAPI backend and PostgreSQL stack.
+- Pinned base images and non-root runtime.
 
 ### 7.2 CI/CD and release controls
 
-- CI gates: lint, typecheck, unit, integration, security scan.
-- Environment promotion strategy: dev -> staging -> prod.
+- CI gates: lint/type/test/security checks.
+- Promotion: dev -> staging -> prod.
 
 ### 7.3 Final validation
 
-- Load/perf validation for MVP targets.
-- Regression suite for all MVP criteria.
+- Performance validation for MVP targets.
+- Regression suite on acceptance criteria.
 - Incident runbook dry run.
 
 ### Checkpoint CP-7 (Final Gate)
 
 - Required pass:
   - All SRD acceptance criteria passed in staging.
-  - Production release checklist approved.
+  - Release checklist approved.
 - Required docs update:
   - `docs/phases/phase-7-checkpoint.md`
   - `docs/release/release-checklist.md`
@@ -342,30 +318,22 @@ Status enum proposal:
 
 ## 6. FR Traceability to Phase Gates
 
-- FR-1 to FR-6 -> Phase 2 checkpoint.
-- FR-7 to FR-11 -> Phase 3 + Phase 5 checkpoints.
-- FR-12 to FR-14 -> Phase 4 checkpoint.
-- FR-15 to FR-16 -> Phase 5 checkpoint.
-- NFR security/performance/reliability/scalability -> Phase 6 + Phase 7 checkpoints.
+- FR-1 to FR-6 -> Phase 2.
+- FR-7 to FR-11 -> Phase 3 + Phase 5.
+- FR-12 to FR-14 -> Phase 4.
+- FR-15 to FR-16 -> Phase 5.
+- NFRs -> Phase 6 + Phase 7.
 
 ## 7. Source References (Official, Accessed 2026-02-28)
 
 - GitHub CLI `gh repo create`: <https://cli.github.com/manual/gh_repo_create>
 - Expo Camera: <https://docs.expo.dev/versions/latest/sdk/camera/>
 - Expo Video (`expo-video`): <https://docs.expo.dev/versions/latest/sdk/video/>
-- Expo Video (`expo-av`) deprecation context: <https://docs.expo.dev/versions/latest/sdk/video-av/>
 - Expo SecureStore: <https://docs.expo.dev/versions/latest/sdk/securestore/>
-- Express production security: <https://expressjs.com/en/advanced/best-practice-security.html>
-- Multer middleware guidance: <https://expressjs.com/en/resources/middleware/multer.html>
-- Cloudinary Node upload docs: <https://cloudinary.com/documentation/node_image_and_video_upload>
-- Cloudinary upload API: <https://cloudinary.com/documentation/upload_images>
-- Cloudinary upload parameters: <https://cloudinary.com/documentation/upload_parameters>
-- FastAPI background tasks: <https://fastapi.tiangolo.com/tutorial/background-tasks/>
+- FastAPI file uploads: <https://fastapi.tiangolo.com/tutorial/request-files/>
 - FastAPI error handling: <https://fastapi.tiangolo.com/tutorial/handling-errors/>
 - FastAPI CORS: <https://fastapi.tiangolo.com/tutorial/cors/>
 - PostgreSQL constraints: <https://www.postgresql.org/docs/current/ddl-constraints.html>
-- PostgreSQL row security: <https://www.postgresql.org/docs/current/ddl-rowsecurity.html>
+- Cloudinary upload docs: <https://cloudinary.com/documentation/upload_images>
 - Docker build best practices: <https://docs.docker.com/build/building/best-practices/>
 - OWASP password storage: <https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html>
-- OpenTelemetry JS docs: <https://opentelemetry.io/docs/languages/js/>
-- OpenTelemetry Python instrumentation docs: <https://opentelemetry.io/docs/languages/python/instrumentation/>

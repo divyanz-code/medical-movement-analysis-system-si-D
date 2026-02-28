@@ -18,22 +18,28 @@ Required docs:
 - Phase 1.1 started.
 - Monorepo directory structure created:
   - `apps/mobile`
-  - `apps/backend`
-  - `services/ai`
+  - `services/backend`
   - `infra`
   - `docs/*`
 - Baseline architecture overview document created.
 - Phase 1.2 completed.
 - Tooling baseline established:
-  - Root npm workspaces and quality scripts (`lint`, `format:check`, `typecheck`, `test`).
-  - Backend strict TypeScript config, ESLint, Prettier, Vitest + Supertest.
+  - Root quality scripts (`lint`, `format:check`, `typecheck`, `test`).
   - Mobile TypeScript/ESLint/Prettier/Vitest harness.
-  - AI FastAPI skeleton and pytest API contract tests.
+  - FastAPI backend skeleton and pytest API contract tests.
+- Architecture decision update:
+  - Consolidated from two servers (Node API + Python AI service) to one Python/FastAPI backend for MVP simplification.
+  - Removed `apps/backend` (Node scaffold) and promoted FastAPI service to primary backend at `services/backend`.
+- Post-migration verification evidence (all passing):
+  - `npm run lint`
+  - `npm run format:check`
+  - `npm run typecheck`
+  - `npm test` (mobile Vitest + backend pytest)
 - Verification evidence (all passing):
   - `npm run lint`
   - `npm run format:check`
   - `npm run typecheck`
-  - `npm test` (includes Python pytest for AI service)
+  - `npm test` (includes Python pytest for backend service)
 
 ## Gate Status
 
