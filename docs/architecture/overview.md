@@ -1,4 +1,4 @@
-# Architecture Overview (Phase 1 Baseline)
+# Architecture Overview
 
 ## Scope
 
@@ -16,6 +16,7 @@ Phase 1 MVP baseline structure established.
 - Phase 1.1 (repository and workspace bootstrap): Completed on 2026-02-28.
 - Phase 1.2 (tooling and quality baseline): Completed on 2026-02-28, then refactored to single-backend architecture on 2026-02-28.
 - Phase 1.3 (architecture artifacts): Completed on 2026-02-28.
+- Phase 2 (auth and profile domain): Completed on 2026-02-28.
 
 ## Tooling Baseline
 
