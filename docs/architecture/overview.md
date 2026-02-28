@@ -8,7 +8,7 @@ Phase 1 MVP baseline structure established.
 
 - `apps/mobile`: React Native + Expo app.
 - `services/backend`: Python/FastAPI API service (auth, profile, upload, analysis, history).
-- `infra`: Infrastructure assets (containers, compose, deployment manifests).
+- `infra`: Docker Compose stack for backend + PostgreSQL.
 - `docs`: Architecture, phase checkpoints, APIs, security, operations, and release documentation.
 
 ## Status
@@ -26,3 +26,6 @@ Phase 1 MVP baseline structure established.
 - Tests:
   - Mobile: Vitest
   - Backend (FastAPI): Pytest + FastAPI `TestClient`
+- Container baseline:
+  - `services/backend/Dockerfile`
+  - `infra/docker-compose.yml`

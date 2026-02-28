@@ -30,6 +30,12 @@ Required docs:
 - Architecture decision update:
   - Consolidated from two servers (Node API + Python AI service) to one Python/FastAPI backend for MVP simplification.
   - Removed `apps/backend` (Node scaffold) and promoted FastAPI service to primary backend at `services/backend`.
+- Repository cleanup update:
+  - Removed unused placeholder folders and `.gitkeep` files.
+  - Reduced docs tree to active Phase 1 documents.
+  - Added Docker baseline for simplified stack:
+    - `services/backend/Dockerfile`
+    - `infra/docker-compose.yml`
 - Post-migration verification evidence (all passing):
   - `npm run lint`
   - `npm run format:check`
