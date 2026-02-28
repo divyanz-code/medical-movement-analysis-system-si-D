@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+import time
 from typing import Protocol
 
 import cloudinary
@@ -25,6 +26,8 @@ class CloudinaryVideoStorage(VideoStorage):
             settings.cloudinary_cloud_name and settings.cloudinary_api_key and settings.cloudinary_api_secret
         )
         self._folder = settings.cloudinary_folder
+        self._max_retries = 3
+        self._retry_delay_seconds = 0.25
 
         if self._enabled:
             cloudinary.config(
@@ -42,18 +45,27 @@ class CloudinaryVideoStorage(VideoStorage):
                 message='Cloud storage is not configured',
             )
 
-        try:
-            file.file.seek(0)
-            upload_response = cloudinary.uploader.upload(
-                file.file,
-                resource_type='video',
-                folder=folder or self._folder,
-                use_filename=False,
-                unique_filename=True,
-                overwrite=False,
-            )
-        except Exception as exc:
-            raise DomainError(status_code=502, code='CLOUD_UPLOAD_FAILED', message='Video upload failed') from exc
+        last_exception: Exception | None = None
+        upload_response = None
+        for attempt in range(self._max_retries):
+            try:
+                file.file.seek(0)
+                upload_response = cloudinary.uploader.upload(
+                    file.file,
+                    resource_type='video',
+                    folder=folder or self._folder,
+                    use_filename=False,
+                    unique_filename=True,
+                    overwrite=False,
+                )
+                break
+            except Exception as exc:
+                last_exception = exc
+                if attempt < self._max_retries - 1:
+                    time.sleep(self._retry_delay_seconds * (attempt + 1))
+
+        if upload_response is None:
+            raise DomainError(status_code=502, code='CLOUD_UPLOAD_FAILED', message='Video upload failed') from last_exception
 
         public_id = upload_response.get('public_id')
         secure_url = upload_response.get('secure_url')

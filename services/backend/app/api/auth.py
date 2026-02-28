@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from app.api.deps import DbSession, get_settings
+from app.api.deps import DbSession, get_settings, rate_limit_auth
 from app.core.config import Settings
 from app.repositories.user_repository import UserRepository
 from app.schemas.auth import LoginRequest, LoginResponse, RegisterRequest, RegisterResponse, UserResponse
@@ -16,6 +16,7 @@ def register(
     payload: RegisterRequest,
     db: DbSession,
     settings: Annotated[Settings, Depends(get_settings)],
+    _rate_limit: Annotated[None, Depends(rate_limit_auth)],
 ) -> RegisterResponse:
     service = AuthService(UserRepository(db), settings)
     user = service.register(payload)
@@ -27,6 +28,7 @@ def login(
     payload: LoginRequest,
     db: DbSession,
     settings: Annotated[Settings, Depends(get_settings)],
+    _rate_limit: Annotated[None, Depends(rate_limit_auth)],
 ) -> LoginResponse:
     service = AuthService(UserRepository(db), settings)
     return service.login(payload.email, payload.password)

@@ -43,6 +43,8 @@ def build_client(
     *,
     max_video_size_mb: int = 50,
     analyzer: object | None = None,
+    auth_rate_limit_per_minute: int = 30,
+    upload_rate_limit_per_minute: int = 12,
 ) -> TestClient:
     db_file = tmp_path / 'test_phase.db'
     settings = Settings(
@@ -53,6 +55,9 @@ def build_client(
         jwt_secret='test-secret-value-1234',
         jwt_access_token_exp_minutes=60,
         max_video_size_mb=max_video_size_mb,
+        request_body_limit_mb=2,
+        auth_rate_limit_per_minute=auth_rate_limit_per_minute,
+        upload_rate_limit_per_minute=upload_rate_limit_per_minute,
         cloudinary_folder='mma/test-videos',
     )
     app = create_app(settings, video_storage=FakeVideoStorage(), analysis_engine=analyzer or FakeAnalyzer())
@@ -100,6 +105,19 @@ def test_health(tmp_path: Path) -> None:
         assert response.json() == {'status': 'ok'}
 
 
+def test_ready_and_metrics_endpoints(tmp_path: Path) -> None:
+    with build_client(tmp_path) as client:
+        ready = client.get('/ready')
+        assert ready.status_code == 200
+        assert ready.json() == {'status': 'ready'}
+
+        metrics = client.get('/metrics')
+        assert metrics.status_code == 200
+        payload = metrics.json()
+        assert 'counters' in payload
+        assert 'timings_ms' in payload
+
+
 def test_analyze_rejects_invalid_url(tmp_path: Path) -> None:
     with build_client(tmp_path) as client:
         response = client.post('/analyze', json={'video_url': 'local-file'})
@@ -138,6 +156,16 @@ def test_auth_rejects_invalid_credentials(tmp_path: Path) -> None:
         )
         assert invalid.status_code == 401
         assert invalid.json()['error']['code'] == 'INVALID_CREDENTIALS'
+
+
+def test_auth_rate_limit_enforced(tmp_path: Path) -> None:
+    with build_client(tmp_path, auth_rate_limit_per_minute=1) as client:
+        first = client.post('/api/v1/auth/login', json={'email': 'nobody@example.com', 'password': 'Password123!'})
+        second = client.post('/api/v1/auth/login', json={'email': 'nobody@example.com', 'password': 'Password123!'})
+
+        assert first.status_code == 401
+        assert second.status_code == 429
+        assert second.json()['error']['code'] == 'RATE_LIMIT_EXCEEDED'
 
 
 def test_profile_requires_auth(tmp_path: Path) -> None:
@@ -233,6 +261,28 @@ def test_video_access_forbidden_for_other_user(tmp_path: Path) -> None:
 
         assert forbidden.status_code == 403
         assert forbidden.json()['error']['code'] == 'FORBIDDEN_RESOURCE'
+
+
+def test_upload_rate_limit_enforced(tmp_path: Path) -> None:
+    with build_client(tmp_path, upload_rate_limit_per_minute=1) as client:
+        token = register_and_login(client, 'limit-upload@example.com')
+
+        first = client.post(
+            '/api/v1/videos',
+            headers=auth_headers(token),
+            files={'video': ('knee.mp4', BytesIO(b'video-bytes'), 'video/mp4')},
+            data={'duration_seconds': '10'},
+        )
+        second = client.post(
+            '/api/v1/videos',
+            headers=auth_headers(token),
+            files={'video': ('knee.mp4', BytesIO(b'video-bytes'), 'video/mp4')},
+            data={'duration_seconds': '10'},
+        )
+
+        assert first.status_code == 202
+        assert second.status_code == 429
+        assert second.json()['error']['code'] == 'RATE_LIMIT_EXCEEDED'
 
 
 def test_video_multiple_uploads_same_user(tmp_path: Path) -> None:

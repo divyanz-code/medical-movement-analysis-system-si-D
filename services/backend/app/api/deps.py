@@ -5,6 +5,8 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
 from app.core.config import Settings
+from app.core.errors import DomainError
+from app.core.rate_limit import InMemoryRateLimiter
 from app.core.security import TokenError, decode_access_token
 from app.db.base import get_session
 from app.services.storage_service import VideoStorage
@@ -23,6 +25,10 @@ def get_db(request: Request):
 
 def get_video_storage(request: Request) -> VideoStorage:
     return request.app.state.video_storage
+
+
+def get_rate_limiter(request: Request) -> InMemoryRateLimiter:
+    return request.app.state.rate_limiter
 
 
 def get_current_user_id(
@@ -45,3 +51,44 @@ def get_current_user_id(
 
 DbSession = Annotated[Session, Depends(get_db)]
 CurrentUserId = Annotated[int, Depends(get_current_user_id)]
+
+
+def _client_key(request: Request, bucket: str) -> str:
+    client_ip = request.client.host if request.client else 'unknown'
+    return f'{bucket}:{client_ip}'
+
+
+def rate_limit_auth(
+    request: Request,
+    settings: Annotated[Settings, Depends(get_settings)],
+    limiter: Annotated[InMemoryRateLimiter, Depends(get_rate_limiter)],
+) -> None:
+    result = limiter.allow(
+        key=_client_key(request, 'auth'),
+        limit=settings.auth_rate_limit_per_minute,
+        window_seconds=60,
+    )
+    if not result.allowed:
+        raise DomainError(
+            status_code=429,
+            code='RATE_LIMIT_EXCEEDED',
+            message=f'Auth rate limit exceeded. Retry in {result.retry_after_seconds}s',
+        )
+
+
+def rate_limit_upload(
+    request: Request,
+    settings: Annotated[Settings, Depends(get_settings)],
+    limiter: Annotated[InMemoryRateLimiter, Depends(get_rate_limiter)],
+) -> None:
+    result = limiter.allow(
+        key=_client_key(request, 'upload'),
+        limit=settings.upload_rate_limit_per_minute,
+        window_seconds=60,
+    )
+    if not result.allowed:
+        raise DomainError(
+            status_code=429,
+            code='RATE_LIMIT_EXCEEDED',
+            message=f'Upload rate limit exceeded. Retry in {result.retry_after_seconds}s',
+        )

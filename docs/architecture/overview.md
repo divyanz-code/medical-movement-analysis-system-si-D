@@ -20,6 +20,7 @@ Phase 1 MVP baseline structure established.
 - Phase 3 (video ingestion and cloud storage): Completed on 2026-02-28.
 - Phase 4 (analysis orchestration): Completed on 2026-02-28.
 - Phase 5 (mobile MVP flow orchestration): Completed on 2026-02-28.
+- Phase 6 (security, observability, reliability hardening): Completed on 2026-02-28.
 
 ## Tooling Baseline
 

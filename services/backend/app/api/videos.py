@@ -2,7 +2,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, Request, UploadFile
 
-from app.api.deps import CurrentUserId, DbSession, get_settings, get_video_storage
+from app.api.deps import CurrentUserId, DbSession, get_settings, get_video_storage, rate_limit_upload
 from app.core.config import Settings
 from app.repositories.analysis_repository import AnalysisRepository
 from app.repositories.video_repository import VideoRepository
@@ -23,6 +23,7 @@ async def upload_video(
     db: DbSession,
     settings: Annotated[Settings, Depends(get_settings)],
     storage: Annotated[VideoStorage, Depends(get_video_storage)],
+    _rate_limit: Annotated[None, Depends(rate_limit_upload)],
     video: UploadFile = File(...),
     duration_seconds: int = Form(...),
 ) -> VideoUploadResponse:
