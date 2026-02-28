@@ -1,0 +1,19 @@
+import * as SecureStore from "expo-secure-store";
+
+import type { TokenStore } from "./tokenStore.js";
+
+const TOKEN_KEY = "mma_access_token";
+
+export class ExpoSecureTokenStore implements TokenStore {
+  async getToken(): Promise<string | null> {
+    return SecureStore.getItemAsync(TOKEN_KEY);
+  }
+
+  async setToken(token: string): Promise<void> {
+    await SecureStore.setItemAsync(TOKEN_KEY, token);
+  }
+
+  async clearToken(): Promise<void> {
+    await SecureStore.deleteItemAsync(TOKEN_KEY);
+  }
+}

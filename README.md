@@ -30,6 +30,20 @@ Backend health:
 curl http://localhost:8000/health
 ```
 
+## Mobile (Expo)
+
+Set API URL for Expo runtime:
+
+```bash
+export EXPO_PUBLIC_API_BASE_URL=http://localhost:8000
+```
+
+Run mobile app:
+
+```bash
+npm run -w apps/mobile start
+```
+
 ## Execution Model
 
 Development follows phased checkpoints documented in:

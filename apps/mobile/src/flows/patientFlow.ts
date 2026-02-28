@@ -22,8 +22,16 @@ export class PatientFlowService {
 
   async registerAndLogin(payload: RegisterRequest & { password: string }): Promise<void> {
     await this.api.register(payload);
-    const login = await this.api.login({ email: payload.email, password: payload.password });
+    await this.login(payload.email, payload.password);
+  }
+
+  async login(email: string, password: string): Promise<void> {
+    const login = await this.api.login({ email, password });
     await this.tokenStore.setToken(login.access_token);
+  }
+
+  async logout(): Promise<void> {
+    await this.tokenStore.clearToken();
   }
 
   async getProfile(): Promise<Profile> {

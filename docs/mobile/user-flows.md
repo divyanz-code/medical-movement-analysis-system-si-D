@@ -21,6 +21,13 @@
 - API layer: `apps/mobile/src/api/mobileApi.ts`
 - Token lifecycle abstraction: `apps/mobile/src/storage/tokenStore.ts`
 - Analysis/ROM utility: `apps/mobile/src/types/domain.ts`
+- Expo Router screens:
+  - `apps/mobile/app/(auth)/login.tsx`
+  - `apps/mobile/app/(auth)/register.tsx`
+  - `apps/mobile/app/(app)/profile.tsx`
+  - `apps/mobile/app/(app)/record.tsx`
+  - `apps/mobile/app/(app)/results.tsx`
+  - `apps/mobile/app/(app)/history.tsx`
 
 ## UX Error States
 

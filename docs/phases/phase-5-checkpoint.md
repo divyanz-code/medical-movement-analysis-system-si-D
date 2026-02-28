@@ -17,6 +17,9 @@ Required docs:
 
 - Implemented mobile typed API client and patient flow orchestration.
 - Added token store abstraction and secure flow boundary checks.
+- Upgraded `apps/mobile` to latest Expo Router baseline (`create-expo-app@latest`, Expo SDK 54 track on 2026-02-28).
+- Added React Native screens for auth/profile/record/upload/results/history flows.
+- Added Expo camera/video/secure-store integrations for real device flow.
 - Added mobile flow tests covering:
   - register/login/profile/update/upload/poll success path
   - duration validation failure path
