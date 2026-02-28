@@ -1,8 +1,24 @@
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
-import { Button, SafeAreaView, Text, TextInput, View } from "react-native";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View
+} from "react-native";
+import { StatusBar } from "expo-status-bar";
 
 import { patientFlow } from "../../src/runtime/client";
+import { profileNeedsOnboarding } from "../../src/types/domain";
+import { AppButton } from "../../src/ui/components/AppButton";
+import { AppCard } from "../../src/ui/components/AppCard";
+import { AppField } from "../../src/ui/components/AppField";
+import { ScreenHeader } from "../../src/ui/components/ScreenHeader";
+import { colors, responsiveFont, spacing } from "../../src/ui/theme";
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -16,7 +32,8 @@ export default function LoginScreen() {
     setError(null);
     try {
       await patientFlow.login(email, password);
-      router.replace("/(app)/profile");
+      const profile = await patientFlow.getProfile();
+      router.replace(profileNeedsOnboarding(profile) ? "/(auth)/onboarding" : "/(app)/home");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
@@ -24,29 +41,105 @@ export default function LoginScreen() {
     }
   }
 
+  function onBiometricLogin() {
+    Alert.alert("Biometric Sign-In", "Authenticate with Face ID / Fingerprint?", [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Authenticate",
+        onPress: () => {
+          onLogin().catch(() => {
+            // Login errors are already handled in onLogin.
+          });
+        }
+      }
+    ]);
+  }
+
   return (
-    <SafeAreaView style={{ flex: 1, padding: 20, gap: 14 }}>
-      <Text style={{ fontSize: 22, fontWeight: "700" }}>Patient Login</Text>
-      <TextInput
-        autoCapitalize="none"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-        placeholder="Email"
-        style={{ borderWidth: 1, borderColor: "#ccc", borderRadius: 10, padding: 12 }}
-      />
-      <TextInput
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-        placeholder="Password"
-        style={{ borderWidth: 1, borderColor: "#ccc", borderRadius: 10, padding: 12 }}
-      />
-      {error ? <Text style={{ color: "#b00020" }}>{error}</Text> : null}
-      <Button title={loading ? "Signing in..." : "Login"} onPress={onLogin} disabled={loading} />
-      <View style={{ marginTop: 8 }}>
-        <Link href="/(auth)/register">Need an account? Register</Link>
-      </View>
+    <SafeAreaView style={styles.root}>
+      <StatusBar style="dark" backgroundColor={colors.authBackground} />
+      <KeyboardAvoidingView
+        style={styles.keyboardContainer}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+          <ScreenHeader
+            title="Welcome Back"
+            subtitle="Sign in to continue your movement journey"
+          />
+
+          <AppCard>
+            <View style={styles.formContent}>
+              <AppField
+                label="Email"
+                autoCapitalize="none"
+                keyboardType="email-address"
+                value={email}
+                onChangeText={setEmail}
+                placeholder="you@example.com"
+              />
+              <AppField
+                label="Password"
+                secureTextEntry
+                value={password}
+                onChangeText={setPassword}
+                placeholder="••••••••"
+              />
+
+              {error ? <Text style={styles.error}>{error}</Text> : null}
+
+              <AppButton label="Sign In" onPress={onLogin} loading={loading} />
+              <AppButton
+                label="Face ID / Fingerprint"
+                onPress={onBiometricLogin}
+                variant="secondary"
+              />
+            </View>
+          </AppCard>
+
+          <View style={styles.footerRow}>
+            <Text style={styles.footerText}>Don&apos;t have an account? </Text>
+            <Link href="/(auth)/register" style={styles.footerLink}>
+              Sign Up
+            </Link>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: colors.authBackground
+  },
+  keyboardContainer: {
+    flex: 1
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.lg,
+    justifyContent: "center",
+    gap: spacing.lg
+  },
+  formContent: {
+    gap: spacing.md
+  },
+  error: {
+    color: colors.danger,
+    fontSize: responsiveFont(14)
+  },
+  footerRow: {
+    flexDirection: "row",
+    justifyContent: "center"
+  },
+  footerText: {
+    color: colors.textMuted
+  },
+  footerLink: {
+    color: colors.accent,
+    fontWeight: "700"
+  }
+});

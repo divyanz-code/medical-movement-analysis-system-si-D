@@ -1,0 +1,82 @@
+import { Assessment, User } from "./types";
+
+export const mockUser: User = {
+  id: "1",
+  name: "Sarah Johnson",
+  email: "sarah.johnson@email.com",
+  age: 34,
+  gender: "female",
+  affectedLimb: "right-knee",
+};
+
+export const mockAssessments: Assessment[] = [
+  {
+    id: "1",
+    userId: "1",
+    date: "2026-02-28T10:30:00Z",
+    jointType: "Right Knee",
+    taskType: "Flexion",
+    minAngle: 12,
+    maxAngle: 118,
+    rom: 106,
+    movementScore: 87,
+    compensationDetected: false,
+  },
+  {
+    id: "2",
+    userId: "1",
+    date: "2026-02-25T14:15:00Z",
+    jointType: "Right Knee",
+    taskType: "Squat",
+    minAngle: 15,
+    maxAngle: 112,
+    rom: 97,
+    movementScore: 82,
+    compensationDetected: true,
+    notes: "Slight valgus collapse detected at max depth",
+  },
+  {
+    id: "3",
+    userId: "1",
+    date: "2026-02-21T09:45:00Z",
+    jointType: "Right Knee",
+    taskType: "Flexion",
+    minAngle: 18,
+    maxAngle: 105,
+    rom: 87,
+    movementScore: 76,
+    compensationDetected: false,
+  },
+  {
+    id: "4",
+    userId: "1",
+    date: "2026-02-18T16:20:00Z",
+    jointType: "Right Knee",
+    taskType: "Extension",
+    minAngle: 8,
+    maxAngle: 95,
+    rom: 87,
+    movementScore: 74,
+    compensationDetected: true,
+  },
+  {
+    id: "5",
+    userId: "1",
+    date: "2026-02-14T11:00:00Z",
+    jointType: "Right Knee",
+    taskType: "Flexion",
+    minAngle: 22,
+    maxAngle: 98,
+    rom: 76,
+    movementScore: 68,
+    compensationDetected: false,
+  },
+];
+
+export const trendData = [
+  { date: "Feb 14", score: 68 },
+  { date: "Feb 18", score: 74 },
+  { date: "Feb 21", score: 76 },
+  { date: "Feb 25", score: 82 },
+  { date: "Feb 28", score: 87 },
+];
