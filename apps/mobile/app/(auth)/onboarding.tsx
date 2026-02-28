@@ -18,7 +18,8 @@ import { patientFlow } from "../../src/runtime/client";
 import { AppButton } from "../../src/ui/components/AppButton";
 import { AppCard } from "../../src/ui/components/AppCard";
 import { ScreenHeader } from "../../src/ui/components/ScreenHeader";
-import { colors, moderateScale, radius, responsiveFont, spacing } from "../../src/ui/theme";
+import { moderateScale, radius, responsiveFont, spacing, type ThemeColors } from "../../src/ui/theme";
+import { useAppTheme } from "../../src/ui/themeProvider";
 
 type GenderOption = "male" | "female" | "other";
 
@@ -56,6 +57,8 @@ const LIMB_OPTIONS: LimbOption[] = [
 
 export default function OnboardingScreen() {
   const router = useRouter();
+  const { colors, mode } = useAppTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const [step, setStep] = useState(1);
   const [age, setAge] = useState(27);
   const [gender, setGender] = useState<GenderOption | "">("");
@@ -136,7 +139,7 @@ export default function OnboardingScreen() {
 
   return (
     <SafeAreaView style={styles.root}>
-      <StatusBar style="dark" backgroundColor={colors.authBackground} />
+      <StatusBar style={mode === "dark" ? "light" : "dark"} backgroundColor={colors.authBackground} />
       <KeyboardAvoidingView
         style={styles.keyboardContainer}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -292,7 +295,8 @@ export default function OnboardingScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.authBackground
@@ -421,4 +425,5 @@ const styles = StyleSheet.create({
   actionCell: {
     flex: 1
   }
-});
+  });
+}

@@ -1,9 +1,11 @@
 import { Feather } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 
-import { colors, moderateScale, responsiveFont } from "../../src/ui/theme";
+import { moderateScale, responsiveFont } from "../../src/ui/theme";
+import { useAppTheme } from "../../src/ui/themeProvider";
 
 export default function AppTabsLayout() {
+  const { colors } = useAppTheme();
   return (
     <Tabs
       screenOptions={{

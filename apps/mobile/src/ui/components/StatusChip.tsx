@@ -1,10 +1,12 @@
+import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-import { colors, moderateScale, radius, responsiveFont } from "../theme";
+import { moderateScale, radius, responsiveFont, type ThemeColors } from "../theme";
+import { useAppTheme } from "../themeProvider";
 
 type ChipStatus = "aligned" | "compensatory" | "warning" | "success" | "processing";
 
-const statusConfig: Record<
+function buildStatusConfig(colors: ThemeColors): Record<
   ChipStatus,
   {
     label: string;
@@ -12,7 +14,8 @@ const statusConfig: Record<
     borderColor: string;
     textColor: string;
   }
-> = {
+> {
+  return {
   aligned: {
     label: "Aligned",
     backgroundColor: colors.successSoft,
@@ -43,7 +46,8 @@ const statusConfig: Record<
     borderColor: colors.border,
     textColor: colors.accent
   }
-};
+  };
+}
 
 interface StatusChipProps {
   status: ChipStatus;
@@ -51,6 +55,9 @@ interface StatusChipProps {
 }
 
 export function StatusChip({ status, label }: StatusChipProps) {
+  const { colors } = useAppTheme();
+  const styles = useMemo(() => createStyles(), []);
+  const statusConfig = useMemo(() => buildStatusConfig(colors), [colors]);
   const config = statusConfig[status];
   return (
     <View
@@ -67,15 +74,17 @@ export function StatusChip({ status, label }: StatusChipProps) {
   );
 }
 
-const styles = StyleSheet.create({
-  chip: {
-    borderWidth: 1,
-    borderRadius: radius.pill,
-    paddingHorizontal: moderateScale(10),
-    paddingVertical: moderateScale(4)
-  },
-  text: {
-    fontSize: responsiveFont(11),
-    fontWeight: "700"
-  }
-});
+function createStyles() {
+  return StyleSheet.create({
+    chip: {
+      borderWidth: 1,
+      borderRadius: radius.pill,
+      paddingHorizontal: moderateScale(10),
+      paddingVertical: moderateScale(4)
+    },
+    text: {
+      fontSize: responsiveFont(11),
+      fontWeight: "700"
+    }
+  });
+}

@@ -1,5 +1,5 @@
 import { Link, useRouter } from "expo-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Alert,
   KeyboardAvoidingView,
@@ -18,10 +18,13 @@ import { AppButton } from "../../src/ui/components/AppButton";
 import { AppCard } from "../../src/ui/components/AppCard";
 import { AppField } from "../../src/ui/components/AppField";
 import { ScreenHeader } from "../../src/ui/components/ScreenHeader";
-import { colors, responsiveFont, spacing } from "../../src/ui/theme";
+import { responsiveFont, spacing, type ThemeColors } from "../../src/ui/theme";
+import { useAppTheme } from "../../src/ui/themeProvider";
 
 export default function LoginScreen() {
   const router = useRouter();
+  const { colors, mode } = useAppTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const [email, setEmail] = useState("shaurya@example.com");
   const [password, setPassword] = useState("StrongP@ssw0rd!");
   const [error, setError] = useState<string | null>(null);
@@ -57,7 +60,7 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView style={styles.root}>
-      <StatusBar style="dark" backgroundColor={colors.authBackground} />
+      <StatusBar style={mode === "dark" ? "light" : "dark"} backgroundColor={colors.authBackground} />
       <KeyboardAvoidingView
         style={styles.keyboardContainer}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
@@ -109,7 +112,8 @@ export default function LoginScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.authBackground
@@ -142,4 +146,5 @@ const styles = StyleSheet.create({
     color: colors.accent,
     fontWeight: "700"
   }
-});
+  });
+}

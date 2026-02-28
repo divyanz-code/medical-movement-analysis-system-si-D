@@ -1,19 +1,23 @@
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Alert, Pressable, SafeAreaView, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
 import { patientFlow } from "../../src/runtime/client";
 import { AppButton } from "../../src/ui/components/AppButton";
 import { AppCard } from "../../src/ui/components/AppCard";
+import { type ThemeColors } from "../../src/ui/theme";
 import { ScreenHeader } from "../../src/ui/components/ScreenHeader";
-import { colors, moderateScale, radius, responsiveFont, spacing } from "../../src/ui/theme";
+import { moderateScale, radius, responsiveFont, spacing } from "../../src/ui/theme";
+import { useAppTheme } from "../../src/ui/themeProvider";
 
 export default function SettingsScreen() {
   const router = useRouter();
+  const { colors, mode, setMode } = useAppTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const [notifications, setNotifications] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
+  const darkMode = mode === "dark";
 
   async function logout() {
     await patientFlow.logout();
@@ -96,7 +100,11 @@ export default function SettingsScreen() {
               <View style={styles.switchControl}>
                 <Switch
                   value={darkMode}
-                  onValueChange={setDarkMode}
+                  onValueChange={(value) => {
+                    setMode(value ? "dark" : "light").catch(() => {
+                      // Keep current mode on write failure.
+                    });
+                  }}
                   trackColor={{ false: colors.border, true: colors.accentSoft }}
                   thumbColor={darkMode ? colors.accent : colors.white}
                 />
@@ -148,7 +156,8 @@ export default function SettingsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.surface
@@ -255,4 +264,5 @@ const styles = StyleSheet.create({
   signOutWrap: {
     marginTop: spacing.xs
   }
-});
+  });
+}

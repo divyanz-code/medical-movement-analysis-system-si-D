@@ -8,7 +8,8 @@ import { AppButton } from "../../src/ui/components/AppButton";
 import { AppCard } from "../../src/ui/components/AppCard";
 import { AppField } from "../../src/ui/components/AppField";
 import { ScreenHeader } from "../../src/ui/components/ScreenHeader";
-import { colors, moderateScale, radius, responsiveFont, spacing } from "../../src/ui/theme";
+import { moderateScale, radius, responsiveFont, spacing, type ThemeColors } from "../../src/ui/theme";
+import { useAppTheme } from "../../src/ui/themeProvider";
 
 function initials(name: string): string {
   return name
@@ -20,6 +21,8 @@ function initials(name: string): string {
 }
 
 export default function ProfileScreen() {
+  const { colors, mode } = useAppTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const [name, setName] = useState("Patient");
   const [email, setEmail] = useState("-");
   const [age, setAge] = useState("27");
@@ -70,7 +73,7 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView style={styles.root}>
-      <StatusBar style="dark" backgroundColor={colors.surface} />
+      <StatusBar style={mode === "dark" ? "light" : "dark"} backgroundColor={colors.surface} />
       <ScrollView contentContainerStyle={styles.content}>
         <ScreenHeader title="Profile" subtitle="Your account and clinical details" />
 
@@ -150,7 +153,8 @@ export default function ProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.surface
@@ -258,5 +262,5 @@ const styles = StyleSheet.create({
   actionCell: {
     flex: 1
   },
-  
-});
+  });
+}

@@ -20,7 +20,33 @@ export function responsiveFont(size: number): number {
   return Math.round(PixelRatio.roundToNearestPixel(moderateScale(size, 0.35)));
 }
 
-export const colors = {
+export type ThemeColors = {
+  background: string;
+  surface: string;
+  authBackground: string;
+  card: string;
+  text: string;
+  textMuted: string;
+  border: string;
+  divider: string;
+  primary: string;
+  accent: string;
+  accentSoft: string;
+  success: string;
+  successSoft: string;
+  warning: string;
+  warningSoft: string;
+  danger: string;
+  dangerSoft: string;
+  darkSurface: string;
+  darkOverlay: string;
+  white: string;
+  whiteMuted: string;
+  whiteSoft: string;
+  whiteTint: string;
+};
+
+export const lightColors: ThemeColors = {
   background: "#FFFFFF",
   surface: "#F3F7FA",
   authBackground: "#EAF2F7",
@@ -45,6 +71,35 @@ export const colors = {
   whiteSoft: "rgba(255,255,255,0.92)",
   whiteTint: "rgba(255,255,255,0.24)"
 } as const;
+
+export const darkColors: ThemeColors = {
+  background: "#08151C",
+  surface: "#0C1D27",
+  authBackground: "#091821",
+  card: "#102531",
+  text: "#E7F2F7",
+  textMuted: "#9EB4C1",
+  border: "#1E3B4B",
+  divider: "#183545",
+  primary: "#123745",
+  accent: "#4EB2C1",
+  accentSoft: "rgba(78,178,193,0.2)",
+  success: "#50C49A",
+  successSoft: "rgba(80,196,154,0.18)",
+  warning: "#E2A94A",
+  warningSoft: "rgba(226,169,74,0.2)",
+  danger: "#F07B7B",
+  dangerSoft: "rgba(240,123,123,0.2)",
+  darkSurface: "#07131A",
+  darkOverlay: "rgba(3,10,14,0.74)",
+  white: "#FFFFFF",
+  whiteMuted: "rgba(255,255,255,0.82)",
+  whiteSoft: "rgba(255,255,255,0.92)",
+  whiteTint: "rgba(255,255,255,0.24)"
+} as const;
+
+// Backward compatibility for files not yet migrated to theme hook.
+export const colors = lightColors;
 
 export const shadows = {
   card: {

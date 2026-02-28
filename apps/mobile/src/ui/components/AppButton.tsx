@@ -1,6 +1,8 @@
+import { useMemo } from "react";
 import { ActivityIndicator, Pressable, StyleSheet, Text } from "react-native";
 
-import { colors, moderateScale, radius, responsiveFont } from "../theme";
+import { moderateScale, radius, responsiveFont, type ThemeColors } from "../theme";
+import { useAppTheme } from "../themeProvider";
 
 type Variant = "primary" | "secondary" | "danger";
 
@@ -19,6 +21,8 @@ export function AppButton({
   loading = false,
   variant = "primary"
 }: AppButtonProps) {
+  const { colors } = useAppTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const inactive = disabled || loading;
   return (
     <Pressable
@@ -49,7 +53,8 @@ export function AppButton({
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   base: {
     minHeight: moderateScale(50),
     borderRadius: radius.md,
@@ -83,4 +88,5 @@ const styles = StyleSheet.create({
   dangerLabel: {
     color: colors.danger
   }
-});
+  });
+}

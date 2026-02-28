@@ -1,15 +1,18 @@
 import { Feather } from "@expo/vector-icons";
+import { useMemo } from "react";
 import { StyleSheet, Text, View, useWindowDimensions } from "react-native";
 
-import { colors, radius, responsiveFont, spacing } from "../theme";
+import { radius, responsiveFont, spacing, type ThemeColors } from "../theme";
+import { useAppTheme } from "../themeProvider";
 
 type MetricVariant = "default" | "accent" | "success" | "warning";
 type Trend = "up" | "down" | "stable";
 
-const variantConfig: Record<
+function buildVariantConfig(colors: ThemeColors): Record<
   MetricVariant,
   { backgroundColor: string; borderColor: string; iconColor: string }
-> = {
+> {
+  return {
   default: {
     backgroundColor: colors.background,
     borderColor: colors.border,
@@ -30,7 +33,8 @@ const variantConfig: Record<
     borderColor: colors.border,
     iconColor: colors.warning
   }
-};
+  };
+}
 
 interface MetricCardProps {
   icon: keyof typeof Feather.glyphMap;
@@ -49,6 +53,9 @@ export function MetricCard({
   trend,
   variant = "default"
 }: MetricCardProps) {
+  const { colors } = useAppTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+  const variantConfig = useMemo(() => buildVariantConfig(colors), [colors]);
   const { width } = useWindowDimensions();
   const variantStyle = variantConfig[variant];
   const valueText = String(value);
@@ -94,39 +101,41 @@ export function MetricCard({
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    borderRadius: radius.md,
-    borderWidth: 1,
-    padding: spacing.md
-  },
-  labelRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs
-  },
-  label: {
-    color: colors.textMuted,
-    fontSize: responsiveFont(12)
-  },
-  valueRow: {
-    marginTop: spacing.xs,
-    flexDirection: "row",
-    alignItems: "flex-end",
-    gap: 2
-  },
-  value: {
-    color: colors.text,
-    fontWeight: "700",
-    flexShrink: 1
-  },
-  unit: {
-    color: colors.textMuted,
-    marginBottom: 2
-  },
-  trend: {
-    marginTop: spacing.xs,
-    color: colors.textMuted,
-    fontSize: responsiveFont(11)
-  }
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    card: {
+      borderRadius: radius.md,
+      borderWidth: 1,
+      padding: spacing.md
+    },
+    labelRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.xs
+    },
+    label: {
+      color: colors.textMuted,
+      fontSize: responsiveFont(12)
+    },
+    valueRow: {
+      marginTop: spacing.xs,
+      flexDirection: "row",
+      alignItems: "flex-end",
+      gap: 2
+    },
+    value: {
+      color: colors.text,
+      fontWeight: "700",
+      flexShrink: 1
+    },
+    unit: {
+      color: colors.textMuted,
+      marginBottom: 2
+    },
+    trend: {
+      marginTop: spacing.xs,
+      color: colors.textMuted,
+      fontSize: responsiveFont(11)
+    }
+  });
+}

@@ -1,6 +1,8 @@
+import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
 
-import { colors, spacing } from "../theme";
+import { spacing, type ThemeColors } from "../theme";
+import { useAppTheme } from "../themeProvider";
 
 interface AngleVisualizerProps {
   angle: number;
@@ -15,6 +17,8 @@ export function AngleVisualizer({
   maxAngle,
   size = 120
 }: AngleVisualizerProps) {
+  const { colors } = useAppTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const normalized = Math.max(0, Math.min(180, angle));
   const rotation = `${normalized - 90}deg`;
   const dialSize = size;
@@ -52,59 +56,61 @@ export function AngleVisualizer({
   );
 }
 
-const styles = StyleSheet.create({
-  root: {
-    alignItems: "center"
-  },
-  dial: {
-    borderWidth: 2,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  crosshairVertical: {
-    position: "absolute",
-    width: 1,
-    height: "82%",
-    backgroundColor: colors.border
-  },
-  crosshairHorizontal: {
-    position: "absolute",
-    height: 1,
-    width: "82%",
-    backgroundColor: colors.border
-  },
-  pointer: {
-    position: "absolute",
-    width: "40%",
-    height: 3,
-    backgroundColor: colors.accent,
-    borderRadius: 2,
-    right: "50%"
-  },
-  centerDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.accent
-  },
-  centerLabel: {
-    position: "absolute",
-    top: 44
-  },
-  angleValue: {
-    color: colors.text,
-    fontWeight: "700",
-    fontSize: 24
-  },
-  minMaxRow: {
-    marginTop: spacing.xs,
-    flexDirection: "row",
-    gap: spacing.lg
-  },
-  minMaxText: {
-    color: colors.textMuted,
-    fontSize: 11
-  }
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    root: {
+      alignItems: "center"
+    },
+    dial: {
+      borderWidth: 2,
+      borderColor: colors.border,
+      backgroundColor: colors.surface,
+      alignItems: "center",
+      justifyContent: "center"
+    },
+    crosshairVertical: {
+      position: "absolute",
+      width: 1,
+      height: "82%",
+      backgroundColor: colors.border
+    },
+    crosshairHorizontal: {
+      position: "absolute",
+      height: 1,
+      width: "82%",
+      backgroundColor: colors.border
+    },
+    pointer: {
+      position: "absolute",
+      width: "40%",
+      height: 3,
+      backgroundColor: colors.accent,
+      borderRadius: 2,
+      right: "50%"
+    },
+    centerDot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: colors.accent
+    },
+    centerLabel: {
+      position: "absolute",
+      top: 44
+    },
+    angleValue: {
+      color: colors.text,
+      fontWeight: "700",
+      fontSize: 24
+    },
+    minMaxRow: {
+      marginTop: spacing.xs,
+      flexDirection: "row",
+      gap: spacing.lg
+    },
+    minMaxText: {
+      color: colors.textMuted,
+      fontSize: 11
+    }
+  });
+}

@@ -1,8 +1,10 @@
 import { Feather } from "@expo/vector-icons";
+import { useMemo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 import type { AnalysisItem } from "../../types/contracts";
-import { colors, moderateScale, radius, responsiveFont, spacing } from "../theme";
+import { moderateScale, radius, responsiveFont, spacing, type ThemeColors } from "../theme";
+import { useAppTheme } from "../themeProvider";
 import { StatusChip } from "./StatusChip";
 
 interface SessionCardProps {
@@ -12,6 +14,8 @@ interface SessionCardProps {
 }
 
 export function SessionCard({ item, onPress, previousScore }: SessionCardProps) {
+  const { colors } = useAppTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const date = new Date(item.updated_at);
   const scoreChange =
     previousScore !== undefined && item.movement_score !== null
@@ -77,78 +81,80 @@ export function SessionCard({ item, onPress, previousScore }: SessionCardProps) 
   );
 }
 
-const styles = StyleSheet.create({
-  card: {
-    borderRadius: radius.md,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.card,
-    padding: spacing.md,
-    flexDirection: "row",
-    gap: spacing.sm
-  },
-  accentRail: {
-    width: moderateScale(4),
-    borderRadius: radius.pill,
-    backgroundColor: colors.accent
-  },
-  content: {
-    flex: 1,
-    gap: spacing.sm
-  },
-  headerRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    gap: spacing.sm
-  },
-  headerLeft: {
-    flex: 1
-  },
-  title: {
-    color: colors.text,
-    fontSize: responsiveFont(15),
-    fontWeight: "700"
-  },
-  timeRow: {
-    marginTop: 4,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4
-  },
-  subtitle: {
-    color: colors.textMuted,
-    fontSize: responsiveFont(12)
-  },
-  metricsRow: {
-    flexDirection: "row",
-    gap: spacing.lg
-  },
-  metricItem: {
-    flex: 1
-  },
-  metricLabel: {
-    color: colors.textMuted,
-    fontSize: responsiveFont(11)
-  },
-  metricValueRow: {
-    marginTop: 2,
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs
-  },
-  metricValue: {
-    color: colors.text,
-    fontWeight: "700",
-    fontSize: responsiveFont(20)
-  },
-  changeRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 2
-  },
-  changeValue: {
-    fontSize: responsiveFont(11),
-    fontWeight: "700"
-  }
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    card: {
+      borderRadius: radius.md,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.card,
+      padding: spacing.md,
+      flexDirection: "row",
+      gap: spacing.sm
+    },
+    accentRail: {
+      width: moderateScale(4),
+      borderRadius: radius.pill,
+      backgroundColor: colors.accent
+    },
+    content: {
+      flex: 1,
+      gap: spacing.sm
+    },
+    headerRow: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "flex-start",
+      gap: spacing.sm
+    },
+    headerLeft: {
+      flex: 1
+    },
+    title: {
+      color: colors.text,
+      fontSize: responsiveFont(15),
+      fontWeight: "700"
+    },
+    timeRow: {
+      marginTop: 4,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4
+    },
+    subtitle: {
+      color: colors.textMuted,
+      fontSize: responsiveFont(12)
+    },
+    metricsRow: {
+      flexDirection: "row",
+      gap: spacing.lg
+    },
+    metricItem: {
+      flex: 1
+    },
+    metricLabel: {
+      color: colors.textMuted,
+      fontSize: responsiveFont(11)
+    },
+    metricValueRow: {
+      marginTop: 2,
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.xs
+    },
+    metricValue: {
+      color: colors.text,
+      fontWeight: "700",
+      fontSize: responsiveFont(20)
+    },
+    changeRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 2
+    },
+    changeValue: {
+      fontSize: responsiveFont(11),
+      fontWeight: "700"
+    }
+  });
+}

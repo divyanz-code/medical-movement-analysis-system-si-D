@@ -1,7 +1,9 @@
 import { Feather } from "@expo/vector-icons";
+import { useMemo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { colors, moderateScale, radius, responsiveFont, spacing } from "../theme";
+import { moderateScale, radius, responsiveFont, spacing, type ThemeColors } from "../theme";
+import { useAppTheme } from "../themeProvider";
 
 interface EmptyStateProps {
   icon: keyof typeof Feather.glyphMap;
@@ -18,6 +20,8 @@ export function EmptyState({
   actionLabel,
   onAction
 }: EmptyStateProps) {
+  const { colors } = useAppTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <View style={styles.root}>
       <View style={styles.iconWrap}>
@@ -34,44 +38,46 @@ export function EmptyState({
   );
 }
 
-const styles = StyleSheet.create({
-  root: {
-    paddingVertical: moderateScale(40),
-    paddingHorizontal: spacing.xl,
-    alignItems: "center"
-  },
-  iconWrap: {
-    width: moderateScale(64),
-    height: moderateScale(64),
-    borderRadius: radius.pill,
-    backgroundColor: colors.surface,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  title: {
-    marginTop: spacing.md,
-    color: colors.text,
-    fontWeight: "700",
-    fontSize: responsiveFont(20)
-  },
-  description: {
-    marginTop: spacing.xs,
-    color: colors.textMuted,
-    textAlign: "center",
-    lineHeight: moderateScale(20)
-  },
-  actionButton: {
-    marginTop: spacing.md,
-    minHeight: moderateScale(42),
-    borderRadius: radius.md,
-    width: "100%",
-    maxWidth: 280,
-    backgroundColor: colors.accent,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  actionText: {
-    color: colors.white,
-    fontWeight: "700"
-  }
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    root: {
+      paddingVertical: moderateScale(40),
+      paddingHorizontal: spacing.xl,
+      alignItems: "center"
+    },
+    iconWrap: {
+      width: moderateScale(64),
+      height: moderateScale(64),
+      borderRadius: radius.pill,
+      backgroundColor: colors.surface,
+      alignItems: "center",
+      justifyContent: "center"
+    },
+    title: {
+      marginTop: spacing.md,
+      color: colors.text,
+      fontWeight: "700",
+      fontSize: responsiveFont(20)
+    },
+    description: {
+      marginTop: spacing.xs,
+      color: colors.textMuted,
+      textAlign: "center",
+      lineHeight: moderateScale(20)
+    },
+    actionButton: {
+      marginTop: spacing.md,
+      minHeight: moderateScale(42),
+      borderRadius: radius.md,
+      width: "100%",
+      maxWidth: 280,
+      backgroundColor: colors.accent,
+      alignItems: "center",
+      justifyContent: "center"
+    },
+    actionText: {
+      color: colors.white,
+      fontWeight: "700"
+    }
+  });
+}

@@ -9,7 +9,8 @@ import { AppButton } from "../../src/ui/components/AppButton";
 import { AppCard } from "../../src/ui/components/AppCard";
 import { MetricCard } from "../../src/ui/components/MetricCard";
 import { ScreenHeader } from "../../src/ui/components/ScreenHeader";
-import { colors, responsiveFont, spacing } from "../../src/ui/theme";
+import { responsiveFont, spacing, type ThemeColors } from "../../src/ui/theme";
+import { useAppTheme } from "../../src/ui/themeProvider";
 
 function scoreLabel(score: number): string {
   if (score >= 85) return "Excellent";
@@ -19,6 +20,8 @@ function scoreLabel(score: number): string {
 
 export default function HomeScreen() {
   const router = useRouter();
+  const { colors, mode } = useAppTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const [items, setItems] = useState<AnalysisItem[]>([]);
   const [name, setName] = useState("there");
   const [status, setStatus] = useState<string | null>(null);
@@ -50,7 +53,7 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.root}>
-      <StatusBar style="dark" backgroundColor={colors.surface} />
+      <StatusBar style={mode === "dark" ? "light" : "dark"} backgroundColor={colors.surface} />
       <ScrollView contentContainerStyle={styles.content}>
         <ScreenHeader
           title={`Welcome back, ${name}`}
@@ -84,7 +87,8 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.surface
@@ -122,4 +126,5 @@ const styles = StyleSheet.create({
   error: {
     color: colors.danger
   }
-});
+  });
+}

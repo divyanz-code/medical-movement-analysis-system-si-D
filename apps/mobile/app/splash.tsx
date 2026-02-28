@@ -1,16 +1,19 @@
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ActivityIndicator, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { Feather } from "@expo/vector-icons";
 
 import { tokenStore } from "../src/runtime/client";
 import { appLaunchStore } from "../src/storage/appLaunchStore";
 import { AppButton } from "../src/ui/components/AppButton";
-import { colors, moderateScale, radius, responsiveFont, spacing } from "../src/ui/theme";
+import { moderateScale, radius, responsiveFont, spacing, type ThemeColors } from "../src/ui/theme";
+import { useAppTheme } from "../src/ui/themeProvider";
 
 export default function SplashScreen() {
   const router = useRouter();
+  const { colors } = useAppTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const [loading, setLoading] = useState(false);
 
   async function continueToApp() {
@@ -67,7 +70,8 @@ export default function SplashScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.primary
@@ -136,4 +140,5 @@ const styles = StyleSheet.create({
   loader: {
     marginTop: spacing.sm
   }
-});
+  });
+}

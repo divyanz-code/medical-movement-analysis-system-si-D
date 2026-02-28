@@ -8,9 +8,12 @@ import { AppCard } from "../../src/ui/components/AppCard";
 import { EmptyState } from "../../src/ui/components/EmptyState";
 import { ScreenHeader } from "../../src/ui/components/ScreenHeader";
 import { SessionCard } from "../../src/ui/components/SessionCard";
-import { colors, radius, spacing } from "../../src/ui/theme";
+import { radius, spacing, type ThemeColors } from "../../src/ui/theme";
+import { useAppTheme } from "../../src/ui/themeProvider";
 
 export default function HistoryScreen() {
+  const { colors, mode } = useAppTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const [items, setItems] = useState<AnalysisItem[]>([]);
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"ALL" | AnalysisItem["status"]>("ALL");
@@ -35,7 +38,7 @@ export default function HistoryScreen() {
 
   return (
     <SafeAreaView style={styles.root}>
-      <StatusBar style="dark" backgroundColor={colors.surface} />
+      <StatusBar style={mode === "dark" ? "light" : "dark"} backgroundColor={colors.surface} />
       <View style={styles.headerWrap}>
         <ScreenHeader
           title="Assessment History"
@@ -96,7 +99,8 @@ export default function HistoryScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
   root: {
     flex: 1,
     backgroundColor: colors.surface
@@ -158,4 +162,5 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     paddingBottom: 156
   }
-});
+  });
+}

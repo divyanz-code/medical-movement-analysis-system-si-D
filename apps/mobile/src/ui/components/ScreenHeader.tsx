@@ -1,7 +1,9 @@
 import { Feather } from "@expo/vector-icons";
+import { useMemo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
-import { colors, moderateScale, radius, responsiveFont, spacing } from "../theme";
+import { moderateScale, radius, responsiveFont, spacing, type ThemeColors } from "../theme";
+import { useAppTheme } from "../themeProvider";
 
 interface ScreenHeaderProps {
   title: string;
@@ -11,6 +13,8 @@ interface ScreenHeaderProps {
 }
 
 export function ScreenHeader({ title, subtitle, onBack, light = false }: ScreenHeaderProps) {
+  const { colors } = useAppTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <View style={styles.root}>
       <View style={styles.topRow}>
@@ -34,46 +38,48 @@ export function ScreenHeader({ title, subtitle, onBack, light = false }: ScreenH
   );
 }
 
-const styles = StyleSheet.create({
-  root: {
-    gap: spacing.sm
-  },
-  topRow: {
-    flexDirection: "row"
-  },
-  backButton: {
-    width: moderateScale(36),
-    height: moderateScale(36),
-    borderRadius: radius.pill,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  backButtonDark: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.card
-  },
-  backButtonLight: {
-    backgroundColor: colors.darkOverlay
-  },
-  backPlaceholder: {
-    width: moderateScale(36),
-    height: moderateScale(36)
-  },
-  title: {
-    color: colors.text,
-    fontSize: responsiveFont(30),
-    fontWeight: "700"
-  },
-  subtitle: {
-    color: colors.textMuted,
-    fontSize: responsiveFont(15),
-    lineHeight: moderateScale(22)
-  },
-  lightTitle: {
-    color: colors.white
-  },
-  lightSubtitle: {
-    color: colors.whiteMuted
-  }
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    root: {
+      gap: spacing.sm
+    },
+    topRow: {
+      flexDirection: "row"
+    },
+    backButton: {
+      width: moderateScale(36),
+      height: moderateScale(36),
+      borderRadius: radius.pill,
+      alignItems: "center",
+      justifyContent: "center"
+    },
+    backButtonDark: {
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.card
+    },
+    backButtonLight: {
+      backgroundColor: colors.darkOverlay
+    },
+    backPlaceholder: {
+      width: moderateScale(36),
+      height: moderateScale(36)
+    },
+    title: {
+      color: colors.text,
+      fontSize: responsiveFont(30),
+      fontWeight: "700"
+    },
+    subtitle: {
+      color: colors.textMuted,
+      fontSize: responsiveFont(15),
+      lineHeight: moderateScale(22)
+    },
+    lightTitle: {
+      color: colors.white
+    },
+    lightSubtitle: {
+      color: colors.whiteMuted
+    }
+  });
+}
