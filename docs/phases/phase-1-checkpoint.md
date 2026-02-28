@@ -41,6 +41,16 @@ Required docs:
   - `npm run format:check`
   - `npm run typecheck`
   - `npm test` (mobile Vitest + backend pytest)
+- Phase 1.3 completed.
+- Architecture artifacts added:
+  - `docs/api/api-contract-v1.md`
+  - `docs/architecture/upload-analysis-sequence.md`
+  - `docs/architecture/risk-register.md`
+- CP-1 verification rerun after Phase 1.3 docs:
+  - `npm run lint`
+  - `npm run format:check`
+  - `npm run typecheck`
+  - `npm test` (mobile Vitest + backend pytest)
 - Verification evidence (all passing):
   - `npm run lint`
   - `npm run format:check`
@@ -49,4 +59,4 @@ Required docs:
 
 ## Gate Status
 
-- CP-1: BLOCKED (expected until Phase 1.3 architecture artifacts are complete)
+- CP-1: PASS (Phase 1.1, 1.2, 1.3 complete and verified)
