@@ -2,7 +2,7 @@ import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import { ActivityIndicator, SafeAreaView, Text, View } from "react-native";
 
-import { tokenStore } from "../src/runtime/client.js";
+import { tokenStore } from "../src/runtime/client";
 
 export default function IndexScreen() {
   const router = useRouter();

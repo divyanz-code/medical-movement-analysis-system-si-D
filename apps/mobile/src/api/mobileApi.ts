@@ -9,8 +9,8 @@ import type {
   RegisterResponse,
   VideoUploadRequest,
   VideoUploadResponse
-} from "../types/contracts.js";
-import type { HttpClient } from "./httpClient.js";
+} from "../types/contracts";
+import type { HttpClient } from "./httpClient";
 
 export interface MobileApi {
   register(payload: RegisterRequest): Promise<RegisterResponse>;

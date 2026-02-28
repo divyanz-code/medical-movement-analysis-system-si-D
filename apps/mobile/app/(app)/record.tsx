@@ -4,7 +4,7 @@ import { Button, SafeAreaView, Text, View } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { VideoView, useVideoPlayer } from "expo-video";
 
-import { patientFlow } from "../../src/runtime/client.js";
+import { patientFlow } from "../../src/runtime/client";
 
 export default function RecordScreen() {
   const router = useRouter();

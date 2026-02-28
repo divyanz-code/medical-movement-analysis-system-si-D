@@ -1,1 +1,1 @@
-export { computeRangeOfMotion } from "./types/domain.js";
+export { computeRangeOfMotion } from "./types/domain";

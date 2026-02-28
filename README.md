@@ -32,16 +32,16 @@ curl http://localhost:8000/health
 
 ## Mobile (Expo)
 
-Set API URL for Expo runtime:
+Auto-detect LAN IP and start Expo (recommended):
 
 ```bash
-export EXPO_PUBLIC_API_BASE_URL=http://localhost:8000
+npm run mobile:start
 ```
 
-Run mobile app:
+If QR/LAN mode has connectivity issues, use tunnel:
 
 ```bash
-npm run -w apps/mobile start
+npm run mobile:start:tunnel
 ```
 
 ## Execution Model

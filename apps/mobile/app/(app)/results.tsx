@@ -2,8 +2,8 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Button, SafeAreaView, Text, View } from "react-native";
 
-import type { AnalysisItem } from "../../src/types/contracts.js";
-import { patientFlow } from "../../src/runtime/client.js";
+import type { AnalysisItem } from "../../src/types/contracts";
+import { patientFlow } from "../../src/runtime/client";
 
 export default function ResultsScreen() {
   const router = useRouter();

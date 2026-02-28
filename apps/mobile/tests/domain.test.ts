@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { computeRangeOfMotion } from "../src/domain.js";
+import { computeRangeOfMotion } from "../src/domain";
 
 describe("computeRangeOfMotion", () => {
   it("computes max minus min", () => {

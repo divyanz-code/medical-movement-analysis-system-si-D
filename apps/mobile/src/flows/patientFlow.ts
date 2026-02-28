@@ -1,13 +1,14 @@
-import type { MobileApi } from "../api/mobileApi.js";
-import type { TokenStore } from "../storage/tokenStore.js";
-import { computeRangeOfMotion, isAnalysisTerminal } from "../types/domain.js";
+import type { MobileApi } from "../api/mobileApi";
+import { debug, info, warn } from "../debug/logger";
+import type { TokenStore } from "../storage/tokenStore";
+import { computeRangeOfMotion, isAnalysisTerminal } from "../types/domain";
 import type {
   AnalysisItem,
   Profile,
   ProfileUpdateRequest,
   RegisterRequest,
   VideoUploadRequest
-} from "../types/contracts.js";
+} from "../types/contracts";
 
 export interface PollOptions {
   maxAttempts?: number;
@@ -21,17 +22,22 @@ export class PatientFlowService {
   ) {}
 
   async registerAndLogin(payload: RegisterRequest & { password: string }): Promise<void> {
+    info("flow", "register:start", { email: payload.email });
     await this.api.register(payload);
     await this.login(payload.email, payload.password);
+    info("flow", "register:complete", { email: payload.email });
   }
 
   async login(email: string, password: string): Promise<void> {
+    info("flow", "login:start", { email });
     const login = await this.api.login({ email, password });
     await this.tokenStore.setToken(login.access_token);
+    info("flow", "login:complete", { email });
   }
 
   async logout(): Promise<void> {
     await this.tokenStore.clearToken();
+    info("flow", "logout:complete");
   }
 
   async getProfile(): Promise<Profile> {
@@ -52,7 +58,13 @@ export class PatientFlowService {
     }
 
     const token = await this.requireToken();
+    info("flow", "upload:start", {
+      durationSeconds: payload.durationSeconds,
+      mimeType: payload.mimeType,
+      fileName: payload.fileName
+    });
     const upload = await this.api.uploadVideo(token, payload);
+    info("flow", "upload:accepted", { videoId: upload.video_id, status: upload.status });
     return { videoId: upload.video_id, status: upload.status };
   }
 
@@ -64,6 +76,7 @@ export class PatientFlowService {
     let latest: AnalysisItem | null = null;
     for (let index = 0; index < maxAttempts; index += 1) {
       latest = await this.api.getAnalysis(token, videoId);
+      debug("flow", "analysis:poll", { videoId, attempt: index + 1, status: latest.status });
       if (isAnalysisTerminal(latest.status)) {
         if (
           latest.status === "SUCCEEDED" &&
@@ -72,12 +85,17 @@ export class PatientFlowService {
         ) {
           latest.range_of_motion = computeRangeOfMotion(latest.min_angle, latest.max_angle);
         }
+        info("flow", "analysis:terminal", { videoId, status: latest.status });
         return latest;
       }
       await new Promise((resolve) => setTimeout(resolve, delayMs));
     }
 
     if (latest !== null) {
+      warn("flow", "analysis:timeout-returning-latest", {
+        videoId,
+        status: latest.status
+      });
       return latest;
     }
 

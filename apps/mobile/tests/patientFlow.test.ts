@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { PatientFlowService } from "../src/flows/patientFlow.js";
-import { InMemoryTokenStore } from "../src/storage/tokenStore.js";
-import type { AnalysisItem, MobileApi } from "../src/index.js";
+import { PatientFlowService } from "../src/flows/patientFlow";
+import { InMemoryTokenStore } from "../src/storage/tokenStore";
+import type { AnalysisItem, MobileApi } from "../src/index";
 
 function buildApiMock(overrides: Partial<MobileApi> = {}): MobileApi {
   return {

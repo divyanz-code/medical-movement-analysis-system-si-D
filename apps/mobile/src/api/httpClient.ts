@@ -1,4 +1,5 @@
-import type { ApiErrorEnvelope } from "../types/contracts.js";
+import type { ApiErrorEnvelope } from "../types/contracts";
+import { debug, error as logError, warn } from "../debug/logger";
 
 export interface HttpClient {
   request<T>(
@@ -16,6 +17,8 @@ export class FetchHttpClient implements HttpClient {
     init: RequestInit = {},
     options: { authToken?: string; isMultipart?: boolean } = {}
   ): Promise<T> {
+    const startedAt = Date.now();
+    const url = `${this.baseUrl}${path}`;
     const headers = new Headers(init.headers ?? {});
     if (!options.isMultipart) {
       headers.set("content-type", "application/json");
@@ -24,9 +27,36 @@ export class FetchHttpClient implements HttpClient {
       headers.set("authorization", `Bearer ${options.authToken}`);
     }
 
-    const response = await fetch(`${this.baseUrl}${path}`, {
-      ...init,
-      headers
+    debug("http", "request:start", {
+      method: init.method ?? "GET",
+      url,
+      isMultipart: options.isMultipart ?? false
+    });
+
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        ...init,
+        headers
+      });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown network failure";
+      logError("http", "request:network-failure", {
+        method: init.method ?? "GET",
+        url,
+        message
+      });
+      throw new Error(
+        `NETWORK_ERROR: Request to ${url} failed. Check EXPO_PUBLIC_API_BASE_URL, backend status, and iPhone/Mac same Wi-Fi.`
+      );
+    }
+
+    const durationMs = Date.now() - startedAt;
+    debug("http", "request:complete", {
+      method: init.method ?? "GET",
+      url,
+      status: response.status,
+      durationMs
     });
 
     if (!response.ok) {
@@ -39,6 +69,7 @@ export class FetchHttpClient implements HttpClient {
         code = payload.error.code;
       } catch {
         // keep fallback values
+        warn("http", "response:error-non-json", { url, status: response.status });
       }
 
       throw new Error(`${code}: ${message}`);

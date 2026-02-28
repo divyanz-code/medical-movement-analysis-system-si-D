@@ -7,9 +7,12 @@ services:
     ports:
       - "8000:8000"
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/mma
-      JWT_SECRET: change-me
-      CORS_ORIGINS: http://localhost:19006,http://localhost:8081
+      DATABASE_URL: postgresql+psycopg://postgres:postgres@db:5432/mma
+      JWT_SECRET: dev-only-jwt-secret-change-in-prod-12345
+      # JSON arrays required because pydantic-settings parses list fields as JSON from env.
+      CORS_ORIGINS: '["http://localhost:19006","http://localhost:8081"]'
+      # Local-dev convenience. Lock this down per-domain in non-dev environments.
+      ALLOWED_HOSTS: '["*"]'
     depends_on:
       db:
         condition: service_healthy

@@ -1,4 +1,4 @@
-import type { AnalysisItem } from "./contracts.js";
+import type { AnalysisItem } from "./contracts";
 
 export function computeRangeOfMotion(minAngle: number, maxAngle: number): number {
   return maxAngle - minAngle;

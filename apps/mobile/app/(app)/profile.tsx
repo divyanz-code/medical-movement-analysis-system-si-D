@@ -2,7 +2,7 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Button, SafeAreaView, Text, TextInput, View } from "react-native";
 
-import { patientFlow } from "../../src/runtime/client.js";
+import { patientFlow } from "../../src/runtime/client";
 
 export default function ProfileScreen() {
   const router = useRouter();

@@ -7,6 +7,8 @@
     "apps/mobile"
   ],
   "scripts": {
+    "mobile:start": "./scripts/start-mobile.sh",
+    "mobile:start:tunnel": "./scripts/start-mobile.sh --tunnel",
     "lint": "npm run -w apps/mobile lint",
     "format:check": "npm run -w apps/mobile format:check",
     "typecheck": "npm run -w apps/mobile typecheck",

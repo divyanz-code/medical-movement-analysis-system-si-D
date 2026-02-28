@@ -1,6 +1,6 @@
 import * as SecureStore from "expo-secure-store";
 
-import type { TokenStore } from "./tokenStore.js";
+import type { TokenStore } from "./tokenStore";
 
 const TOKEN_KEY = "mma_access_token";
 
