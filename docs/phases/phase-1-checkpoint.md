@@ -23,7 +23,18 @@ Required docs:
   - `infra`
   - `docs/*`
 - Baseline architecture overview document created.
+- Phase 1.2 completed.
+- Tooling baseline established:
+  - Root npm workspaces and quality scripts (`lint`, `format:check`, `typecheck`, `test`).
+  - Backend strict TypeScript config, ESLint, Prettier, Vitest + Supertest.
+  - Mobile TypeScript/ESLint/Prettier/Vitest harness.
+  - AI FastAPI skeleton and pytest API contract tests.
+- Verification evidence (all passing):
+  - `npm run lint`
+  - `npm run format:check`
+  - `npm run typecheck`
+  - `npm test` (includes Python pytest for AI service)
 
 ## Gate Status
 
-- CP-1: BLOCKED (expected until Phase 1.2 and Phase 1.3 are complete)
+- CP-1: BLOCKED (expected until Phase 1.3 architecture artifacts are complete)

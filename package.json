@@ -1,0 +1,20 @@
+{
+  "name": "medical-movement-analysis-system",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Monorepo for Medical Movement Analysis System",
+  "workspaces": [
+    "apps/backend",
+    "apps/mobile"
+  ],
+  "scripts": {
+    "lint": "npm run -w apps/backend lint && npm run -w apps/mobile lint",
+    "format:check": "npm run -w apps/backend format:check && npm run -w apps/mobile format:check",
+    "typecheck": "npm run -w apps/backend typecheck && npm run -w apps/mobile typecheck",
+    "test": "npm run -w apps/backend test && npm run -w apps/mobile test && PYTHONPATH=services/ai python3 -m pytest services/ai/tests -q"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.0.0"
+  }
+}
