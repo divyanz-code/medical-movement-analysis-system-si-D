@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.core.config import Settings
 from app.core.security import TokenError, decode_access_token
 from app.db.base import get_session
+from app.services.storage_service import VideoStorage
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
@@ -18,6 +19,10 @@ def get_settings(request: Request) -> Settings:
 def get_db(request: Request):
     session_factory = request.app.state.session_factory
     yield from get_session(session_factory)
+
+
+def get_video_storage(request: Request) -> VideoStorage:
+    return request.app.state.video_storage
 
 
 def get_current_user_id(

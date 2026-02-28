@@ -4,14 +4,15 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 
-from app.api import analyze, auth, profile
+from app.api import analyze, auth, profile, videos
 from app.core.config import Settings, get_settings
 from app.core.errors import DomainError
 from app.db.base import build_engine, build_session_factory, init_db
+from app.services.storage_service import CloudinaryVideoStorage, VideoStorage
 import app.models  # noqa: F401
 
 
-def create_app(settings: Settings | None = None) -> FastAPI:
+def create_app(settings: Settings | None = None, video_storage: VideoStorage | None = None) -> FastAPI:
     resolved_settings = settings or get_settings()
 
     @asynccontextmanager
@@ -19,10 +20,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         engine = build_engine(resolved_settings.database_url)
         session_factory = build_session_factory(engine)
         init_db(engine)
+        storage = video_storage or CloudinaryVideoStorage(resolved_settings)
 
         app.state.settings = resolved_settings
         app.state.engine = engine
         app.state.session_factory = session_factory
+        app.state.video_storage = storage
         yield
         engine.dispose()
 
@@ -69,6 +72,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app.include_router(auth.router)
     app.include_router(profile.router)
+    app.include_router(videos.router)
     app.include_router(analyze.router)
 
     return app
