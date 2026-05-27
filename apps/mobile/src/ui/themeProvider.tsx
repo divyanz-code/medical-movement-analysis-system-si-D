@@ -1,6 +1,6 @@
 import * as SecureStore from "expo-secure-store";
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, View, Platform } from "react-native";
 
 import { darkColors, lightColors, type ThemeColors } from "./theme";
 
@@ -23,7 +23,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     async function load() {
-      const stored = await SecureStore.getItemAsync(THEME_KEY);
+      let stored: string | null = null;
+      if (Platform.OS === "web") {
+        stored = localStorage.getItem(THEME_KEY);
+      } else {
+        stored = await SecureStore.getItemAsync(THEME_KEY);
+      }
       if (stored === "dark" || stored === "light") {
         setModeState(stored);
       }
@@ -35,8 +40,13 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   async function setMode(modeToSet: ThemeMode) {
     setModeState(modeToSet);
-    await SecureStore.setItemAsync(THEME_KEY, modeToSet);
+    if (Platform.OS === "web") {
+      localStorage.setItem(THEME_KEY, modeToSet);
+    } else {
+      await SecureStore.setItemAsync(THEME_KEY, modeToSet);
+    }
   }
+
 
   async function toggleMode() {
     const next = mode === "dark" ? "light" : "dark";
