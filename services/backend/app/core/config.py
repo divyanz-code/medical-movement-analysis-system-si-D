@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     jwt_algorithm: str = 'HS256'
     jwt_access_token_exp_minutes: int = Field(default=60, ge=5, le=1440)
 
-    request_body_limit_mb: int = Field(default=1, ge=1, le=20)
+    request_body_limit_mb: int = Field(default=50, ge=1, le=200)
     cors_origins: list[str] = Field(default_factory=lambda: ['http://localhost:19006', 'http://localhost:8081'])
     allowed_hosts: list[str] = Field(default_factory=lambda: ['localhost', '127.0.0.1', 'testserver'])
 

@@ -15,8 +15,8 @@ from app.core.logging import build_logger, log_event
 from app.core.metrics import MetricsRegistry
 from app.core.rate_limit import InMemoryRateLimiter
 from app.db.base import build_engine, build_session_factory, init_db
-from app.services.analysis_engine import LocalHeuristicAnalyzer, MovementAnalyzer
-from app.services.storage_service import CloudinaryVideoStorage, VideoStorage
+from app.services.analysis_engine import MediaPipeAnalyzer, MovementAnalyzer
+from app.services.storage_service import CloudinaryVideoStorage, LocalVideoStorage, VideoStorage
 import app.models  # noqa: F401
 
 
@@ -33,8 +33,12 @@ def create_app(
         engine = build_engine(resolved_settings.database_url)
         session_factory = build_session_factory(engine)
         init_db(engine)
-        storage = video_storage or CloudinaryVideoStorage(resolved_settings)
-        analyzer = analysis_engine or LocalHeuristicAnalyzer()
+        cloudinary_storage = CloudinaryVideoStorage(resolved_settings)
+        if not cloudinary_storage._enabled:
+            storage = video_storage or LocalVideoStorage(resolved_settings)
+        else:
+            storage = video_storage or cloudinary_storage
+        analyzer = analysis_engine or MediaPipeAnalyzer()
         metrics = MetricsRegistry()
         rate_limiter = InMemoryRateLimiter()
 

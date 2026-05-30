@@ -54,7 +54,16 @@ export class BackendMobileApi implements MobileApi {
   uploadVideo(token: string, payload: VideoUploadRequest): Promise<VideoUploadResponse> {
     const formData = new FormData();
     formData.append("duration_seconds", String(payload.durationSeconds));
-    formData.append("video", payload.video, payload.fileName);
+    
+    const videoFile = (payload.video as any)?.uri
+      ? {
+          uri: (payload.video as any).uri,
+          name: payload.fileName,
+          type: payload.mimeType
+        }
+      : payload.video;
+
+    formData.append("video", videoFile as any, payload.fileName);
 
     return this.http.request<VideoUploadResponse>(
       "/api/v1/videos",

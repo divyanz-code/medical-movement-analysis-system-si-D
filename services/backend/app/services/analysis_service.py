@@ -1,4 +1,5 @@
 import json
+import logging
 
 from app.core.errors import DomainError
 from app.models.analysis import Analysis
@@ -36,7 +37,6 @@ def process_analysis_for_video(*, session_factory, analyzer: MovementAnalyzer, v
     session = session_factory()
     try:
         analysis_repo = AnalysisRepository(session)
-        video_repo = VideoRepository(session)
 
         analysis = analysis_repo.find_by_video_id(video_id)
         if analysis is None:
@@ -44,10 +44,32 @@ def process_analysis_for_video(*, session_factory, analyzer: MovementAnalyzer, v
 
         analysis_repo.set_processing(analysis.id)
 
-        video = video_repo.find_by_id(video_id)
+        # Retrieve the video and eager-load user profile to identify the target joint
+        from sqlalchemy.orm import joinedload
+        from app.models.video import Video
+        from app.models.user import User
+        video = session.query(Video).options(
+            joinedload(Video.user).joinedload(User.profile)
+        ).filter(Video.id == video_id).first()
+
         if video is None:
             analysis_repo.set_failed(analysis_id=analysis.id, error_code='VIDEO_NOT_FOUND', error_message='Video not found')
             return
+
+        # Dynamically instantiate MediaPipeAnalyzer for the user's affected limb
+        from app.services.analysis_engine import MediaPipeAnalyzer, JOINT_LANDMARK_TRIPLETS, JointNotVisibleError
+        if isinstance(analyzer, MediaPipeAnalyzer):
+            target_joint = "left_elbow"
+            if video.user and video.user.profile and video.user.profile.affected_limb:
+                limb = video.user.profile.affected_limb.lower().strip()
+                if limb in JOINT_LANDMARK_TRIPLETS:
+                    target_joint = limb
+            
+            analyzer = MediaPipeAnalyzer(
+                joint=target_joint,
+                frame_step=analyzer.frame_step,
+                visibility_threshold=analyzer.visibility_threshold
+            )
 
         try:
             result = analyzer.analyze(video_url=video.cloud_url)
@@ -67,7 +89,20 @@ def process_analysis_for_video(*, session_factory, analyzer: MovementAnalyzer, v
                 movement_score=movement_score,
                 raw_json=json.dumps(result.raw_json),
             )
-        except Exception:
+        except JointNotVisibleError as exc:
+            error_msg = str(exc)
+            logging.getLogger(__name__).warning("Analysis validation failed: %s", error_msg)
+            analysis_repo.set_failed(
+                analysis_id=analysis.id,
+                error_code='JOINT_NOT_VISIBLE',
+                error_message=error_msg,
+            )
+        except Exception as exc:
+            logging.getLogger(__name__).error(
+                "Analysis processing error: %s: %s",
+                type(exc).__name__,
+                exc,
+            )
             analysis_repo.set_failed(
                 analysis_id=analysis.id,
                 error_code='ANALYSIS_PROCESSING_FAILED',

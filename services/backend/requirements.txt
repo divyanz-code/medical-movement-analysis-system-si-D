@@ -11,3 +11,7 @@ cloudinary==1.44.1
 python-multipart==0.0.20
 pytest==8.4.1
 httpx==0.28.1
+# MediaPipe pose analysis
+mediapipe==0.10.18
+opencv-python-headless==4.11.0.86
+requests==2.32.3

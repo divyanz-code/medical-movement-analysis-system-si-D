@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { CameraView, useCameraPermissions } from "expo-camera";
+import { CameraView, useCameraPermissions, useMicrophonePermissions } from "expo-camera";
 import { VideoView, useVideoPlayer } from "expo-video";
 
 import { patientFlow } from "../../src/runtime/client";
@@ -18,6 +18,7 @@ export default function RecordScreen() {
   const { height: screenHeight } = useWindowDimensions();
   const cameraRef = useRef<CameraView | null>(null);
   const [permission, requestPermission] = useCameraPermissions();
+  const [micPermission, requestMicPermission] = useMicrophonePermissions();
   const [recording, setRecording] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [durationSeconds, setDurationSeconds] = useState(0);
@@ -85,10 +86,15 @@ export default function RecordScreen() {
     setStatus(null);
 
     try {
-      const response = await fetch(videoUri);
-      const blob = await response.blob();
+      // Use direct file descriptor for React Native FormData instead of fetching blob
+      const videoFile = {
+        uri: videoUri,
+        type: "video/mp4",
+        name: "movement.mp4"
+      } as any as Blob;
+
       const { videoId } = await patientFlow.uploadRecordedVideo({
-        video: blob,
+        video: videoFile,
         fileName: "movement.mp4",
         mimeType: "video/mp4",
         durationSeconds
@@ -101,7 +107,7 @@ export default function RecordScreen() {
     }
   }
 
-  if (!permission) {
+  if (!permission || !micPermission) {
     return (
       <SafeAreaView style={styles.centeredRoot}>
         <ActivityIndicator color={colors.accent} />
@@ -109,7 +115,14 @@ export default function RecordScreen() {
     );
   }
 
-  if (!permission.granted) {
+  if (!permission.granted || !micPermission.granted) {
+    const handleRequestPermissions = async () => {
+      const cameraResult = await requestPermission();
+      if (cameraResult.granted) {
+        await requestMicPermission();
+      }
+    };
+
     return (
       <SafeAreaView style={styles.permissionRoot}>
         <StatusBar style="dark" backgroundColor={colors.surface} />
@@ -121,10 +134,10 @@ export default function RecordScreen() {
         <View style={styles.permissionCard}>
           <AppCard>
             <Text style={styles.permissionText}>
-              Grant camera permission to capture assessment videos.
+              Grant camera and microphone permissions to capture assessment videos.
             </Text>
             <View style={styles.permissionAction}>
-              <AppButton label="Grant Permission" onPress={requestPermission} />
+              <AppButton label="Grant Permissions" onPress={handleRequestPermissions} />
             </View>
           </AppCard>
         </View>

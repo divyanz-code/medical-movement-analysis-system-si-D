@@ -74,3 +74,30 @@ class CloudinaryVideoStorage(VideoStorage):
             raise DomainError(status_code=502, code='CLOUD_UPLOAD_FAILED', message='Cloud upload returned invalid data')
 
         return UploadResult(public_id=public_id, secure_url=secure_url)
+
+
+class LocalVideoStorage(VideoStorage):
+    def __init__(self, settings: Settings) -> None:
+        import os
+        # Create an uploads folder inside the backend directory
+        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        self._dir = os.path.join(base_dir, "uploads")
+        os.makedirs(self._dir, exist_ok=True)
+
+    async def upload_video(self, *, file: UploadFile, folder: str) -> UploadResult:
+        import os
+        import uuid
+        import shutil
+
+        filename = f"{uuid.uuid4()}_{file.filename or 'video.mp4'}"
+        dest = os.path.join(self._dir, filename)
+
+        try:
+            file.file.seek(0)
+            with open(dest, "wb") as buffer:
+                shutil.copyfileobj(file.file, buffer)
+        except Exception as exc:
+            raise DomainError(status_code=500, code='LOCAL_WRITE_FAILED', message='Failed to save video locally') from exc
+
+        return UploadResult(public_id=f"local/{filename}", secure_url=f"file://{dest}")
+
