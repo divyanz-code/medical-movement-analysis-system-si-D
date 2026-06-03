@@ -20,7 +20,7 @@ if not os.path.exists(LOCAL_VIDEO):
         "https://filesamples.com/samples/video/mp4/sample_640x360.mp4"
     ])
     if r.returncode != 0:
-        print("    ❌ Download failed"); sys.exit(1)
+        print("    Download failed"); sys.exit(1)
 
 size_mb = os.path.getsize(LOCAL_VIDEO) / (1024*1024)
 print(f"\n[1] Video ready: {LOCAL_VIDEO}  ({size_mb:.2f} MB)")
@@ -54,7 +54,7 @@ app = create_app(settings, video_storage=LocalFileStorage(),
                  analysis_engine=MediaPipeAnalyzer(joint="left_shoulder", frame_step=5, visibility_threshold=0.03))
 
 with TestClient(app) as client:
-    print("    ✅ App ready")
+    print("     App ready")
 
     # Register + login
     print("\n[3] Register + login...")
@@ -65,7 +65,7 @@ with TestClient(app) as client:
                     json={"email":"e2e@example.com","password":"TestPass123!"})
     assert r.status_code == 200, f"Login failed: {r.text}"
     H = {"Authorization": f"Bearer {r.json()['access_token']}"}
-    print("    ✅ Authenticated")
+    print("    Authenticated")
 
     # Upload
     print("\n[4] Uploading video...")
@@ -75,7 +75,7 @@ with TestClient(app) as client:
                         data={"duration_seconds": "15"})
     assert r.status_code == 202, f"Upload failed: {r.text}"
     vid_id = r.json()["video_id"]
-    print(f"    ✅ video_id={vid_id}  (MediaPipe running in background...)")
+    print(f"     video_id={vid_id}  (MediaPipe running in background...)")
 
     # Poll
     print("\n[5] Polling — MediaPipe running pose detection frame by frame...\n")
@@ -86,11 +86,11 @@ with TestClient(app) as client:
         print(f"    [{elapsed:>3}s]  {status}")
         if status == "SUCCEEDED": break
         if status == "FAILED":
-            print(f"\n    ❌ FAILED  {result.get('error_code')}: {result.get('error_message')}")
+            print(f"\n     FAILED  {result.get('error_code')}: {result.get('error_message')}")
             sys.exit(1)
         time.sleep(5)
     else:
-        print("\n    ❌ Timed out"); sys.exit(1)
+        print("\n     Timed out"); sys.exit(1)
 
     # Results
     raw = json.loads(result.get("raw_json") or "{}")

@@ -78,6 +78,20 @@ export default function AppTabsLayout() {
           tabBarStyle: { display: "none" }
         }}
       />
+      <Tabs.Screen
+        name="face-record"
+        options={{
+          href: null,
+          tabBarStyle: { display: "none" }
+        }}
+      />
+      <Tabs.Screen
+        name="face-results"
+        options={{
+          href: null,
+          tabBarStyle: { display: "none" }
+        }}
+      />
     </Tabs>
   );
 }

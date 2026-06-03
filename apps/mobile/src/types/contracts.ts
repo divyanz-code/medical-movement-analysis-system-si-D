@@ -1,5 +1,7 @@
 export type UserRole = "patient";
 
+export type AnalysisType = "movement" | "facial_expression";
+
 export interface AuthUser {
   id: number;
   name: string;
@@ -47,6 +49,7 @@ export interface VideoUploadRequest {
   fileName: string;
   mimeType: string;
   durationSeconds: number;
+  analysisType?: AnalysisType;
 }
 
 export interface VideoUploadResponse {
@@ -54,13 +57,31 @@ export interface VideoUploadResponse {
   status: "PENDING" | "PROCESSING" | "SUCCEEDED" | "FAILED";
 }
 
+export interface ExpressionScore {
+  min: number;
+  max: number;
+  mean: number;
+  peak: number;
+}
+
+export interface ExpressionSummary {
+  [expressionName: string]: ExpressionScore;
+}
+
 export interface AnalysisItem {
   video_id: number;
+  analysis_type: AnalysisType;
   status: "PENDING" | "PROCESSING" | "SUCCEEDED" | "FAILED";
   min_angle: number | null;
   max_angle: number | null;
   range_of_motion: number | null;
   movement_score: number | null;
+  expression_summary: ExpressionSummary | null;
+  landmark_image_base64?: string | null;
+  calibration_frame_base64?: string | null;
+  success_frame_base64?: string | null;
+  tracking_frame_base64?: string | null;
+  per_frame_blendshapes?: Record<string, number>[] | null;
   error_code: string | null;
   error_message: string | null;
   created_at: string;
@@ -78,3 +99,4 @@ export interface ApiErrorEnvelope {
     request_id: string;
   };
 }
+

@@ -12,40 +12,22 @@ import { AppCard } from "../../src/ui/components/AppCard";
 import { RecordButton } from "../../src/ui/components/RecordButton";
 import { StatusChip } from "../../src/ui/components/StatusChip";
 import { colors, moderateScale, radius, responsiveFont, spacing } from "../../src/ui/theme";
-import Svg, { Line, Circle } from "react-native-svg";
 
-const HAND_CONNECTIONS = [
-  [0, 1], [1, 2], [2, 3], [3, 4],        // Thumb
-  [0, 5], [5, 6], [6, 7], [7, 8],        // Index
-  [0, 9], [9, 10], [10, 11], [11, 12],   // Middle
-  [0, 13], [13, 14], [14, 15], [15, 16], // Ring
-  [0, 17], [17, 18], [18, 19], [19, 20]  // Pinky
+const MOCK_MESH_POINTS = [
+  { x: 0, y: -90 }, // Forehead top
+  { x: -30, y: -75 }, { x: 30, y: -75 },
+  { x: -55, y: -50 }, { x: 55, y: -50 }, // Upper temples
+  { x: -20, y: -45 }, { x: 20, y: -45 }, // Eyebrows
+  { x: -40, y: -30 }, { x: 0, y: -30 }, { x: 40, y: -30 }, // Eyes / Bridge
+  { x: -15, y: -15 }, { x: 15, y: -15 }, // Nose top
+  { x: -70, y: 0 }, { x: -35, y: 0 }, { x: 0, y: 0 }, { x: 35, y: 0 }, { x: 70, y: 0 }, // Cheekbones / Nose tip
+  { x: -25, y: 20 }, { x: 25, y: 20 }, // Mouth corners
+  { x: -50, y: 40 }, { x: 0, y: 35 }, { x: 50, y: 40 }, // Jawline mid
+  { x: -30, y: 70 }, { x: 30, y: 70 }, // Lower jaw
+  { x: 0, y: 90 }, // Chin
 ];
 
-function generateRefHandLandmarks(wx: number, wy: number, isLeft: number | boolean, W: number, H: number) {
-  const landmarks = [{ x: wx * W, y: wy * H }];
-  const baseAngle = Math.PI / 2.0;
-  const fingerAngles = isLeft 
-    ? [-0.6, -0.2, 0.0, 0.2, 0.4] 
-    : [0.6, 0.2, 0.0, -0.2, -0.4];
-    
-  for (let fIdx = 0; fIdx < 5; fIdx++) {
-    const angle = baseAngle + fingerAngles[fIdx];
-    for (let jointIdx = 1; jointIdx <= 4; jointIdx++) {
-      const dist = 0.03 + jointIdx * 0.02;
-      const lx = wx + Math.cos(angle) * dist;
-      const ly = wy + Math.sin(angle) * dist;
-      landmarks.push({ x: lx * W, y: ly * H });
-    }
-  }
-  return landmarks;
-}
-
-
-
-
-
-export default function RecordScreen() {
+export default function FaceRecordScreen() {
   const router = useRouter();
   const { height: screenHeight } = useWindowDimensions();
   const cameraRef = useRef<CameraView | null>(null);
@@ -57,9 +39,6 @@ export default function RecordScreen() {
   const [videoUri, setVideoUri] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [cameraFacing, setCameraFacing] = useState<"back" | "front">("back");
-  const [torchEnabled, setTorchEnabled] = useState(false);
-  const [cameraDims, setCameraDims] = useState({ width: 0, height: 0 });
   const cameraHeight = Math.min(Math.max(screenHeight * 0.42, 260), 380);
   const previewHeight = Math.min(Math.max(screenHeight * 0.26, 180), 260);
 
@@ -67,13 +46,23 @@ export default function RecordScreen() {
     instance.loop = true;
   });
 
-
+  const [meshPulse, setMeshPulse] = useState(0);
 
   useEffect(() => {
-    if (cameraFacing === "front" && torchEnabled) {
-      setTorchEnabled(false);
-    }
-  }, [cameraFacing, torchEnabled]);
+    if (!recording) return;
+    const interval = setInterval(() => {
+      setElapsedSeconds((current) => Math.min(15, current + 1));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [recording]);
+
+  useEffect(() => {
+    if (!recording) return;
+    const pulseInterval = setInterval(() => {
+      setMeshPulse((prev) => (prev + 1) % 100);
+    }, 150);
+    return () => clearInterval(pulseInterval);
+  }, [recording]);
 
   async function startRecording() {
     if (!cameraRef.current) return;
@@ -99,34 +88,26 @@ export default function RecordScreen() {
     cameraRef.current?.stopRecording();
   }
 
-  function toggleCameraFacing() {
-    setCameraFacing((current) => (current === "back" ? "front" : "back"));
-  }
-
-  function toggleTorch() {
-    setTorchEnabled((current) => !current);
-  }
-
   async function uploadVideo() {
     if (!videoUri) return;
     setUploading(true);
     setStatus(null);
 
     try {
-      // Use direct file descriptor for React Native FormData instead of fetching blob
       const videoFile = {
         uri: videoUri,
         type: "video/mp4",
-        name: "movement.mp4"
+        name: "face_assessment.mp4"
       } as any as Blob;
 
       const { videoId } = await patientFlow.uploadRecordedVideo({
         video: videoFile,
-        fileName: "movement.mp4",
+        fileName: "face_assessment.mp4",
         mimeType: "video/mp4",
-        durationSeconds
+        durationSeconds,
+        analysisType: "facial_expression"
       });
-      router.push({ pathname: "/(app)/results", params: { videoId: String(videoId) } });
+      router.push({ pathname: "/(app)/face-results" as any, params: { videoId: String(videoId) } });
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Upload failed");
     } finally {
@@ -161,7 +142,7 @@ export default function RecordScreen() {
         <View style={styles.permissionCard}>
           <AppCard>
             <Text style={styles.permissionText}>
-              Grant camera and microphone permissions to capture assessment videos.
+              Grant camera and microphone permissions to capture facial expression videos.
             </Text>
             <View style={styles.permissionAction}>
               <AppButton label="Grant Permissions" onPress={handleRequestPermissions} />
@@ -181,117 +162,38 @@ export default function RecordScreen() {
             ref={cameraRef}
             style={styles.camera}
             mode="video"
-            facing={cameraFacing}
-            enableTorch={cameraFacing === "back" && torchEnabled}
+            facing="front"
           />
+          {/* Face outline guide overlay */}
+          <View style={styles.faceGuideOverlay} pointerEvents="none">
+            <View style={styles.faceGuideOval} />
+            
+            {/* Animated high-tech mesh points */}
+            {recording && MOCK_MESH_POINTS.map((pt, idx) => {
+              const jitterX = Math.sin(meshPulse + idx) * 1.5;
+              const jitterY = Math.cos(meshPulse + idx) * 1.5;
+              const opacity = 0.4 + Math.sin((meshPulse + idx) / 2) * 0.4;
+              return (
+                <View
+                  key={idx}
+                  style={[
+                    styles.meshDot,
+                    {
+                      left: "50%",
+                      top: "50%",
+                      marginLeft: pt.x + jitterX - 2,
+                      marginTop: pt.y + jitterY - 2,
+                      opacity,
+                    },
+                  ]}
+                />
+              );
+            })}
 
-          {/* Reference skeleton guide overlay */}
-          <View style={StyleSheet.absoluteFill} pointerEvents="none" onLayout={(e) => {
-            const { width, height } = e.nativeEvent.layout;
-            setCameraDims({ width, height });
-          }}>
-            {cameraDims.width > 0 && cameraDims.height > 0 && (
-              <View style={StyleSheet.absoluteFill}>
-                <Svg width={cameraDims.width} height={cameraDims.height}>
-                  {/* Bone lines */}
-                  <Line
-                    x1={0.60 * cameraDims.width}
-                    y1={0.35 * cameraDims.height}
-                    x2={0.40 * cameraDims.width}
-                    y2={0.35 * cameraDims.height}
-                    stroke="rgba(255, 78, 78, 0.45)"
-                    strokeWidth={4}
-                  />
-                  <Line
-                    x1={0.60 * cameraDims.width}
-                    y1={0.35 * cameraDims.height}
-                    x2={0.65 * cameraDims.width}
-                    y2={0.55 * cameraDims.height}
-                    stroke="rgba(255, 78, 78, 0.45)"
-                    strokeWidth={4}
-                  />
-                  <Line
-                    x1={0.65 * cameraDims.width}
-                    y1={0.55 * cameraDims.height}
-                    x2={0.70 * cameraDims.width}
-                    y2={0.75 * cameraDims.height}
-                    stroke="rgba(255, 78, 78, 0.45)"
-                    strokeWidth={4}
-                  />
-                  <Line
-                    x1={0.40 * cameraDims.width}
-                    y1={0.35 * cameraDims.height}
-                    x2={0.35 * cameraDims.width}
-                    y2={0.55 * cameraDims.height}
-                    stroke="rgba(255, 78, 78, 0.45)"
-                    strokeWidth={4}
-                  />
-                  <Line
-                    x1={0.35 * cameraDims.width}
-                    y1={0.55 * cameraDims.height}
-                    x2={0.30 * cameraDims.width}
-                    y2={0.75 * cameraDims.height}
-                    stroke="rgba(255, 78, 78, 0.45)"
-                    strokeWidth={4}
-                  />
-                  
-                  {/* Left hand reference */}
-                  {generateRefHandLandmarks(0.70, 0.75, true, cameraDims.width, cameraDims.height).map((pt, idx) => (
-                    <Circle key={`l-${idx}`} cx={pt.x} cy={pt.y} r={3} fill="rgba(255, 78, 78, 0.6)" />
-                  ))}
-                  {HAND_CONNECTIONS.map(([start, end], idx) => {
-                    const lHand = generateRefHandLandmarks(0.70, 0.75, true, cameraDims.width, cameraDims.height);
-                    return (
-                      <Line
-                        key={`l-conn-${idx}`}
-                        x1={lHand[start].x}
-                        y1={lHand[start].y}
-                        x2={lHand[end].x}
-                        y2={lHand[end].y}
-                        stroke="rgba(255, 78, 78, 0.35)"
-                        strokeWidth={2}
-                      />
-                    );
-                  })}
-
-                  {/* Right hand reference */}
-                  {generateRefHandLandmarks(0.30, 0.75, false, cameraDims.width, cameraDims.height).map((pt, idx) => (
-                    <Circle key={`r-${idx}`} cx={pt.x} cy={pt.y} r={3} fill="rgba(255, 78, 78, 0.6)" />
-                  ))}
-                  {HAND_CONNECTIONS.map(([start, end], idx) => {
-                    const rHand = generateRefHandLandmarks(0.30, 0.75, false, cameraDims.width, cameraDims.height);
-                    return (
-                      <Line
-                        key={`r-conn-${idx}`}
-                        x1={rHand[start].x}
-                        y1={rHand[start].y}
-                        x2={rHand[end].x}
-                        y2={rHand[end].y}
-                        stroke="rgba(255, 78, 78, 0.35)"
-                        strokeWidth={2}
-                      />
-                    );
-                  })}
-
-                  {/* Joints */}
-                  <Circle cx={0.60 * cameraDims.width} cy={0.35 * cameraDims.height} r={7} fill="rgba(255, 78, 78, 0.7)" />
-                  <Circle cx={0.40 * cameraDims.width} cy={0.35 * cameraDims.height} r={7} fill="rgba(255, 78, 78, 0.7)" />
-                  <Circle cx={0.65 * cameraDims.width} cy={0.55 * cameraDims.height} r={7} fill="rgba(255, 78, 78, 0.7)" />
-                  <Circle cx={0.35 * cameraDims.width} cy={0.55 * cameraDims.height} r={7} fill="rgba(255, 78, 78, 0.7)" />
-                  <Circle cx={0.70 * cameraDims.width} cy={0.75 * cameraDims.height} r={7} fill="rgba(255, 78, 78, 0.7)" />
-                  <Circle cx={0.30 * cameraDims.width} cy={0.75 * cameraDims.height} r={7} fill="rgba(255, 78, 78, 0.7)" />
-                </Svg>
-                <View style={styles.guideInstructionOverlay}>
-                  <Text style={styles.guideInstructionText}>
-                    Align shoulders, elbows, wrists, and hands with the reference skeleton.
-                  </Text>
-                </View>
-              </View>
-            )}
+            <Text style={styles.faceGuideText}>
+              {recording ? "Scanning expressions..." : "Position your face here"}
+            </Text>
           </View>
-
-
-
           <View style={styles.overlayBack}>
             <Pressable style={styles.overlayBackButton} onPress={() => router.back()}>
               <Feather name="arrow-left" size={18} color={colors.white} />
@@ -305,29 +207,25 @@ export default function RecordScreen() {
           ) : null}
           {!recording ? (
             <View style={styles.overlayStatus}>
-              <StatusChip status="aligned" label="Ready" />
+              <StatusChip status="aligned" label="Face Mode" />
             </View>
           ) : null}
         </View>
 
         <View style={styles.controlsSection}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Record Assessment</Text>
-            <Text style={styles.sectionHint}>Record 5 to 15 seconds</Text>
+            <View style={styles.faceBadge}>
+              <Feather name="smile" size={16} color={colors.white} />
+              <Text style={styles.faceBadgeText}>Facial Expression</Text>
+            </View>
+            <Text style={styles.sectionTitle}>Face Assessment</Text>
+            <Text style={styles.sectionHint}>Record 5 to 15 seconds • Front camera</Text>
           </View>
 
           <View style={styles.controlsRow}>
-            <Pressable
-              style={[styles.sideControlButton, cameraFacing !== "back" && styles.sideControlButtonDisabled]}
-              onPress={toggleTorch}
-              disabled={recording || cameraFacing !== "back"}
-            >
-              <Feather name={torchEnabled ? "zap" : "zap-off"} size={18} color={colors.white} />
-            </Pressable>
+            <View style={styles.sideControlPlaceholder} />
             <RecordButton isRecording={recording} onPress={recording ? stopRecording : startRecording} />
-            <Pressable style={styles.sideControlButton} onPress={toggleCameraFacing} disabled={recording}>
-              <Feather name="refresh-cw" size={18} color={colors.white} />
-            </Pressable>
+            <View style={styles.sideControlPlaceholder} />
           </View>
 
           {videoUri ? (
@@ -342,17 +240,17 @@ export default function RecordScreen() {
                 />
               </View>
               <View style={styles.uploadButtonWrap}>
-                <AppButton label="Upload for Analysis" onPress={uploadVideo} loading={uploading} />
+                <AppButton label="Analyze Expressions" onPress={uploadVideo} loading={uploading} />
               </View>
             </AppCard>
           ) : (
             <AppCard>
               <View style={styles.emptyPreviewWrap}>
                 <View style={styles.emptyPreviewIcon}>
-                  <Feather name="video" size={18} color={colors.accent} />
+                  <Feather name="smile" size={18} color={colors.accent} />
                 </View>
                 <Text style={styles.emptyPreviewTitle}>No video yet</Text>
-                <Text style={styles.emptyPreviewText}>Tap record to capture your assessment.</Text>
+                <Text style={styles.emptyPreviewText}>Tap record to capture your facial expressions.</Text>
               </View>
             </AppCard>
           )}
@@ -418,6 +316,25 @@ const styles = StyleSheet.create({
   camera: {
     flex: 1
   },
+  faceGuideOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  faceGuideOval: {
+    width: moderateScale(160),
+    height: moderateScale(210),
+    borderRadius: moderateScale(105),
+    borderWidth: 2,
+    borderColor: "rgba(78,178,193,0.55)",
+    borderStyle: "dashed"
+  },
+  faceGuideText: {
+    marginTop: spacing.sm,
+    color: "rgba(255,255,255,0.7)",
+    fontSize: responsiveFont(11),
+    fontWeight: "600"
+  },
   overlayBack: {
     position: "absolute",
     top: spacing.sm,
@@ -468,6 +385,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: spacing.xs
   },
+  faceBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+    backgroundColor: "rgba(78,178,193,0.25)",
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
+    borderRadius: radius.pill,
+    marginBottom: spacing.xs
+  },
+  faceBadgeText: {
+    color: "#4EB2C1",
+    fontSize: responsiveFont(11),
+    fontWeight: "700"
+  },
   sectionTitle: {
     color: colors.white,
     fontSize: responsiveFont(18),
@@ -483,18 +415,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: spacing.lg
   },
-  sideControlButton: {
+  sideControlPlaceholder: {
     width: moderateScale(46),
-    height: moderateScale(46),
-    borderRadius: radius.pill,
-    borderWidth: 1,
-    borderColor: colors.whiteTint,
-    backgroundColor: colors.darkOverlay,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  sideControlButtonDisabled: {
-    opacity: 0.45
+    height: moderateScale(46)
   },
   previewTitle: {
     color: colors.text,
@@ -539,21 +462,16 @@ const styles = StyleSheet.create({
     color: colors.dangerSoft,
     textAlign: "center"
   },
-  guideInstructionOverlay: {
+  meshDot: {
     position: "absolute",
-    bottom: spacing.md,
-    alignSelf: "center",
-    backgroundColor: "rgba(20, 20, 20, 0.75)",
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderRadius: radius.md,
-    maxWidth: "85%"
-  },
-  guideInstructionText: {
-    color: colors.white,
-    fontSize: responsiveFont(11),
-    fontWeight: "600",
-    textAlign: "center",
-    lineHeight: moderateScale(15)
-  },
+    width: moderateScale(4),
+    height: moderateScale(4),
+    borderRadius: radius.pill,
+    backgroundColor: "#4EB2C1",
+    shadowColor: "#4EB2C1",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 2,
+  }
 });

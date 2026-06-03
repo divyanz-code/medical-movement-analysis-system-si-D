@@ -11,6 +11,7 @@ class Analysis(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     video_id: Mapped[int] = mapped_column(ForeignKey('videos.id', ondelete='CASCADE'), nullable=False, unique=True, index=True)
+    analysis_type: Mapped[str] = mapped_column(String(30), nullable=False, default='movement')
     status: Mapped[str] = mapped_column(String(20), nullable=False, default='PENDING')
     min_angle: Mapped[float | None] = mapped_column(Float, nullable=True)
     max_angle: Mapped[float | None] = mapped_column(Float, nullable=True)

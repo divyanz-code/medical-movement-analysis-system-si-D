@@ -21,3 +21,11 @@ __pycache__/
 # Expo local cache
 apps/mobile/.expo/
 venv/
+
+# Uploads (large video files)
+services/backend/uploads/
+
+# Database files
+*.db
+*.db.bak
+

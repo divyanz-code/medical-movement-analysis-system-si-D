@@ -26,12 +26,13 @@ async def upload_video(
     _rate_limit: Annotated[None, Depends(rate_limit_upload)],
     video: UploadFile = File(...),
     duration_seconds: int = Form(...),
+    analysis_type: str = Form('movement'),
 ) -> VideoUploadResponse:
     service = VideoService(VideoRepository(db), storage, settings)
     created = await service.upload_video(user_id=user_id, file=video, duration_seconds=duration_seconds)
 
     analysis_service = AnalysisService(AnalysisRepository(db))
-    analysis = analysis_service.create_pending(created.id)
+    analysis = analysis_service.create_pending(created.id, analysis_type=analysis_type)
 
     session_factory = request.app.state.session_factory
     analyzer: MovementAnalyzer = request.app.state.analysis_engine

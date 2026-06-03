@@ -9,8 +9,8 @@ class AnalysisRepository:
     def __init__(self, session: Session) -> None:
         self.session = session
 
-    def create_pending(self, *, video_id: int) -> Analysis:
-        analysis = Analysis(video_id=video_id, status='PENDING')
+    def create_pending(self, *, video_id: int, analysis_type: str = 'movement') -> Analysis:
+        analysis = Analysis(video_id=video_id, analysis_type=analysis_type, status='PENDING')
         self.session.add(analysis)
         self.session.commit()
         self.session.refresh(analysis)

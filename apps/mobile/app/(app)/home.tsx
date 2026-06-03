@@ -70,6 +70,7 @@ export default function HomeScreen() {
 
         <View style={styles.actionStack}>
           <AppButton label="Record Assessment" onPress={() => router.push("/(app)/record")} />
+          <AppButton label="😊 Face Expression Assessment" onPress={() => router.push("/(app)/face-record" as any)} variant="secondary" />
         </View>
 
         <View style={styles.metricsRow}>

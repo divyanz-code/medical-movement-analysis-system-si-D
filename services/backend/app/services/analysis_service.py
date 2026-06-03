@@ -16,8 +16,8 @@ class AnalysisService:
     def __init__(self, repo: AnalysisRepository) -> None:
         self.repo = repo
 
-    def create_pending(self, video_id: int) -> Analysis:
-        return self.repo.create_pending(video_id=video_id)
+    def create_pending(self, video_id: int, analysis_type: str = 'movement') -> Analysis:
+        return self.repo.create_pending(video_id=video_id, analysis_type=analysis_type)
 
     def get_for_user(self, *, user_id: int, video_id: int) -> Analysis:
         analysis = self.repo.find_by_video_id_with_video(video_id)
@@ -56,9 +56,16 @@ def process_analysis_for_video(*, session_factory, analyzer: MovementAnalyzer, v
             analysis_repo.set_failed(analysis_id=analysis.id, error_code='VIDEO_NOT_FOUND', error_message='Video not found')
             return
 
-        # Dynamically instantiate MediaPipeAnalyzer for the user's affected limb
-        from app.services.analysis_engine import MediaPipeAnalyzer, JOINT_LANDMARK_TRIPLETS, JointNotVisibleError
-        if isinstance(analyzer, MediaPipeAnalyzer):
+        # Choose analyzer based on analysis_type
+        from app.services.analysis_engine import (
+            MediaPipeAnalyzer, FaceMeshAnalyzer, JOINT_LANDMARK_TRIPLETS,
+            JointNotVisibleError, FaceNotDetectedError,
+        )
+
+        if analysis.analysis_type == 'facial_expression':
+            analyzer = FaceMeshAnalyzer(frame_step=5)
+        elif isinstance(analyzer, MediaPipeAnalyzer):
+            # Dynamically instantiate MediaPipeAnalyzer for the user's affected limb
             target_joint = "left_elbow"
             if video.user and video.user.profile and video.user.profile.affected_limb:
                 limb = video.user.profile.affected_limb.lower().strip()
@@ -95,6 +102,14 @@ def process_analysis_for_video(*, session_factory, analyzer: MovementAnalyzer, v
             analysis_repo.set_failed(
                 analysis_id=analysis.id,
                 error_code='JOINT_NOT_VISIBLE',
+                error_message=error_msg,
+            )
+        except FaceNotDetectedError as exc:
+            error_msg = str(exc)
+            logging.getLogger(__name__).warning("Face detection failed: %s", error_msg)
+            analysis_repo.set_failed(
+                analysis_id=analysis.id,
+                error_code='FACE_NOT_DETECTED',
                 error_message=error_msg,
             )
         except Exception as exc:
