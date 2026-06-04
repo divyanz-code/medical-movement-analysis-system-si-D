@@ -70,15 +70,29 @@ export default function HomeScreen() {
 
         <View style={styles.actionStack}>
           <AppButton label="Record Assessment" onPress={() => router.push("/(app)/record")} />
-          <AppButton label="😊 Face Expression Assessment" onPress={() => router.push("/(app)/face-record" as any)} variant="secondary" />
+          <AppButton
+            label="😊 Face Expression Assessment"
+            onPress={() => router.push("/(app)/face-record" as any)}
+            variant="secondary"
+          />
         </View>
 
         <View style={styles.metricsRow}>
           <View style={styles.metricCell}>
-            <MetricCard icon="activity" label="Total Sessions" value={items.length} variant="accent" />
+            <MetricCard
+              icon="activity"
+              label="Total Sessions"
+              value={items.length}
+              variant="accent"
+            />
           </View>
           <View style={styles.metricCell}>
-            <MetricCard icon="check-circle" label="Completed" value={successfulCount} variant="success" />
+            <MetricCard
+              icon="check-circle"
+              label="Completed"
+              value={successfulCount}
+              variant="success"
+            />
           </View>
         </View>
 
@@ -90,42 +104,42 @@ export default function HomeScreen() {
 
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: colors.surface
-  },
-  content: {
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.lg,
-    paddingBottom: 108,
-    gap: spacing.md
-  },
-  kicker: {
-    color: colors.textMuted,
-    fontSize: responsiveFont(12)
-  },
-  scoreValue: {
-    marginTop: spacing.xs,
-    color: colors.text,
-    fontSize: responsiveFont(44),
-    fontWeight: "700"
-  },
-  scoreHint: {
-    color: colors.accent,
-    fontWeight: "600"
-  },
-  actionStack: {
-    gap: spacing.sm
-  },
-  metricsRow: {
-    flexDirection: "row",
-    gap: spacing.md
-  },
-  metricCell: {
-    flex: 1
-  },
-  error: {
-    color: colors.danger
-  }
+    root: {
+      flex: 1,
+      backgroundColor: colors.surface
+    },
+    content: {
+      paddingHorizontal: spacing.xl,
+      paddingTop: spacing.lg,
+      paddingBottom: 108,
+      gap: spacing.md
+    },
+    kicker: {
+      color: colors.textMuted,
+      fontSize: responsiveFont(12)
+    },
+    scoreValue: {
+      marginTop: spacing.xs,
+      color: colors.text,
+      fontSize: responsiveFont(44),
+      fontWeight: "700"
+    },
+    scoreHint: {
+      color: colors.accent,
+      fontWeight: "600"
+    },
+    actionStack: {
+      gap: spacing.sm
+    },
+    metricsRow: {
+      flexDirection: "row",
+      gap: spacing.md
+    },
+    metricCell: {
+      flex: 1
+    },
+    error: {
+      color: colors.danger
+    }
   });
 }

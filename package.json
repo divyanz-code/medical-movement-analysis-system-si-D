@@ -12,7 +12,7 @@
     "lint": "npm run -w apps/mobile lint",
     "format:check": "npm run -w apps/mobile format:check",
     "typecheck": "npm run -w apps/mobile typecheck",
-    "test": "npm run -w apps/mobile test && PYTHONPATH=services/backend python3 -m pytest services/backend/tests -q"
+    "test": "npm run -w apps/mobile test && PYTHONPATH=services/backend services/backend/venv/bin/pytest services/backend/tests -q"
   },
   "engines": {
     "node": ">=22.0.0",

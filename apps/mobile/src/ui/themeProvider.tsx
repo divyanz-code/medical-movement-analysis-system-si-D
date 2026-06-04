@@ -1,5 +1,13 @@
 import * as SecureStore from "expo-secure-store";
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  useCallback,
+  type ReactNode
+} from "react";
 import { ActivityIndicator, View, Platform } from "react-native";
 
 import { darkColors, lightColors, type ThemeColors } from "./theme";
@@ -38,20 +46,26 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     load().catch(() => setReady(true));
   }, []);
 
-  async function setMode(modeToSet: ThemeMode) {
+  const setMode = useCallback(async (modeToSet: ThemeMode) => {
     setModeState(modeToSet);
     if (Platform.OS === "web") {
       localStorage.setItem(THEME_KEY, modeToSet);
     } else {
       await SecureStore.setItemAsync(THEME_KEY, modeToSet);
     }
-  }
+  }, []);
 
-
-  async function toggleMode() {
-    const next = mode === "dark" ? "light" : "dark";
-    await setMode(next);
-  }
+  const toggleMode = useCallback(async () => {
+    setModeState((current) => {
+      const next = current === "dark" ? "light" : "dark";
+      if (Platform.OS === "web") {
+        localStorage.setItem(THEME_KEY, next);
+      } else {
+        SecureStore.setItemAsync(THEME_KEY, next).catch(() => {});
+      }
+      return next;
+    });
+  }, []);
 
   const value = useMemo<ThemeContextValue>(
     () => ({
@@ -60,7 +74,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       setMode,
       toggleMode
     }),
-    [mode]
+    [mode, setMode, toggleMode]
   );
 
   if (!ready) {

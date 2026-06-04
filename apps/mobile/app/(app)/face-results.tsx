@@ -1,7 +1,17 @@
 import { StatusBar } from "expo-status-bar";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Alert, Image, Pressable, SafeAreaView, ScrollView, Share, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  Image,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  Share,
+  StyleSheet,
+  Text,
+  View
+} from "react-native";
 import { Feather } from "@expo/vector-icons";
 
 import { patientFlow } from "../../src/runtime/client";
@@ -13,15 +23,48 @@ import { StatusChip } from "../../src/ui/components/StatusChip";
 import { colors, moderateScale, radius, responsiveFont, spacing } from "../../src/ui/theme";
 
 // Expression display config: emoji, label, description, color
-const EXPRESSION_CONFIG: Record<string, { emoji: string; label: string; description: string; barColor: string }> = {
+const EXPRESSION_CONFIG: Record<
+  string,
+  { emoji: string; label: string; description: string; barColor: string }
+> = {
   smile: { emoji: "😊", label: "Smile", description: "Mouth smile muscles", barColor: "#50C49A" },
   frown: { emoji: "😟", label: "Frown", description: "Mouth frown muscles", barColor: "#E2A94A" },
-  eye_blink_left: { emoji: "😉", label: "Left Eye Blink", description: "Left eyelid closure", barColor: "#4EB2C1" },
-  eye_blink_right: { emoji: "😉", label: "Right Eye Blink", description: "Right eyelid closure", barColor: "#4EB2C1" },
-  eyebrow_raise: { emoji: "🤨", label: "Eyebrow Raise", description: "Outer brow elevation", barColor: "#A78BFA" },
-  mouth_open: { emoji: "😮", label: "Mouth Open", description: "Jaw opening range", barColor: "#F07B7B" },
-  lip_pucker: { emoji: "😗", label: "Lip Pucker", description: "Lip puckering movement", barColor: "#F472B6" },
-  cheek_puff: { emoji: "🐡", label: "Cheek Puff", description: "Cheek inflation", barColor: "#FB923C" },
+  eye_blink_left: {
+    emoji: "😉",
+    label: "Left Eye Blink",
+    description: "Left eyelid closure",
+    barColor: "#4EB2C1"
+  },
+  eye_blink_right: {
+    emoji: "😉",
+    label: "Right Eye Blink",
+    description: "Right eyelid closure",
+    barColor: "#4EB2C1"
+  },
+  eyebrow_raise: {
+    emoji: "🤨",
+    label: "Eyebrow Raise",
+    description: "Outer brow elevation",
+    barColor: "#A78BFA"
+  },
+  mouth_open: {
+    emoji: "😮",
+    label: "Mouth Open",
+    description: "Jaw opening range",
+    barColor: "#F07B7B"
+  },
+  lip_pucker: {
+    emoji: "😗",
+    label: "Lip Pucker",
+    description: "Lip puckering movement",
+    barColor: "#F472B6"
+  },
+  cheek_puff: {
+    emoji: "🐡",
+    label: "Cheek Puff",
+    description: "Cheek inflation",
+    barColor: "#FB923C"
+  }
 };
 
 function getIntensityLabel(score: number): string {
@@ -49,7 +92,7 @@ function ExpressionBar({ name, score }: { name: string; score: ExpressionScore }
   const config = EXPRESSION_CONFIG[name] ?? {
     label: name.replace(/_/g, " "),
     description: "",
-    barColor: colors.accent,
+    barColor: colors.accent
   };
 
   const peakPercent = Math.round(score.peak * 100);
@@ -75,7 +118,7 @@ function ExpressionBar({ name, score }: { name: string; score: ExpressionScore }
           <View
             style={[
               barStyles.fillPeak,
-              { width: `${Math.max(peakPercent, 2)}%`, backgroundColor: config.barColor },
+              { width: `${Math.max(peakPercent, 2)}%`, backgroundColor: config.barColor }
             ]}
           />
           <View
@@ -84,8 +127,8 @@ function ExpressionBar({ name, score }: { name: string; score: ExpressionScore }
               {
                 width: `${Math.max(meanPercent, 2)}%`,
                 backgroundColor: config.barColor,
-                opacity: 0.5,
-              },
+                opacity: 0.5
+              }
             ]}
           />
         </View>
@@ -107,13 +150,13 @@ const EXPRESSION_BLENDSHAPES_MAP: Record<string, string[]> = {
   eyebrow_raise: ["browOuterUpLeft", "browOuterUpRight"],
   mouth_open: ["jawOpen"],
   lip_pucker: ["mouthPucker"],
-  cheek_puff: ["cheekPuff"],
+  cheek_puff: ["cheekPuff"]
 };
 
 function getFrameScore(frame: Record<string, number>, name: string): number {
   const bsNames = EXPRESSION_BLENDSHAPES_MAP[name];
   if (!bsNames) return 0;
-  const scores = bsNames.map(bs => frame[bs] ?? 0);
+  const scores = bsNames.map((bs) => frame[bs] ?? 0);
   return scores.reduce((sum, s) => sum + s, 0) / bsNames.length;
 }
 
@@ -123,12 +166,12 @@ function ExpressionTimeline({ perFrame }: { perFrame: Record<string, number>[] }
   const activeExpressions = Object.keys(EXPRESSION_CONFIG);
 
   const scores = useMemo(() => {
-    return perFrame.map(frame => getFrameScore(frame, selectedExpr));
+    return perFrame.map((frame) => getFrameScore(frame, selectedExpr));
   }, [perFrame, selectedExpr]);
 
   const config = EXPRESSION_CONFIG[selectedExpr] ?? {
     label: selectedExpr,
-    barColor: colors.accent,
+    barColor: colors.accent
   };
 
   return (
@@ -137,13 +180,13 @@ function ExpressionTimeline({ perFrame }: { perFrame: Record<string, number>[] }
         <Feather name="activity" size={16} color={colors.accent} />
         <Text style={styles.expressionTitle}>Expression Timeline</Text>
       </View>
-      
+
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={timelineStyles.selectorContainer}
       >
-        {activeExpressions.map(name => {
+        {activeExpressions.map((name) => {
           const cfg = EXPRESSION_CONFIG[name];
           const isSelected = selectedExpr === name;
           return (
@@ -152,14 +195,14 @@ function ExpressionTimeline({ perFrame }: { perFrame: Record<string, number>[] }
               onPress={() => setSelectedExpr(name)}
               style={[
                 timelineStyles.pill,
-                isSelected && { backgroundColor: cfg.barColor + "20", borderColor: cfg.barColor },
+                isSelected && { backgroundColor: cfg.barColor + "20", borderColor: cfg.barColor }
               ]}
             >
               <View style={[timelineStyles.pillColorDot, { backgroundColor: cfg.barColor }]} />
               <Text
                 style={[
                   timelineStyles.pillText,
-                  isSelected && { color: cfg.barColor, fontWeight: "700" },
+                  isSelected && { color: cfg.barColor, fontWeight: "700" }
                 ]}
               >
                 {cfg.label}
@@ -171,7 +214,7 @@ function ExpressionTimeline({ perFrame }: { perFrame: Record<string, number>[] }
 
       <View style={timelineStyles.chartContainer}>
         <View style={timelineStyles.gridContainer}>
-          {[1.0, 0.75, 0.5, 0.25].map(level => (
+          {[1.0, 0.75, 0.5, 0.25].map((level) => (
             <View key={level} style={timelineStyles.gridLine}>
               <Text style={timelineStyles.gridLabel}>{Math.round(level * 100)}%</Text>
               <View style={timelineStyles.line} />
@@ -198,8 +241,8 @@ function ExpressionTimeline({ perFrame }: { perFrame: Record<string, number>[] }
                           height: barHeight,
                           backgroundColor: config.barColor,
                           borderTopLeftRadius: radius.sm,
-                          borderTopRightRadius: radius.sm,
-                        },
+                          borderTopRightRadius: radius.sm
+                        }
                       ]}
                     />
                   </View>
@@ -248,8 +291,9 @@ export default function FaceResultsScreen() {
 
   const expressionEntries = useMemo(() => {
     if (!analysis?.expression_summary) return [];
-    return Object.entries(analysis.expression_summary)
-      .sort(([, a], [, b]) => (b as ExpressionScore).peak - (a as ExpressionScore).peak);
+    return Object.entries(analysis.expression_summary).sort(
+      ([, a], [, b]) => (b as ExpressionScore).peak - (a as ExpressionScore).peak
+    );
   }, [analysis]);
 
   const overallScore = analysis?.movement_score ?? null;
@@ -264,7 +308,7 @@ export default function FaceResultsScreen() {
       "Facial Expression Analysis Report",
       `Status: ${analysis.status}`,
       `Overall Intensity: ${overallScore !== null ? Math.round(overallScore * 100) + "%" : "-"}`,
-      "",
+      ""
     ];
 
     if (analysis.expression_summary) {
@@ -331,7 +375,9 @@ export default function FaceResultsScreen() {
         ) : null}
 
         {/* Per-frame timeline chart */}
-        {analysis?.status === "SUCCEEDED" && analysis.per_frame_blendshapes && analysis.per_frame_blendshapes.length > 0 ? (
+        {analysis?.status === "SUCCEEDED" &&
+        analysis.per_frame_blendshapes &&
+        analysis.per_frame_blendshapes.length > 0 ? (
           <ExpressionTimeline perFrame={analysis.per_frame_blendshapes} />
         ) : null}
 
@@ -363,7 +409,11 @@ export default function FaceResultsScreen() {
           <AppButton label="Share Report" onPress={shareReport} variant="secondary" />
         </View>
         <AppButton label="Go To History" onPress={() => router.push("/(app)/history")} />
-        <AppButton label="New Face Assessment" onPress={() => router.push("/(app)/face-record" as any)} variant="secondary" />
+        <AppButton
+          label="New Face Assessment"
+          onPress={() => router.push("/(app)/face-record" as any)}
+          variant="secondary"
+        />
 
         <Text style={styles.statusText}>Status: {status}</Text>
       </ScrollView>
@@ -375,71 +425,71 @@ const barStyles = StyleSheet.create({
   container: {
     paddingVertical: spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: colors.divider,
+    borderBottomColor: colors.divider
   },
   header: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.sm,
+    gap: spacing.sm
   },
   colorDot: {
     width: moderateScale(8),
     height: moderateScale(8),
-    borderRadius: radius.pill,
+    borderRadius: radius.pill
   },
   labelGroup: {
-    flex: 1,
+    flex: 1
   },
   label: {
     color: colors.text,
     fontSize: responsiveFont(13),
-    fontWeight: "700",
+    fontWeight: "700"
   },
   description: {
     color: colors.textMuted,
-    fontSize: responsiveFont(10),
+    fontSize: responsiveFont(10)
   },
   scoreGroup: {
-    alignItems: "flex-end",
+    alignItems: "flex-end"
   },
   peakScore: {
     fontSize: responsiveFont(16),
-    fontWeight: "800",
+    fontWeight: "800"
   },
   intensityLabel: {
     color: colors.textMuted,
     fontSize: responsiveFont(10),
-    fontWeight: "600",
+    fontWeight: "600"
   },
   trackContainer: {
     marginTop: spacing.xs,
-    marginLeft: moderateScale(34),
+    marginLeft: moderateScale(34)
   },
   track: {
     height: moderateScale(6),
     backgroundColor: colors.divider,
     borderRadius: radius.pill,
-    overflow: "hidden",
+    overflow: "hidden"
   },
   fillPeak: {
     position: "absolute",
     height: "100%",
-    borderRadius: radius.pill,
+    borderRadius: radius.pill
   },
   fillMean: {
     position: "absolute",
     height: "100%",
-    borderRadius: radius.pill,
+    borderRadius: radius.pill
   },
   statsRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 3,
+    marginTop: 3
   },
   statText: {
     color: colors.textMuted,
-    fontSize: responsiveFont(9),
-  },
+    fontSize: responsiveFont(9)
+  }
 });
 
 const styles = StyleSheet.create({
@@ -464,12 +514,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.accentSoft,
     paddingHorizontal: spacing.sm,
     paddingVertical: 4,
-    borderRadius: radius.pill,
+    borderRadius: radius.pill
   },
   faceBadgeText: {
     color: colors.accent,
     fontSize: responsiveFont(11),
-    fontWeight: "700",
+    fontWeight: "700"
   },
   scoreTitle: {
     color: colors.textMuted,
@@ -484,15 +534,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.xs,
-    marginBottom: spacing.xs,
+    marginBottom: spacing.xs
   },
   expressionTitle: {
     color: colors.text,
     fontSize: responsiveFont(14),
-    fontWeight: "700",
+    fontWeight: "700"
   },
   expressionList: {
-    gap: 0,
+    gap: 0
   },
   actionRows: {
     gap: spacing.sm
@@ -514,12 +564,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.xs,
-    marginBottom: spacing.md,
+    marginBottom: spacing.md
   },
   imageTitle: {
     color: colors.text,
     fontSize: responsiveFont(14),
-    fontWeight: "700",
+    fontWeight: "700"
   },
   imageContainer: {
     width: "100%",
@@ -528,19 +578,19 @@ const styles = StyleSheet.create({
     borderRadius: radius.md,
     overflow: "hidden",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "center"
   },
   landmarkImage: {
     width: "100%",
-    height: "100%",
-  },
+    height: "100%"
+  }
 });
 
 const timelineStyles = StyleSheet.create({
   selectorContainer: {
     paddingVertical: spacing.xs,
     gap: spacing.sm,
-    marginBottom: spacing.md,
+    marginBottom: spacing.md
   },
   pill: {
     flexDirection: "row",
@@ -551,22 +601,22 @@ const timelineStyles = StyleSheet.create({
     borderRadius: radius.pill,
     backgroundColor: colors.divider + "40",
     borderWidth: 1,
-    borderColor: "transparent",
+    borderColor: "transparent"
   },
   pillColorDot: {
     width: moderateScale(6),
     height: moderateScale(6),
-    borderRadius: radius.pill,
+    borderRadius: radius.pill
   },
   pillText: {
     fontSize: responsiveFont(11),
     color: colors.textMuted,
-    fontWeight: "500",
+    fontWeight: "500"
   },
   chartContainer: {
     height: 160,
     position: "relative",
-    justifyContent: "flex-end",
+    justifyContent: "flex-end"
   },
   gridContainer: {
     position: "absolute",
@@ -574,18 +624,18 @@ const timelineStyles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 25,
-    justifyContent: "space-between",
+    justifyContent: "space-between"
   },
   gridLine: {
     flexDirection: "row",
     alignItems: "center",
-    gap: spacing.xs,
+    gap: spacing.xs
   },
   gridLabel: {
     fontSize: responsiveFont(8),
     color: colors.textMuted,
     width: 25,
-    textAlign: "right",
+    textAlign: "right"
   },
   line: {
     flex: 1,
@@ -593,23 +643,23 @@ const timelineStyles = StyleSheet.create({
     borderStyle: "dashed",
     borderWidth: 1,
     borderColor: colors.divider,
-    opacity: 0.5,
+    opacity: 0.5
   },
   barsScrollContainer: {
     paddingLeft: 30,
-    paddingRight: spacing.md,
+    paddingRight: spacing.md
   },
   barsWrapper: {
     flexDirection: "row",
     alignItems: "flex-end",
     gap: 6,
-    height: 135,
+    height: 135
   },
   barColumn: {
     alignItems: "center",
     width: 12,
     height: "100%",
-    justifyContent: "flex-end",
+    justifyContent: "flex-end"
   },
   barTrack: {
     width: 6,
@@ -617,20 +667,20 @@ const timelineStyles = StyleSheet.create({
     backgroundColor: colors.divider + "30",
     borderRadius: radius.pill,
     justifyContent: "flex-end",
-    overflow: "hidden",
+    overflow: "hidden"
   },
   barFill: {
-    width: "100%",
+    width: "100%"
   },
   tickContainer: {
     height: 15,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 4,
+    marginTop: 4
   },
   tickText: {
     fontSize: responsiveFont(8),
     color: colors.textMuted,
-    fontWeight: "600",
-  },
+    fontWeight: "600"
+  }
 });

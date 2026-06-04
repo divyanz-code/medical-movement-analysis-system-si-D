@@ -1,7 +1,16 @@
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
-import { Alert, Pressable, SafeAreaView, ScrollView, StyleSheet, Switch, Text, View } from "react-native";
+import {
+  Alert,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  View
+} from "react-native";
 import { Feather } from "@expo/vector-icons";
 
 import { patientFlow } from "../../src/runtime/client";
@@ -158,111 +167,111 @@ export default function SettingsScreen() {
 
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: colors.surface
-  },
-  content: {
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.lg,
-    paddingBottom: 108,
-    gap: spacing.md
-  },
-  accountRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: spacing.sm
-  },
-  accountIconWrap: {
-    width: moderateScale(36),
-    height: moderateScale(36),
-    borderRadius: radius.sm,
-    backgroundColor: colors.accentSoft,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  accountTextWrap: {
-    flex: 1
-  },
-  accountTitle: {
-    color: colors.text,
-    fontWeight: "700",
-    fontSize: responsiveFont(15)
-  },
-  accountSubtitle: {
-    color: colors.textMuted,
-    fontSize: responsiveFont(12),
-    marginTop: spacing.xs,
-    lineHeight: moderateScale(18)
-  },
-  sectionTitle: {
-    color: colors.text,
-    fontWeight: "700",
-    fontSize: responsiveFont(17)
-  },
-  sectionContent: {
-    marginTop: spacing.md,
-    gap: spacing.xs
-  },
-  switchRow: {
-    minHeight: moderateScale(58),
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: spacing.xs
-  },
-  rowLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm,
-    flex: 1,
-    marginRight: spacing.sm
-  },
-  iconWrap: {
-    width: moderateScale(32),
-    height: moderateScale(32),
-    borderRadius: radius.sm,
-    backgroundColor: colors.accentSoft,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  switchTextWrap: {
-    flex: 1,
-    justifyContent: "center"
-  },
-  switchControl: {
-    minHeight: moderateScale(32),
-    justifyContent: "center",
-    alignItems: "center",
-    marginLeft: spacing.xs
-  },
-  switchTitle: {
-    color: colors.text,
-    fontWeight: "600"
-  },
-  switchSubtitle: {
-    color: colors.textMuted,
-    fontSize: responsiveFont(12),
-    marginTop: 2
-  },
-  rowDivider: {
-    height: 1,
-    backgroundColor: colors.divider
-  },
-  menuRow: {
-    minHeight: moderateScale(48),
-    paddingHorizontal: spacing.xs,
-    paddingVertical: spacing.sm,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
-  },
-  menuText: {
-    color: colors.text,
-    fontWeight: "600"
-  },
-  signOutWrap: {
-    marginTop: spacing.xs
-  }
+    root: {
+      flex: 1,
+      backgroundColor: colors.surface
+    },
+    content: {
+      paddingHorizontal: spacing.xl,
+      paddingTop: spacing.lg,
+      paddingBottom: 108,
+      gap: spacing.md
+    },
+    accountRow: {
+      flexDirection: "row",
+      alignItems: "flex-start",
+      gap: spacing.sm
+    },
+    accountIconWrap: {
+      width: moderateScale(36),
+      height: moderateScale(36),
+      borderRadius: radius.sm,
+      backgroundColor: colors.accentSoft,
+      alignItems: "center",
+      justifyContent: "center"
+    },
+    accountTextWrap: {
+      flex: 1
+    },
+    accountTitle: {
+      color: colors.text,
+      fontWeight: "700",
+      fontSize: responsiveFont(15)
+    },
+    accountSubtitle: {
+      color: colors.textMuted,
+      fontSize: responsiveFont(12),
+      marginTop: spacing.xs,
+      lineHeight: moderateScale(18)
+    },
+    sectionTitle: {
+      color: colors.text,
+      fontWeight: "700",
+      fontSize: responsiveFont(17)
+    },
+    sectionContent: {
+      marginTop: spacing.md,
+      gap: spacing.xs
+    },
+    switchRow: {
+      minHeight: moderateScale(58),
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingVertical: spacing.xs
+    },
+    rowLeft: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.sm,
+      flex: 1,
+      marginRight: spacing.sm
+    },
+    iconWrap: {
+      width: moderateScale(32),
+      height: moderateScale(32),
+      borderRadius: radius.sm,
+      backgroundColor: colors.accentSoft,
+      alignItems: "center",
+      justifyContent: "center"
+    },
+    switchTextWrap: {
+      flex: 1,
+      justifyContent: "center"
+    },
+    switchControl: {
+      minHeight: moderateScale(32),
+      justifyContent: "center",
+      alignItems: "center",
+      marginLeft: spacing.xs
+    },
+    switchTitle: {
+      color: colors.text,
+      fontWeight: "600"
+    },
+    switchSubtitle: {
+      color: colors.textMuted,
+      fontSize: responsiveFont(12),
+      marginTop: 2
+    },
+    rowDivider: {
+      height: 1,
+      backgroundColor: colors.divider
+    },
+    menuRow: {
+      minHeight: moderateScale(48),
+      paddingHorizontal: spacing.xs,
+      paddingVertical: spacing.sm,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between"
+    },
+    menuText: {
+      color: colors.text,
+      fontWeight: "600"
+    },
+    signOutWrap: {
+      marginTop: spacing.xs
+    }
   });
 }

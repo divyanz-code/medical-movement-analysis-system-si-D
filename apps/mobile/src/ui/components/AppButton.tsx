@@ -55,38 +55,38 @@ export function AppButton({
 
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
-  base: {
-    minHeight: moderateScale(50),
-    borderRadius: radius.md,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  primary: {
-    backgroundColor: colors.accent
-  },
-  secondary: {
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border
-  },
-  danger: {
-    backgroundColor: colors.dangerSoft,
-    borderWidth: 1,
-    borderColor: colors.border
-  },
-  inactive: {
-    opacity: 0.6
-  },
-  label: {
-    color: colors.white,
-    fontSize: responsiveFont(15),
-    fontWeight: "700"
-  },
-  secondaryLabel: {
-    color: colors.text
-  },
-  dangerLabel: {
-    color: colors.danger
-  }
+    base: {
+      minHeight: moderateScale(50),
+      borderRadius: radius.md,
+      alignItems: "center",
+      justifyContent: "center"
+    },
+    primary: {
+      backgroundColor: colors.accent
+    },
+    secondary: {
+      backgroundColor: colors.card,
+      borderWidth: 1,
+      borderColor: colors.border
+    },
+    danger: {
+      backgroundColor: colors.dangerSoft,
+      borderWidth: 1,
+      borderColor: colors.border
+    },
+    inactive: {
+      opacity: 0.6
+    },
+    label: {
+      color: colors.white,
+      fontSize: responsiveFont(15),
+      fontWeight: "700"
+    },
+    secondaryLabel: {
+      color: colors.text
+    },
+    dangerLabel: {
+      color: colors.danger
+    }
   });
 }

@@ -23,7 +23,9 @@ export default function HistoryScreen() {
     patientFlow
       .getHistory()
       .then(setItems)
-      .catch((err: unknown) => setError(err instanceof Error ? err.message : "Failed to load history"));
+      .catch((err: unknown) =>
+        setError(err instanceof Error ? err.message : "Failed to load history")
+      );
   }, []);
 
   const filtered = useMemo(
@@ -101,66 +103,66 @@ export default function HistoryScreen() {
 
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: colors.surface
-  },
-  headerWrap: {
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.lg
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.md,
-    gap: spacing.md
-  },
-  controlLabel: {
-    color: colors.textMuted,
-    fontSize: 12,
-    marginBottom: spacing.xs
-  },
-  searchInput: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: 12,
-    color: colors.text
-  },
-  filtersRow: {
-    marginTop: spacing.md,
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: spacing.xs
-  },
-  filterChip: {
-    borderRadius: radius.pill,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surface,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 6
-  },
-  filterChipActive: {
-    borderColor: colors.accent,
-    backgroundColor: colors.accentSoft
-  },
-  filterChipText: {
-    color: colors.textMuted,
-    fontSize: 11,
-    fontWeight: "600"
-  },
-  filterChipTextActive: {
-    color: colors.accent
-  },
-  error: {
-    color: colors.danger
-  },
-  listContent: {
-    gap: spacing.sm,
-    paddingBottom: 156
-  }
+    root: {
+      flex: 1,
+      backgroundColor: colors.surface
+    },
+    headerWrap: {
+      paddingHorizontal: spacing.xl,
+      paddingTop: spacing.lg
+    },
+    content: {
+      flex: 1,
+      paddingHorizontal: spacing.xl,
+      paddingTop: spacing.md,
+      gap: spacing.md
+    },
+    controlLabel: {
+      color: colors.textMuted,
+      fontSize: 12,
+      marginBottom: spacing.xs
+    },
+    searchInput: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: radius.md,
+      paddingHorizontal: spacing.md,
+      paddingVertical: 12,
+      color: colors.text
+    },
+    filtersRow: {
+      marginTop: spacing.md,
+      flexDirection: "row",
+      flexWrap: "wrap",
+      gap: spacing.xs
+    },
+    filterChip: {
+      borderRadius: radius.pill,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.surface,
+      paddingHorizontal: spacing.sm,
+      paddingVertical: 6
+    },
+    filterChipActive: {
+      borderColor: colors.accent,
+      backgroundColor: colors.accentSoft
+    },
+    filterChipText: {
+      color: colors.textMuted,
+      fontSize: 11,
+      fontWeight: "600"
+    },
+    filterChipTextActive: {
+      color: colors.accent
+    },
+    error: {
+      color: colors.danger
+    },
+    listContent: {
+      gap: spacing.sm,
+      paddingBottom: 156
+    }
   });
 }

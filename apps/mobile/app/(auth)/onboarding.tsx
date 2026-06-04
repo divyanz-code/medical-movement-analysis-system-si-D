@@ -18,7 +18,13 @@ import { patientFlow } from "../../src/runtime/client";
 import { AppButton } from "../../src/ui/components/AppButton";
 import { AppCard } from "../../src/ui/components/AppCard";
 import { ScreenHeader } from "../../src/ui/components/ScreenHeader";
-import { moderateScale, radius, responsiveFont, spacing, type ThemeColors } from "../../src/ui/theme";
+import {
+  moderateScale,
+  radius,
+  responsiveFont,
+  spacing,
+  type ThemeColors
+} from "../../src/ui/theme";
 import { useAppTheme } from "../../src/ui/themeProvider";
 
 type GenderOption = "male" | "female" | "other";
@@ -139,12 +145,18 @@ export default function OnboardingScreen() {
 
   return (
     <SafeAreaView style={styles.root}>
-      <StatusBar style={mode === "dark" ? "light" : "dark"} backgroundColor={colors.authBackground} />
+      <StatusBar
+        style={mode === "dark" ? "light" : "dark"}
+        backgroundColor={colors.authBackground}
+      />
       <KeyboardAvoidingView
         style={styles.keyboardContainer}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+        >
           <ScreenHeader
             title="Set Up Your Profile"
             subtitle="Step-by-step onboarding before your first assessment"
@@ -201,7 +213,11 @@ export default function OnboardingScreen() {
                         <Text style={styles.dropdownPlaceholder}>Select gender</Text>
                       )}
                     </View>
-                    <Feather name={genderDropdownOpen ? "chevron-up" : "chevron-down"} size={16} color={colors.textMuted} />
+                    <Feather
+                      name={genderDropdownOpen ? "chevron-up" : "chevron-down"}
+                      size={16}
+                      color={colors.textMuted}
+                    />
                   </Pressable>
 
                   {genderDropdownOpen ? (
@@ -209,7 +225,10 @@ export default function OnboardingScreen() {
                       {GENDER_OPTIONS.map((option) => (
                         <Pressable
                           key={option.value}
-                          style={[styles.dropdownItem, gender === option.value && styles.dropdownItemActive]}
+                          style={[
+                            styles.dropdownItem,
+                            gender === option.value && styles.dropdownItemActive
+                          ]}
                           onPress={() => {
                             setGender(option.value);
                             setGenderDropdownOpen(false);
@@ -245,7 +264,11 @@ export default function OnboardingScreen() {
                         <Text style={styles.dropdownPlaceholder}>Select affected limb</Text>
                       )}
                     </View>
-                    <Feather name={dropdownOpen ? "chevron-up" : "chevron-down"} size={16} color={colors.textMuted} />
+                    <Feather
+                      name={dropdownOpen ? "chevron-up" : "chevron-down"}
+                      size={16}
+                      color={colors.textMuted}
+                    />
                   </Pressable>
 
                   {dropdownOpen ? (
@@ -253,7 +276,10 @@ export default function OnboardingScreen() {
                       {LIMB_OPTIONS.map((option) => (
                         <Pressable
                           key={option.value}
-                          style={[styles.dropdownItem, affectedLimb === option.value && styles.dropdownItemActive]}
+                          style={[
+                            styles.dropdownItem,
+                            affectedLimb === option.value && styles.dropdownItemActive
+                          ]}
                           onPress={() => {
                             setAffectedLimb(option.value);
                             setDropdownOpen(false);
@@ -276,7 +302,11 @@ export default function OnboardingScreen() {
 
               <View style={styles.actionsRow}>
                 <View style={styles.actionCell}>
-                  <AppButton label={step === 1 ? "Back" : "Previous"} onPress={onBack} variant="secondary" />
+                  <AppButton
+                    label={step === 1 ? "Back" : "Previous"}
+                    onPress={onBack}
+                    variant="secondary"
+                  />
                 </View>
                 <View style={styles.actionCell}>
                   <AppButton
@@ -297,133 +327,133 @@ export default function OnboardingScreen() {
 
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: colors.authBackground
-  },
-  keyboardContainer: {
-    flex: 1
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.lg,
-    justifyContent: "center",
-    gap: spacing.lg
-  },
-  formContent: {
-    gap: spacing.md
-  },
-  progressRow: {
-    gap: spacing.xs
-  },
-  progressText: {
-    color: colors.textMuted,
-    fontSize: responsiveFont(12),
-    fontWeight: "600"
-  },
-  progressTrack: {
-    height: moderateScale(6),
-    borderRadius: radius.pill,
-    backgroundColor: colors.divider,
-    overflow: "hidden"
-  },
-  progressFill: {
-    height: "100%",
-    backgroundColor: colors.accent
-  },
-  stepSection: {
-    gap: spacing.sm
-  },
-  stepTitle: {
-    color: colors.text,
-    fontSize: responsiveFont(18),
-    fontWeight: "700"
-  },
-  stepHint: {
-    color: colors.textMuted,
-    fontSize: responsiveFont(13)
-  },
-  ageValueWrap: {
-    alignSelf: "center",
-    borderRadius: radius.pill,
-    backgroundColor: colors.accentSoft,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.xs
-  },
-  ageValueText: {
-    color: colors.accent,
-    fontWeight: "600",
-    fontSize: responsiveFont(16)
-  },
-  rangeRow: {
-    flexDirection: "row",
-    justifyContent: "space-between"
-  },
-  rangeText: {
-    color: colors.textMuted,
-    fontSize: responsiveFont(12)
-  },
-  dropdownTrigger: {
-    minHeight: moderateScale(52),
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    backgroundColor: colors.surface,
-    paddingHorizontal: spacing.md,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
-  },
-  dropdownValueRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm
-  },
-  dropdownPlaceholder: {
-    color: colors.textMuted,
-    fontSize: responsiveFont(15)
-  },
-  dropdownValueText: {
-    color: colors.text,
-    fontSize: responsiveFont(15),
-    fontWeight: "600"
-  },
-  dropdownMenu: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    backgroundColor: colors.card,
-    overflow: "hidden"
-  },
-  dropdownItem: {
-    minHeight: moderateScale(44),
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderBottomWidth: 1,
-    borderBottomColor: colors.divider
-  },
-  dropdownItemActive: {
-    backgroundColor: colors.accentSoft
-  },
-  dropdownItemText: {
-    color: colors.text,
-    fontSize: responsiveFont(14),
-    fontWeight: "500"
-  },
-  error: {
-    color: colors.danger,
-    fontSize: responsiveFont(14)
-  },
-  actionsRow: {
-    flexDirection: "row",
-    gap: spacing.sm
-  },
-  actionCell: {
-    flex: 1
-  }
+    root: {
+      flex: 1,
+      backgroundColor: colors.authBackground
+    },
+    keyboardContainer: {
+      flex: 1
+    },
+    scrollContent: {
+      flexGrow: 1,
+      paddingHorizontal: spacing.xl,
+      paddingVertical: spacing.lg,
+      justifyContent: "center",
+      gap: spacing.lg
+    },
+    formContent: {
+      gap: spacing.md
+    },
+    progressRow: {
+      gap: spacing.xs
+    },
+    progressText: {
+      color: colors.textMuted,
+      fontSize: responsiveFont(12),
+      fontWeight: "600"
+    },
+    progressTrack: {
+      height: moderateScale(6),
+      borderRadius: radius.pill,
+      backgroundColor: colors.divider,
+      overflow: "hidden"
+    },
+    progressFill: {
+      height: "100%",
+      backgroundColor: colors.accent
+    },
+    stepSection: {
+      gap: spacing.sm
+    },
+    stepTitle: {
+      color: colors.text,
+      fontSize: responsiveFont(18),
+      fontWeight: "700"
+    },
+    stepHint: {
+      color: colors.textMuted,
+      fontSize: responsiveFont(13)
+    },
+    ageValueWrap: {
+      alignSelf: "center",
+      borderRadius: radius.pill,
+      backgroundColor: colors.accentSoft,
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.xs
+    },
+    ageValueText: {
+      color: colors.accent,
+      fontWeight: "600",
+      fontSize: responsiveFont(16)
+    },
+    rangeRow: {
+      flexDirection: "row",
+      justifyContent: "space-between"
+    },
+    rangeText: {
+      color: colors.textMuted,
+      fontSize: responsiveFont(12)
+    },
+    dropdownTrigger: {
+      minHeight: moderateScale(52),
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: radius.md,
+      backgroundColor: colors.surface,
+      paddingHorizontal: spacing.md,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between"
+    },
+    dropdownValueRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.sm
+    },
+    dropdownPlaceholder: {
+      color: colors.textMuted,
+      fontSize: responsiveFont(15)
+    },
+    dropdownValueText: {
+      color: colors.text,
+      fontSize: responsiveFont(15),
+      fontWeight: "600"
+    },
+    dropdownMenu: {
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: radius.md,
+      backgroundColor: colors.card,
+      overflow: "hidden"
+    },
+    dropdownItem: {
+      minHeight: moderateScale(44),
+      paddingHorizontal: spacing.md,
+      paddingVertical: spacing.sm,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      borderBottomWidth: 1,
+      borderBottomColor: colors.divider
+    },
+    dropdownItemActive: {
+      backgroundColor: colors.accentSoft
+    },
+    dropdownItemText: {
+      color: colors.text,
+      fontSize: responsiveFont(14),
+      fontWeight: "500"
+    },
+    error: {
+      color: colors.danger,
+      fontSize: responsiveFont(14)
+    },
+    actionsRow: {
+      flexDirection: "row",
+      gap: spacing.sm
+    },
+    actionCell: {
+      flex: 1
+    }
   });
 }

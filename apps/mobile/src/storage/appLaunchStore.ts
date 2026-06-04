@@ -34,4 +34,3 @@ export class AppLaunchStore {
 }
 
 export const appLaunchStore = new AppLaunchStore();
-

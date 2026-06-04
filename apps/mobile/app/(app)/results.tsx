@@ -1,7 +1,16 @@
 import { StatusBar } from "expo-status-bar";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
-import { Alert, Image, SafeAreaView, ScrollView, Share, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  Share,
+  StyleSheet,
+  Text,
+  View
+} from "react-native";
 import { Feather } from "@expo/vector-icons";
 
 import { patientFlow } from "../../src/runtime/client";
@@ -93,11 +102,7 @@ export default function ResultsScreen() {
     <SafeAreaView style={styles.root}>
       <StatusBar style="dark" backgroundColor={colors.surface} />
       <ScrollView contentContainerStyle={styles.content}>
-        <ScreenHeader
-          onBack={() => router.back()}
-          title="Assessment Result"
-          subtitle={label}
-        />
+        <ScreenHeader onBack={() => router.back()} title="Assessment Result" subtitle={label} />
 
         <AppCard>
           <View style={styles.scoreBlock}>
@@ -118,10 +123,20 @@ export default function ResultsScreen() {
 
         <View style={styles.metricRows}>
           <View style={styles.metricCell}>
-            <MetricCard icon="chevron-down" label="Min Angle" value={analysis?.min_angle ?? "-"} unit="°" />
+            <MetricCard
+              icon="chevron-down"
+              label="Min Angle"
+              value={analysis?.min_angle ?? "-"}
+              unit="°"
+            />
           </View>
           <View style={styles.metricCell}>
-            <MetricCard icon="chevron-up" label="Max Angle" value={analysis?.max_angle ?? "-"} unit="°" />
+            <MetricCard
+              icon="chevron-up"
+              label="Max Angle"
+              value={analysis?.max_angle ?? "-"}
+              unit="°"
+            />
           </View>
         </View>
 
@@ -199,7 +214,7 @@ export default function ResultsScreen() {
                         key={index}
                         style={[
                           styles.paginationDot,
-                          activeIndex === index && styles.paginationDotActive,
+                          activeIndex === index && styles.paginationDotActive
                         ]}
                       />
                     ))}
@@ -224,7 +239,11 @@ export default function ResultsScreen() {
           <AppButton label="Download Summary" onPress={downloadSummary} variant="secondary" />
         </View>
         <AppButton label="Go To History" onPress={() => router.push("/(app)/history")} />
-        <AppButton label="New Assessment" onPress={() => router.push("/(app)/record")} variant="secondary" />
+        <AppButton
+          label="New Assessment"
+          onPress={() => router.push("/(app)/record")}
+          variant="secondary"
+        />
 
         <Text style={styles.statusText}>Status: {status}</Text>
       </ScrollView>
@@ -283,26 +302,26 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: spacing.xs,
-    marginBottom: spacing.md,
+    marginBottom: spacing.md
   },
   imageTitle: {
     color: colors.text,
     fontSize: responsiveFont(14),
-    fontWeight: "700",
+    fontWeight: "700"
   },
   landmarkImage: {
     width: "100%",
-    height: moderateScale(220),
+    height: moderateScale(220)
   },
   carouselContainer: {
     width: "100%",
-    alignItems: "center",
+    alignItems: "center"
   },
   carouselSlide: {
     height: moderateScale(290),
     backgroundColor: colors.divider + "15",
     borderRadius: radius.md,
-    overflow: "hidden",
+    overflow: "hidden"
   },
   slideLabelContainer: {
     position: "absolute",
@@ -311,33 +330,33 @@ const styles = StyleSheet.create({
     right: 0,
     backgroundColor: "rgba(20, 20, 20, 0.8)",
     paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing.sm
   },
   slideLabelTitle: {
     color: colors.white,
     fontSize: responsiveFont(13),
-    fontWeight: "700",
+    fontWeight: "700"
   },
   slideLabelDesc: {
     color: "#A0A0A0",
     fontSize: responsiveFont(11),
-    marginTop: 2,
+    marginTop: 2
   },
   paginationRow: {
     flexDirection: "row",
     gap: spacing.xs,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: spacing.md,
+    marginTop: spacing.md
   },
   paginationDot: {
     width: moderateScale(6),
     height: moderateScale(6),
     borderRadius: radius.pill,
-    backgroundColor: colors.divider,
+    backgroundColor: colors.divider
   },
   paginationDotActive: {
     width: moderateScale(18),
-    backgroundColor: colors.accent,
-  },
+    backgroundColor: colors.accent
+  }
 });

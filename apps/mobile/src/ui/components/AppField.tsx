@@ -31,7 +31,10 @@ export function AppField({ label, helperText, ...inputProps }: AppFieldProps) {
           placeholderTextColor={colors.textMuted}
         />
         {hasPasswordToggle ? (
-          <Pressable style={styles.actionButton} onPress={() => setHidePassword((current) => !current)}>
+          <Pressable
+            style={styles.actionButton}
+            onPress={() => setHidePassword((current) => !current)}
+          >
             <Feather name={hidePassword ? "eye" : "eye-off"} size={18} color={colors.textMuted} />
           </Pressable>
         ) : null}

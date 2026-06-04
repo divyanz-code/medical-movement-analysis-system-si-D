@@ -29,4 +29,3 @@ export class ExpoSecureTokenStore implements TokenStore {
     await SecureStore.deleteItemAsync(TOKEN_KEY);
   }
 }
-

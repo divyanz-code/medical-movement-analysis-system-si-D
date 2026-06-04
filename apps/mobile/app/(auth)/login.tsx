@@ -60,16 +60,19 @@ export default function LoginScreen() {
 
   return (
     <SafeAreaView style={styles.root}>
-      <StatusBar style={mode === "dark" ? "light" : "dark"} backgroundColor={colors.authBackground} />
+      <StatusBar
+        style={mode === "dark" ? "light" : "dark"}
+        backgroundColor={colors.authBackground}
+      />
       <KeyboardAvoidingView
         style={styles.keyboardContainer}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
       >
-        <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
-          <ScreenHeader
-            title="Welcome Back"
-            subtitle="Sign in to continue your movement journey"
-          />
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+        >
+          <ScreenHeader title="Welcome Back" subtitle="Sign in to continue your movement journey" />
 
           <AppCard>
             <View style={styles.formContent}>
@@ -114,37 +117,37 @@ export default function LoginScreen() {
 
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: colors.authBackground
-  },
-  keyboardContainer: {
-    flex: 1
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.lg,
-    justifyContent: "center",
-    gap: spacing.lg
-  },
-  formContent: {
-    gap: spacing.md
-  },
-  error: {
-    color: colors.danger,
-    fontSize: responsiveFont(14)
-  },
-  footerRow: {
-    flexDirection: "row",
-    justifyContent: "center"
-  },
-  footerText: {
-    color: colors.textMuted
-  },
-  footerLink: {
-    color: colors.accent,
-    fontWeight: "700"
-  }
+    root: {
+      flex: 1,
+      backgroundColor: colors.authBackground
+    },
+    keyboardContainer: {
+      flex: 1
+    },
+    scrollContent: {
+      flexGrow: 1,
+      paddingHorizontal: spacing.xl,
+      paddingVertical: spacing.lg,
+      justifyContent: "center",
+      gap: spacing.lg
+    },
+    formContent: {
+      gap: spacing.md
+    },
+    error: {
+      color: colors.danger,
+      fontSize: responsiveFont(14)
+    },
+    footerRow: {
+      flexDirection: "row",
+      justifyContent: "center"
+    },
+    footerText: {
+      color: colors.textMuted
+    },
+    footerLink: {
+      color: colors.accent,
+      fontWeight: "700"
+    }
   });
 }

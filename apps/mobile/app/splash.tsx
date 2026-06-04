@@ -72,73 +72,73 @@ export default function SplashScreen() {
 
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: colors.primary
-  },
-  backGlowOne: {
-    position: "absolute",
-    top: moderateScale(-70),
-    right: moderateScale(-80),
-    width: moderateScale(240),
-    height: moderateScale(240),
-    borderRadius: radius.pill,
-    backgroundColor: "rgba(255,255,255,0.08)"
-  },
-  backGlowTwo: {
-    position: "absolute",
-    bottom: moderateScale(80),
-    left: moderateScale(-60),
-    width: moderateScale(200),
-    height: moderateScale(200),
-    borderRadius: radius.pill,
-    backgroundColor: "rgba(255,255,255,0.06)"
-  },
-  content: {
-    flex: 1,
-    paddingHorizontal: spacing.xl,
-    justifyContent: "center",
-    gap: spacing.md
-  },
-  logoWrap: {
-    width: moderateScale(78),
-    height: moderateScale(78),
-    borderRadius: radius.lg,
-    backgroundColor: colors.whiteSoft,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  title: {
-    color: colors.white,
-    fontSize: responsiveFont(30),
-    fontWeight: "800"
-  },
-  subtitle: {
-    color: colors.whiteMuted,
-    fontSize: responsiveFont(14),
-    lineHeight: moderateScale(22),
-    maxWidth: moderateScale(320)
-  },
-  features: {
-    marginTop: spacing.sm,
-    gap: spacing.sm
-  },
-  featureRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.sm
-  },
-  featureText: {
-    color: colors.whiteSoft,
-    fontSize: responsiveFont(14),
-    fontWeight: "500"
-  },
-  footer: {
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.xl
-  },
-  loader: {
-    marginTop: spacing.sm
-  }
+    root: {
+      flex: 1,
+      backgroundColor: colors.primary
+    },
+    backGlowOne: {
+      position: "absolute",
+      top: moderateScale(-70),
+      right: moderateScale(-80),
+      width: moderateScale(240),
+      height: moderateScale(240),
+      borderRadius: radius.pill,
+      backgroundColor: "rgba(255,255,255,0.08)"
+    },
+    backGlowTwo: {
+      position: "absolute",
+      bottom: moderateScale(80),
+      left: moderateScale(-60),
+      width: moderateScale(200),
+      height: moderateScale(200),
+      borderRadius: radius.pill,
+      backgroundColor: "rgba(255,255,255,0.06)"
+    },
+    content: {
+      flex: 1,
+      paddingHorizontal: spacing.xl,
+      justifyContent: "center",
+      gap: spacing.md
+    },
+    logoWrap: {
+      width: moderateScale(78),
+      height: moderateScale(78),
+      borderRadius: radius.lg,
+      backgroundColor: colors.whiteSoft,
+      alignItems: "center",
+      justifyContent: "center"
+    },
+    title: {
+      color: colors.white,
+      fontSize: responsiveFont(30),
+      fontWeight: "800"
+    },
+    subtitle: {
+      color: colors.whiteMuted,
+      fontSize: responsiveFont(14),
+      lineHeight: moderateScale(22),
+      maxWidth: moderateScale(320)
+    },
+    features: {
+      marginTop: spacing.sm,
+      gap: spacing.sm
+    },
+    featureRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.sm
+    },
+    featureText: {
+      color: colors.whiteSoft,
+      fontSize: responsiveFont(14),
+      fontWeight: "500"
+    },
+    footer: {
+      paddingHorizontal: spacing.xl,
+      paddingBottom: spacing.xl
+    },
+    loader: {
+      marginTop: spacing.sm
+    }
   });
 }

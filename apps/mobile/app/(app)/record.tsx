@@ -1,7 +1,16 @@
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions
+} from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { CameraView, useCameraPermissions, useMicrophonePermissions } from "expo-camera";
 import { VideoView, useVideoPlayer } from "expo-video";
@@ -15,20 +24,39 @@ import { colors, moderateScale, radius, responsiveFont, spacing } from "../../sr
 import Svg, { Line, Circle } from "react-native-svg";
 
 const HAND_CONNECTIONS = [
-  [0, 1], [1, 2], [2, 3], [3, 4],        // Thumb
-  [0, 5], [5, 6], [6, 7], [7, 8],        // Index
-  [0, 9], [9, 10], [10, 11], [11, 12],   // Middle
-  [0, 13], [13, 14], [14, 15], [15, 16], // Ring
-  [0, 17], [17, 18], [18, 19], [19, 20]  // Pinky
+  [0, 1],
+  [1, 2],
+  [2, 3],
+  [3, 4], // Thumb
+  [0, 5],
+  [5, 6],
+  [6, 7],
+  [7, 8], // Index
+  [0, 9],
+  [9, 10],
+  [10, 11],
+  [11, 12], // Middle
+  [0, 13],
+  [13, 14],
+  [14, 15],
+  [15, 16], // Ring
+  [0, 17],
+  [17, 18],
+  [18, 19],
+  [19, 20] // Pinky
 ];
 
-function generateRefHandLandmarks(wx: number, wy: number, isLeft: number | boolean, W: number, H: number) {
+function generateRefHandLandmarks(
+  wx: number,
+  wy: number,
+  isLeft: number | boolean,
+  W: number,
+  H: number
+) {
   const landmarks = [{ x: wx * W, y: wy * H }];
   const baseAngle = Math.PI / 2.0;
-  const fingerAngles = isLeft 
-    ? [-0.6, -0.2, 0.0, 0.2, 0.4] 
-    : [0.6, 0.2, 0.0, -0.2, -0.4];
-    
+  const fingerAngles = isLeft ? [-0.6, -0.2, 0.0, 0.2, 0.4] : [0.6, 0.2, 0.0, -0.2, -0.4];
+
   for (let fIdx = 0; fIdx < 5; fIdx++) {
     const angle = baseAngle + fingerAngles[fIdx];
     for (let jointIdx = 1; jointIdx <= 4; jointIdx++) {
@@ -40,10 +68,6 @@ function generateRefHandLandmarks(wx: number, wy: number, isLeft: number | boole
   }
   return landmarks;
 }
-
-
-
-
 
 export default function RecordScreen() {
   const router = useRouter();
@@ -67,13 +91,19 @@ export default function RecordScreen() {
     instance.loop = true;
   });
 
-
-
   useEffect(() => {
     if (cameraFacing === "front" && torchEnabled) {
       setTorchEnabled(false);
     }
   }, [cameraFacing, torchEnabled]);
+
+  useEffect(() => {
+    if (!recording) return;
+    const interval = setInterval(() => {
+      setElapsedSeconds((current) => Math.min(15, current + 1));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [recording]);
 
   async function startRecording() {
     if (!cameraRef.current) return;
@@ -186,24 +216,28 @@ export default function RecordScreen() {
           />
 
           {/* Reference skeleton guide overlay */}
-          <View style={StyleSheet.absoluteFill} pointerEvents="none" onLayout={(e) => {
-            const { width, height } = e.nativeEvent.layout;
-            setCameraDims({ width, height });
-          }}>
+          <View
+            style={StyleSheet.absoluteFill}
+            pointerEvents="none"
+            onLayout={(e) => {
+              const { width, height } = e.nativeEvent.layout;
+              setCameraDims({ width, height });
+            }}
+          >
             {cameraDims.width > 0 && cameraDims.height > 0 && (
               <View style={StyleSheet.absoluteFill}>
                 <Svg width={cameraDims.width} height={cameraDims.height}>
                   {/* Bone lines */}
                   <Line
-                    x1={0.60 * cameraDims.width}
+                    x1={0.6 * cameraDims.width}
                     y1={0.35 * cameraDims.height}
-                    x2={0.40 * cameraDims.width}
+                    x2={0.4 * cameraDims.width}
                     y2={0.35 * cameraDims.height}
                     stroke="rgba(255, 78, 78, 0.45)"
                     strokeWidth={4}
                   />
                   <Line
-                    x1={0.60 * cameraDims.width}
+                    x1={0.6 * cameraDims.width}
                     y1={0.35 * cameraDims.height}
                     x2={0.65 * cameraDims.width}
                     y2={0.55 * cameraDims.height}
@@ -213,13 +247,13 @@ export default function RecordScreen() {
                   <Line
                     x1={0.65 * cameraDims.width}
                     y1={0.55 * cameraDims.height}
-                    x2={0.70 * cameraDims.width}
+                    x2={0.7 * cameraDims.width}
                     y2={0.75 * cameraDims.height}
                     stroke="rgba(255, 78, 78, 0.45)"
                     strokeWidth={4}
                   />
                   <Line
-                    x1={0.40 * cameraDims.width}
+                    x1={0.4 * cameraDims.width}
                     y1={0.35 * cameraDims.height}
                     x2={0.35 * cameraDims.width}
                     y2={0.55 * cameraDims.height}
@@ -229,18 +263,36 @@ export default function RecordScreen() {
                   <Line
                     x1={0.35 * cameraDims.width}
                     y1={0.55 * cameraDims.height}
-                    x2={0.30 * cameraDims.width}
+                    x2={0.3 * cameraDims.width}
                     y2={0.75 * cameraDims.height}
                     stroke="rgba(255, 78, 78, 0.45)"
                     strokeWidth={4}
                   />
-                  
+
                   {/* Left hand reference */}
-                  {generateRefHandLandmarks(0.70, 0.75, true, cameraDims.width, cameraDims.height).map((pt, idx) => (
-                    <Circle key={`l-${idx}`} cx={pt.x} cy={pt.y} r={3} fill="rgba(255, 78, 78, 0.6)" />
+                  {generateRefHandLandmarks(
+                    0.7,
+                    0.75,
+                    true,
+                    cameraDims.width,
+                    cameraDims.height
+                  ).map((pt, idx) => (
+                    <Circle
+                      key={`l-${idx}`}
+                      cx={pt.x}
+                      cy={pt.y}
+                      r={3}
+                      fill="rgba(255, 78, 78, 0.6)"
+                    />
                   ))}
                   {HAND_CONNECTIONS.map(([start, end], idx) => {
-                    const lHand = generateRefHandLandmarks(0.70, 0.75, true, cameraDims.width, cameraDims.height);
+                    const lHand = generateRefHandLandmarks(
+                      0.7,
+                      0.75,
+                      true,
+                      cameraDims.width,
+                      cameraDims.height
+                    );
                     return (
                       <Line
                         key={`l-conn-${idx}`}
@@ -255,11 +307,29 @@ export default function RecordScreen() {
                   })}
 
                   {/* Right hand reference */}
-                  {generateRefHandLandmarks(0.30, 0.75, false, cameraDims.width, cameraDims.height).map((pt, idx) => (
-                    <Circle key={`r-${idx}`} cx={pt.x} cy={pt.y} r={3} fill="rgba(255, 78, 78, 0.6)" />
+                  {generateRefHandLandmarks(
+                    0.3,
+                    0.75,
+                    false,
+                    cameraDims.width,
+                    cameraDims.height
+                  ).map((pt, idx) => (
+                    <Circle
+                      key={`r-${idx}`}
+                      cx={pt.x}
+                      cy={pt.y}
+                      r={3}
+                      fill="rgba(255, 78, 78, 0.6)"
+                    />
                   ))}
                   {HAND_CONNECTIONS.map(([start, end], idx) => {
-                    const rHand = generateRefHandLandmarks(0.30, 0.75, false, cameraDims.width, cameraDims.height);
+                    const rHand = generateRefHandLandmarks(
+                      0.3,
+                      0.75,
+                      false,
+                      cameraDims.width,
+                      cameraDims.height
+                    );
                     return (
                       <Line
                         key={`r-conn-${idx}`}
@@ -274,12 +344,42 @@ export default function RecordScreen() {
                   })}
 
                   {/* Joints */}
-                  <Circle cx={0.60 * cameraDims.width} cy={0.35 * cameraDims.height} r={7} fill="rgba(255, 78, 78, 0.7)" />
-                  <Circle cx={0.40 * cameraDims.width} cy={0.35 * cameraDims.height} r={7} fill="rgba(255, 78, 78, 0.7)" />
-                  <Circle cx={0.65 * cameraDims.width} cy={0.55 * cameraDims.height} r={7} fill="rgba(255, 78, 78, 0.7)" />
-                  <Circle cx={0.35 * cameraDims.width} cy={0.55 * cameraDims.height} r={7} fill="rgba(255, 78, 78, 0.7)" />
-                  <Circle cx={0.70 * cameraDims.width} cy={0.75 * cameraDims.height} r={7} fill="rgba(255, 78, 78, 0.7)" />
-                  <Circle cx={0.30 * cameraDims.width} cy={0.75 * cameraDims.height} r={7} fill="rgba(255, 78, 78, 0.7)" />
+                  <Circle
+                    cx={0.6 * cameraDims.width}
+                    cy={0.35 * cameraDims.height}
+                    r={7}
+                    fill="rgba(255, 78, 78, 0.7)"
+                  />
+                  <Circle
+                    cx={0.4 * cameraDims.width}
+                    cy={0.35 * cameraDims.height}
+                    r={7}
+                    fill="rgba(255, 78, 78, 0.7)"
+                  />
+                  <Circle
+                    cx={0.65 * cameraDims.width}
+                    cy={0.55 * cameraDims.height}
+                    r={7}
+                    fill="rgba(255, 78, 78, 0.7)"
+                  />
+                  <Circle
+                    cx={0.35 * cameraDims.width}
+                    cy={0.55 * cameraDims.height}
+                    r={7}
+                    fill="rgba(255, 78, 78, 0.7)"
+                  />
+                  <Circle
+                    cx={0.7 * cameraDims.width}
+                    cy={0.75 * cameraDims.height}
+                    r={7}
+                    fill="rgba(255, 78, 78, 0.7)"
+                  />
+                  <Circle
+                    cx={0.3 * cameraDims.width}
+                    cy={0.75 * cameraDims.height}
+                    r={7}
+                    fill="rgba(255, 78, 78, 0.7)"
+                  />
                 </Svg>
                 <View style={styles.guideInstructionOverlay}>
                   <Text style={styles.guideInstructionText}>
@@ -289,8 +389,6 @@ export default function RecordScreen() {
               </View>
             )}
           </View>
-
-
 
           <View style={styles.overlayBack}>
             <Pressable style={styles.overlayBackButton} onPress={() => router.back()}>
@@ -318,14 +416,24 @@ export default function RecordScreen() {
 
           <View style={styles.controlsRow}>
             <Pressable
-              style={[styles.sideControlButton, cameraFacing !== "back" && styles.sideControlButtonDisabled]}
+              style={[
+                styles.sideControlButton,
+                cameraFacing !== "back" && styles.sideControlButtonDisabled
+              ]}
               onPress={toggleTorch}
               disabled={recording || cameraFacing !== "back"}
             >
               <Feather name={torchEnabled ? "zap" : "zap-off"} size={18} color={colors.white} />
             </Pressable>
-            <RecordButton isRecording={recording} onPress={recording ? stopRecording : startRecording} />
-            <Pressable style={styles.sideControlButton} onPress={toggleCameraFacing} disabled={recording}>
+            <RecordButton
+              isRecording={recording}
+              onPress={recording ? stopRecording : startRecording}
+            />
+            <Pressable
+              style={styles.sideControlButton}
+              onPress={toggleCameraFacing}
+              disabled={recording}
+            >
               <Feather name="refresh-cw" size={18} color={colors.white} />
             </Pressable>
           </View>
@@ -555,5 +663,5 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textAlign: "center",
     lineHeight: moderateScale(15)
-  },
+  }
 });

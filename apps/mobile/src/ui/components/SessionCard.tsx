@@ -22,11 +22,7 @@ export function SessionCard({ item, onPress, previousScore }: SessionCardProps) 
       ? item.movement_score - previousScore
       : null;
   const status =
-    item.status === "SUCCEEDED"
-      ? "aligned"
-      : item.status === "FAILED"
-        ? "warning"
-        : "processing";
+    item.status === "SUCCEEDED" ? "aligned" : item.status === "FAILED" ? "warning" : "processing";
 
   return (
     <Pressable style={styles.card} onPress={onPress} disabled={!onPress}>
@@ -39,7 +35,8 @@ export function SessionCard({ item, onPress, previousScore }: SessionCardProps) 
             <View style={styles.timeRow}>
               <Feather name="clock" size={12} color={colors.textMuted} />
               <Text style={styles.subtitle}>
-                {date.toLocaleDateString()} • {date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                {date.toLocaleDateString()} •{" "}
+                {date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
               </Text>
             </View>
           </View>

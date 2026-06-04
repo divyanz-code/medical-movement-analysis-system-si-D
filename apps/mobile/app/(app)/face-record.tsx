@@ -1,7 +1,16 @@
 import { StatusBar } from "expo-status-bar";
 import { useRouter } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+  useWindowDimensions
+} from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { CameraView, useCameraPermissions, useMicrophonePermissions } from "expo-camera";
 import { VideoView, useVideoPlayer } from "expo-video";
@@ -15,16 +24,30 @@ import { colors, moderateScale, radius, responsiveFont, spacing } from "../../sr
 
 const MOCK_MESH_POINTS = [
   { x: 0, y: -90 }, // Forehead top
-  { x: -30, y: -75 }, { x: 30, y: -75 },
-  { x: -55, y: -50 }, { x: 55, y: -50 }, // Upper temples
-  { x: -20, y: -45 }, { x: 20, y: -45 }, // Eyebrows
-  { x: -40, y: -30 }, { x: 0, y: -30 }, { x: 40, y: -30 }, // Eyes / Bridge
-  { x: -15, y: -15 }, { x: 15, y: -15 }, // Nose top
-  { x: -70, y: 0 }, { x: -35, y: 0 }, { x: 0, y: 0 }, { x: 35, y: 0 }, { x: 70, y: 0 }, // Cheekbones / Nose tip
-  { x: -25, y: 20 }, { x: 25, y: 20 }, // Mouth corners
-  { x: -50, y: 40 }, { x: 0, y: 35 }, { x: 50, y: 40 }, // Jawline mid
-  { x: -30, y: 70 }, { x: 30, y: 70 }, // Lower jaw
-  { x: 0, y: 90 }, // Chin
+  { x: -30, y: -75 },
+  { x: 30, y: -75 },
+  { x: -55, y: -50 },
+  { x: 55, y: -50 }, // Upper temples
+  { x: -20, y: -45 },
+  { x: 20, y: -45 }, // Eyebrows
+  { x: -40, y: -30 },
+  { x: 0, y: -30 },
+  { x: 40, y: -30 }, // Eyes / Bridge
+  { x: -15, y: -15 },
+  { x: 15, y: -15 }, // Nose top
+  { x: -70, y: 0 },
+  { x: -35, y: 0 },
+  { x: 0, y: 0 },
+  { x: 35, y: 0 },
+  { x: 70, y: 0 }, // Cheekbones / Nose tip
+  { x: -25, y: 20 },
+  { x: 25, y: 20 }, // Mouth corners
+  { x: -50, y: 40 },
+  { x: 0, y: 35 },
+  { x: 50, y: 40 }, // Jawline mid
+  { x: -30, y: 70 },
+  { x: 30, y: 70 }, // Lower jaw
+  { x: 0, y: 90 } // Chin
 ];
 
 export default function FaceRecordScreen() {
@@ -158,37 +181,33 @@ export default function FaceRecordScreen() {
       <StatusBar style="light" backgroundColor={colors.darkSurface} />
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <View style={[styles.cameraFrame, { height: cameraHeight }]}>
-          <CameraView
-            ref={cameraRef}
-            style={styles.camera}
-            mode="video"
-            facing="front"
-          />
+          <CameraView ref={cameraRef} style={styles.camera} mode="video" facing="front" />
           {/* Face outline guide overlay */}
           <View style={styles.faceGuideOverlay} pointerEvents="none">
             <View style={styles.faceGuideOval} />
-            
+
             {/* Animated high-tech mesh points */}
-            {recording && MOCK_MESH_POINTS.map((pt, idx) => {
-              const jitterX = Math.sin(meshPulse + idx) * 1.5;
-              const jitterY = Math.cos(meshPulse + idx) * 1.5;
-              const opacity = 0.4 + Math.sin((meshPulse + idx) / 2) * 0.4;
-              return (
-                <View
-                  key={idx}
-                  style={[
-                    styles.meshDot,
-                    {
-                      left: "50%",
-                      top: "50%",
-                      marginLeft: pt.x + jitterX - 2,
-                      marginTop: pt.y + jitterY - 2,
-                      opacity,
-                    },
-                  ]}
-                />
-              );
-            })}
+            {recording &&
+              MOCK_MESH_POINTS.map((pt, idx) => {
+                const jitterX = Math.sin(meshPulse + idx) * 1.5;
+                const jitterY = Math.cos(meshPulse + idx) * 1.5;
+                const opacity = 0.4 + Math.sin((meshPulse + idx) / 2) * 0.4;
+                return (
+                  <View
+                    key={idx}
+                    style={[
+                      styles.meshDot,
+                      {
+                        left: "50%",
+                        top: "50%",
+                        marginLeft: pt.x + jitterX - 2,
+                        marginTop: pt.y + jitterY - 2,
+                        opacity
+                      }
+                    ]}
+                  />
+                );
+              })}
 
             <Text style={styles.faceGuideText}>
               {recording ? "Scanning expressions..." : "Position your face here"}
@@ -224,7 +243,10 @@ export default function FaceRecordScreen() {
 
           <View style={styles.controlsRow}>
             <View style={styles.sideControlPlaceholder} />
-            <RecordButton isRecording={recording} onPress={recording ? stopRecording : startRecording} />
+            <RecordButton
+              isRecording={recording}
+              onPress={recording ? stopRecording : startRecording}
+            />
             <View style={styles.sideControlPlaceholder} />
           </View>
 
@@ -250,7 +272,9 @@ export default function FaceRecordScreen() {
                   <Feather name="smile" size={18} color={colors.accent} />
                 </View>
                 <Text style={styles.emptyPreviewTitle}>No video yet</Text>
-                <Text style={styles.emptyPreviewText}>Tap record to capture your facial expressions.</Text>
+                <Text style={styles.emptyPreviewText}>
+                  Tap record to capture your facial expressions.
+                </Text>
               </View>
             </AppCard>
           )}
@@ -472,6 +496,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
-    elevation: 2,
+    elevation: 2
   }
 });

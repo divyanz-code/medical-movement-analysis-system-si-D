@@ -8,31 +8,30 @@ import { useAppTheme } from "../themeProvider";
 type MetricVariant = "default" | "accent" | "success" | "warning";
 type Trend = "up" | "down" | "stable";
 
-function buildVariantConfig(colors: ThemeColors): Record<
-  MetricVariant,
-  { backgroundColor: string; borderColor: string; iconColor: string }
-> {
+function buildVariantConfig(
+  colors: ThemeColors
+): Record<MetricVariant, { backgroundColor: string; borderColor: string; iconColor: string }> {
   return {
-  default: {
-    backgroundColor: colors.background,
-    borderColor: colors.border,
-    iconColor: colors.textMuted
-  },
-  accent: {
-    backgroundColor: colors.accentSoft,
-    borderColor: colors.border,
-    iconColor: colors.accent
-  },
-  success: {
-    backgroundColor: colors.successSoft,
-    borderColor: colors.border,
-    iconColor: colors.success
-  },
-  warning: {
-    backgroundColor: colors.warningSoft,
-    borderColor: colors.border,
-    iconColor: colors.warning
-  }
+    default: {
+      backgroundColor: colors.background,
+      borderColor: colors.border,
+      iconColor: colors.textMuted
+    },
+    accent: {
+      backgroundColor: colors.accentSoft,
+      borderColor: colors.border,
+      iconColor: colors.accent
+    },
+    success: {
+      backgroundColor: colors.successSoft,
+      borderColor: colors.border,
+      iconColor: colors.success
+    },
+    warning: {
+      backgroundColor: colors.warningSoft,
+      borderColor: colors.border,
+      iconColor: colors.warning
+    }
   };
 }
 

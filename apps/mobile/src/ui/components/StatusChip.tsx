@@ -16,36 +16,36 @@ function buildStatusConfig(colors: ThemeColors): Record<
   }
 > {
   return {
-  aligned: {
-    label: "Aligned",
-    backgroundColor: colors.successSoft,
-    borderColor: colors.border,
-    textColor: colors.success
-  },
-  compensatory: {
-    label: "Compensatory",
-    backgroundColor: colors.warningSoft,
-    borderColor: colors.border,
-    textColor: colors.warning
-  },
-  warning: {
-    label: "Warning",
-    backgroundColor: colors.dangerSoft,
-    borderColor: colors.border,
-    textColor: colors.danger
-  },
-  success: {
-    label: "Complete",
-    backgroundColor: colors.successSoft,
-    borderColor: colors.border,
-    textColor: colors.success
-  },
-  processing: {
-    label: "Processing",
-    backgroundColor: colors.accentSoft,
-    borderColor: colors.border,
-    textColor: colors.accent
-  }
+    aligned: {
+      label: "Aligned",
+      backgroundColor: colors.successSoft,
+      borderColor: colors.border,
+      textColor: colors.success
+    },
+    compensatory: {
+      label: "Compensatory",
+      backgroundColor: colors.warningSoft,
+      borderColor: colors.border,
+      textColor: colors.warning
+    },
+    warning: {
+      label: "Warning",
+      backgroundColor: colors.dangerSoft,
+      borderColor: colors.border,
+      textColor: colors.danger
+    },
+    success: {
+      label: "Complete",
+      backgroundColor: colors.successSoft,
+      borderColor: colors.border,
+      textColor: colors.success
+    },
+    processing: {
+      label: "Processing",
+      backgroundColor: colors.accentSoft,
+      borderColor: colors.border,
+      textColor: colors.accent
+    }
   };
 }
 

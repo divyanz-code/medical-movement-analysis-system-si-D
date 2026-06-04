@@ -724,16 +724,15 @@ def _extract_face_blendshapes(
     frames, draw 478 landmarks on the frame with the highest expression score,
     and return (per_frame_blendshapes, total_frames_sampled, frames_with_face, landmark_image_bytes).
 
-    Each entry in per_frame_blendshapes is a dict mapping blendshape
+                    Each entry in per_frame_blendshapes is a dict mapping blendshape
     category name → score (0.0–1.0).
     """
-    import cv2
-    import mediapipe as mp  # noqa: PLC0415
-
-    BaseOptions = mp.tasks.BaseOptions
-    FaceLandmarker = mp.tasks.vision.FaceLandmarker
-    FaceLandmarkerOptions = mp.tasks.vision.FaceLandmarkerOptions
-    VisionRunningMode = mp.tasks.vision.RunningMode
+    import cv2  # type: ignore
+    from mediapipe import Image, ImageFormat  # type: ignore
+    from mediapipe.tasks.python import BaseOptions  # type: ignore
+    from mediapipe.tasks.python.vision import FaceLandmarker, FaceLandmarkerOptions  # type: ignore
+    from mediapipe.tasks.python.vision.core.vision_task_running_mode import VisionTaskRunningMode as VisionRunningMode  # type: ignore
+    from mediapipe.python.solutions.face_mesh_connections import FACEMESH_TESSELATION  # type: ignore
 
     options = FaceLandmarkerOptions(
         base_options=BaseOptions(model_asset_path=model_path),
@@ -771,8 +770,8 @@ def _extract_face_blendshapes(
 
                 # MediaPipe expects RGB
                 rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                mp_image = mp.Image(
-                    image_format=mp.ImageFormat.SRGB,
+                mp_image = Image(
+                    image_format=ImageFormat.SRGB,
                     data=rgb_frame,
                 )
                 result = landmarker.detect(mp_image)
@@ -807,7 +806,7 @@ def _extract_face_blendshapes(
         h, w, _ = best_frame.shape
 
         # 1. Draw green triangular mesh connections (Tessellation)
-        connections = mp.solutions.face_mesh_connections.FACEMESH_TESSELATION
+        connections = FACEMESH_TESSELATION
         for start_idx, end_idx in connections:
             if start_idx < len(best_landmarks) and end_idx < len(best_landmarks):
                 pt1 = best_landmarks[start_idx]

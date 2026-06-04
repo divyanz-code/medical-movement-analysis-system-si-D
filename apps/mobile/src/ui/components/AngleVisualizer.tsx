@@ -11,12 +11,7 @@ interface AngleVisualizerProps {
   size?: number;
 }
 
-export function AngleVisualizer({
-  angle,
-  minAngle,
-  maxAngle,
-  size = 120
-}: AngleVisualizerProps) {
+export function AngleVisualizer({ angle, minAngle, maxAngle, size = 120 }: AngleVisualizerProps) {
   const { colors } = useAppTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const normalized = Math.max(0, Math.min(180, angle));

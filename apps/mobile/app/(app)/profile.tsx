@@ -1,6 +1,15 @@
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useMemo, useState } from "react";
-import { ActivityIndicator, Alert, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View
+} from "react-native";
 import { Feather } from "@expo/vector-icons";
 
 import { patientFlow } from "../../src/runtime/client";
@@ -8,7 +17,13 @@ import { AppButton } from "../../src/ui/components/AppButton";
 import { AppCard } from "../../src/ui/components/AppCard";
 import { AppField } from "../../src/ui/components/AppField";
 import { ScreenHeader } from "../../src/ui/components/ScreenHeader";
-import { moderateScale, radius, responsiveFont, spacing, type ThemeColors } from "../../src/ui/theme";
+import {
+  moderateScale,
+  radius,
+  responsiveFont,
+  spacing,
+  type ThemeColors
+} from "../../src/ui/theme";
 import { useAppTheme } from "../../src/ui/themeProvider";
 
 function initials(name: string): string {
@@ -57,7 +72,10 @@ export default function ProfileScreen() {
       setIsEditing(false);
       Alert.alert("Profile Updated", "Your profile was saved successfully.");
     } catch (error) {
-      Alert.alert("Update Failed", error instanceof Error ? error.message : "Profile update failed");
+      Alert.alert(
+        "Update Failed",
+        error instanceof Error ? error.message : "Profile update failed"
+      );
     }
   }
 
@@ -147,7 +165,6 @@ export default function ProfileScreen() {
             </View>
           </AppCard>
         </View>
-
       </ScrollView>
     </SafeAreaView>
   );
@@ -155,112 +172,112 @@ export default function ProfileScreen() {
 
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
-  root: {
-    flex: 1,
-    backgroundColor: colors.surface
-  },
-  content: {
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.lg,
-    paddingBottom: 96,
-    gap: spacing.md
-  },
-  heroCard: {
-    borderRadius: radius.lg,
-    backgroundColor: colors.card,
-    borderWidth: 1,
-    borderColor: colors.border,
-    padding: spacing.md,
-    gap: spacing.md
-  },
-  heroTopRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.md
-  },
-  avatar: {
-    width: moderateScale(74),
-    height: moderateScale(74),
-    borderRadius: radius.pill,
-    backgroundColor: colors.accentSoft,
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  avatarText: {
-    color: colors.accent,
-    fontSize: responsiveFont(24),
-    fontWeight: "700"
-  },
-  identityText: {
-    flex: 1,
-    gap: spacing.xs
-  },
-  email: {
-    color: colors.textMuted,
-    fontSize: responsiveFont(13)
-  },
-  name: {
-    color: colors.text,
-    fontSize: responsiveFont(24),
-    fontWeight: "700"
-  },
-  heroMetaRow: {
-    flexDirection: "row",
-    gap: spacing.sm
-  },
-  badge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-    borderRadius: radius.pill,
-    backgroundColor: colors.accentSoft,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: moderateScale(6)
-  },
-  badgeText: {
-    color: colors.accent,
-    fontSize: responsiveFont(12),
-    fontWeight: "600"
-  },
-  sectionWrap: {
-    borderRadius: radius.lg
-  },
-  sectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between"
-  },
-  sectionTitle: {
-    color: colors.text,
-    fontWeight: "700",
-    fontSize: responsiveFont(17)
-  },
-  inlineEditButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: spacing.xs,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radius.pill,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs
-  },
-  inlineEditText: {
-    color: colors.accent,
-    fontWeight: "600",
-    fontSize: responsiveFont(12)
-  },
-  formFields: {
-    marginTop: spacing.md,
-    gap: spacing.md
-  },
-  actionsRow: {
-    flexDirection: "row",
-    gap: spacing.sm,
-    marginTop: spacing.xs
-  },
-  actionCell: {
-    flex: 1
-  },
+    root: {
+      flex: 1,
+      backgroundColor: colors.surface
+    },
+    content: {
+      paddingHorizontal: spacing.xl,
+      paddingTop: spacing.lg,
+      paddingBottom: 96,
+      gap: spacing.md
+    },
+    heroCard: {
+      borderRadius: radius.lg,
+      backgroundColor: colors.card,
+      borderWidth: 1,
+      borderColor: colors.border,
+      padding: spacing.md,
+      gap: spacing.md
+    },
+    heroTopRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.md
+    },
+    avatar: {
+      width: moderateScale(74),
+      height: moderateScale(74),
+      borderRadius: radius.pill,
+      backgroundColor: colors.accentSoft,
+      alignItems: "center",
+      justifyContent: "center"
+    },
+    avatarText: {
+      color: colors.accent,
+      fontSize: responsiveFont(24),
+      fontWeight: "700"
+    },
+    identityText: {
+      flex: 1,
+      gap: spacing.xs
+    },
+    email: {
+      color: colors.textMuted,
+      fontSize: responsiveFont(13)
+    },
+    name: {
+      color: colors.text,
+      fontSize: responsiveFont(24),
+      fontWeight: "700"
+    },
+    heroMetaRow: {
+      flexDirection: "row",
+      gap: spacing.sm
+    },
+    badge: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.xs,
+      borderRadius: radius.pill,
+      backgroundColor: colors.accentSoft,
+      paddingHorizontal: spacing.sm,
+      paddingVertical: moderateScale(6)
+    },
+    badgeText: {
+      color: colors.accent,
+      fontSize: responsiveFont(12),
+      fontWeight: "600"
+    },
+    sectionWrap: {
+      borderRadius: radius.lg
+    },
+    sectionHeader: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between"
+    },
+    sectionTitle: {
+      color: colors.text,
+      fontWeight: "700",
+      fontSize: responsiveFont(17)
+    },
+    inlineEditButton: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: spacing.xs,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: radius.pill,
+      paddingHorizontal: spacing.sm,
+      paddingVertical: spacing.xs
+    },
+    inlineEditText: {
+      color: colors.accent,
+      fontWeight: "600",
+      fontSize: responsiveFont(12)
+    },
+    formFields: {
+      marginTop: spacing.md,
+      gap: spacing.md
+    },
+    actionsRow: {
+      flexDirection: "row",
+      gap: spacing.sm,
+      marginTop: spacing.xs
+    },
+    actionCell: {
+      flex: 1
+    }
   });
 }

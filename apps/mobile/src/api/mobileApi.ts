@@ -55,7 +55,7 @@ export class BackendMobileApi implements MobileApi {
     const formData = new FormData();
     formData.append("duration_seconds", String(payload.durationSeconds));
     formData.append("analysis_type", payload.analysisType ?? "movement");
-    
+
     const videoFile = (payload.video as any)?.uri
       ? {
           uri: (payload.video as any).uri,
@@ -64,7 +64,7 @@ export class BackendMobileApi implements MobileApi {
         }
       : payload.video;
 
-    formData.append("video", videoFile as any, payload.fileName);
+    formData.append("video", videoFile as any);
 
     return this.http.request<VideoUploadResponse>(
       "/api/v1/videos",
