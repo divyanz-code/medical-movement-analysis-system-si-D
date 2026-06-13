@@ -1,113 +1,189 @@
-import { Link, useRouter } from "expo-router";
-import { useMemo, useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useState } from "react";
 import {
-  Alert,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  View
+  View,
 } from "react-native";
-import { StatusBar } from "expo-status-bar";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { Alert } from "react-native";
 
-import { patientFlow } from "../../src/runtime/client";
-import { profileNeedsOnboarding } from "../../src/types/domain";
-import { AppButton } from "../../src/ui/components/AppButton";
-import { AppCard } from "../../src/ui/components/AppCard";
-import { AppField } from "../../src/ui/components/AppField";
-import { ScreenHeader } from "../../src/ui/components/ScreenHeader";
-import { responsiveFont, spacing, type ThemeColors } from "../../src/ui/theme";
-import { useAppTheme } from "../../src/ui/themeProvider";
+import { Button } from "@/src/components/Button";
+import { FormField } from "@/src/components/FormField";
+import { useTheme } from "@/src/theme/ThemeProvider";
+import { storage } from "@/src/utils/storage";
+import { patientFlow } from "@/src/runtime/client";
 
-export default function LoginScreen() {
+type Role = "patient" | "doctor" | "admin";
+
+const ROLE_META: Record<Role, { title: string; sub: string; icon: keyof typeof Ionicons.glyphMap }> = {
+  patient: { title: "Patient Login", sub: "Welcome back. Continue your recovery.", icon: "body" },
+  doctor: { title: "Doctor Login", sub: "Manage your patients & protocols.", icon: "medkit" },
+  admin: { title: "Admin Login", sub: "System operations & user management.", icon: "shield-checkmark" },
+};
+
+export default function Login() {
   const router = useRouter();
-  const { colors, mode } = useAppTheme();
-  const styles = useMemo(() => createStyles(colors), [colors]);
-  const [email, setEmail] = useState("shaurya@example.com");
-  const [password, setPassword] = useState("StrongP@ssw0rd!");
-  const [error, setError] = useState<string | null>(null);
+  const { palette, spacing, radii } = useTheme();
+  const params = useLocalSearchParams<{ role?: string }>();
+  const role: Role = (params.role as Role) || "patient";
+  const meta = ROLE_META[role];
+
+  const [email, setEmail] = useState(
+    role === "patient" ? "shaurya@example.com" : role === "doctor" ? "neha@medmove.ai" : "admin@medmove.ai",
+  );
+  const [password, setPassword] = useState(
+    role === "patient" ? "StrongP@ssw0rd!" : "demo1234"
+  );
   const [loading, setLoading] = useState(false);
 
-  async function onLogin() {
-    setLoading(true);
-    setError(null);
-    try {
-      await patientFlow.login(email, password);
-      const profile = await patientFlow.getProfile();
-      router.replace(profileNeedsOnboarding(profile) ? "/(auth)/onboarding" : "/(app)/home");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
-    } finally {
-      setLoading(false);
+  const onSubmit = async () => {
+    if (!email.trim() || !password.trim()) {
+      Alert.alert("Validation Error", "Please enter email and password.");
+      return;
     }
-  }
-
-  function onBiometricLogin() {
-    Alert.alert("Biometric Sign-In", "Authenticate with Face ID / Fingerprint?", [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Authenticate",
-        onPress: () => {
-          onLogin().catch(() => {
-            // Login errors are already handled in onLogin.
-          });
-        }
-      }
-    ]);
-  }
+    setLoading(true);
+    try {
+      await patientFlow.login(email.trim().toLowerCase(), password);
+      await storage.setItem("medmove.role", role);
+      await storage.setItem("medmove.email", email.trim().toLowerCase());
+      setLoading(false);
+      if (role === "patient") router.replace("/(patient)/(tabs)");
+      else if (role === "doctor") router.replace("/(doctor)/(tabs)");
+      else router.replace("/(admin)/(tabs)");
+    } catch (err: any) {
+      setLoading(false);
+      Alert.alert("Login Failed", err.message || "Invalid credentials");
+    }
+  };
 
   return (
-    <SafeAreaView style={styles.root}>
-      <StatusBar
-        style={mode === "dark" ? "light" : "dark"}
-        backgroundColor={colors.authBackground}
-      />
+    <SafeAreaView style={{ flex: 1, backgroundColor: palette.background }} edges={["top", "bottom"]}>
       <KeyboardAvoidingView
-        style={styles.keyboardContainer}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
+        style={{ flex: 1 }}
       >
         <ScrollView
-          contentContainerStyle={styles.scrollContent}
+          contentContainerStyle={{ flexGrow: 1, padding: spacing.lg }}
           keyboardShouldPersistTaps="handled"
         >
-          <ScreenHeader title="Welcome Back" subtitle="Sign in to continue your movement journey" />
+          <Pressable
+            testID="back-button"
+            onPress={() => router.back()}
+            style={[
+              styles.iconBtn,
+              { backgroundColor: palette.surface, borderColor: palette.border },
+            ]}
+          >
+            <Ionicons name="chevron-back" size={22} color={palette.textPrimary} />
+          </Pressable>
 
-          <AppCard>
-            <View style={styles.formContent}>
-              <AppField
-                label="Email"
-                autoCapitalize="none"
-                keyboardType="email-address"
-                value={email}
-                onChangeText={setEmail}
-                placeholder="you@example.com"
-              />
-              <AppField
-                label="Password"
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
-                placeholder="••••••••"
-              />
-
-              {error ? <Text style={styles.error}>{error}</Text> : null}
-
-              <AppButton label="Sign In" onPress={onLogin} loading={loading} />
-              <AppButton
-                label="Face ID / Fingerprint"
-                onPress={onBiometricLogin}
-                variant="secondary"
-              />
+          <View style={{ marginTop: 32, alignItems: "flex-start" }}>
+            <View
+              style={{
+                width: 52,
+                height: 52,
+                borderRadius: 14,
+                backgroundColor: palette.primaryMuted,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Ionicons name={meta.icon} size={24} color={palette.primary} />
             </View>
-          </AppCard>
+            <Text
+              style={{
+                color: palette.textPrimary,
+                fontSize: 28,
+                fontWeight: "800",
+                marginTop: 18,
+                letterSpacing: -0.5,
+              }}
+            >
+              {meta.title}
+            </Text>
+            <Text style={{ color: palette.textSecondary, fontSize: 14, marginTop: 6 }}>
+              {meta.sub}
+            </Text>
+          </View>
 
-          <View style={styles.footerRow}>
-            <Text style={styles.footerText}>Don&apos;t have an account? </Text>
-            <Link href="/(auth)/register" style={styles.footerLink}>
-              Sign Up
-            </Link>
+          <View style={{ marginTop: 28 }}>
+            <FormField
+              testID="input-email"
+              label="Email"
+              icon="mail-outline"
+              placeholder="you@medmove.ai"
+              value={email}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+            />
+            <FormField
+              testID="input-password"
+              label="Password"
+              icon="lock-closed-outline"
+              placeholder="••••••••"
+              value={password}
+              onChangeText={setPassword}
+              secure
+            />
+            <Pressable
+              testID="forgot-password-link"
+              onPress={() => router.push("/(auth)/forgot-password")}
+              style={{ alignSelf: "flex-end", marginTop: 2, marginBottom: 8 }}
+            >
+              <Text style={{ color: palette.primary, fontSize: 13, fontWeight: "600" }}>
+                Forgot password?
+              </Text>
+            </Pressable>
+
+            <Button
+              testID="login-submit-button"
+              label="Sign in securely"
+              iconRight="arrow-forward"
+              fullWidth
+              loading={loading}
+              onPress={onSubmit}
+            />
+
+            <View style={[styles.divider, { borderColor: palette.divider }]}>
+              <Text style={{ color: palette.textSecondary, fontSize: 11, fontWeight: "700", letterSpacing: 1.2 }}>
+                OR
+              </Text>
+            </View>
+
+            <Button
+              label="Continue with biometrics"
+              iconLeft="finger-print"
+              variant="secondary"
+              fullWidth
+              onPress={onSubmit}
+              testID="biometrics-login"
+            />
+          </View>
+
+          <View style={{ flex: 1 }} />
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              marginTop: 28,
+            }}
+          >
+            <Text style={{ color: palette.textSecondary, fontSize: 13 }}>New here? </Text>
+            <Pressable
+              testID="navigate-register"
+              onPress={() => router.push({ pathname: "/(auth)/register", params: { role } })}
+            >
+              <Text style={{ color: palette.primary, fontSize: 13, fontWeight: "700" }}>
+                Create {role} account
+              </Text>
+            </Pressable>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -115,39 +191,19 @@ export default function LoginScreen() {
   );
 }
 
-function createStyles(colors: ThemeColors) {
-  return StyleSheet.create({
-    root: {
-      flex: 1,
-      backgroundColor: colors.authBackground
-    },
-    keyboardContainer: {
-      flex: 1
-    },
-    scrollContent: {
-      flexGrow: 1,
-      paddingHorizontal: spacing.xl,
-      paddingVertical: spacing.lg,
-      justifyContent: "center",
-      gap: spacing.lg
-    },
-    formContent: {
-      gap: spacing.md
-    },
-    error: {
-      color: colors.danger,
-      fontSize: responsiveFont(14)
-    },
-    footerRow: {
-      flexDirection: "row",
-      justifyContent: "center"
-    },
-    footerText: {
-      color: colors.textMuted
-    },
-    footerLink: {
-      color: colors.accent,
-      fontWeight: "700"
-    }
-  });
-}
+const styles = StyleSheet.create({
+  iconBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: StyleSheet.hairlineWidth,
+  },
+  divider: {
+    marginVertical: 20,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    alignSelf: "stretch",
+    alignItems: "center",
+  },
+});

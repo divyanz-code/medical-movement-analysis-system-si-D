@@ -1,0 +1,144 @@
+{
+  "theme_and_archetype": {
+    "domain": "Health, Wellness & Tele-Rehabilitation",
+    "theme": "Light/Dark Mode Hybrid",
+    "primary_archetype": "Archetype 1 (Organic & Earthy) - Modified for Clinical Precision",
+    "rationale": "Medical applications demand trust, calmness, and clinical clarity. We blend the grounded, calming nature of Earthy/Organic with 'Clean Medical Blue/Teal' to achieve a professional healthcare visual language. No generic SaaS purple or vibrant gradients. We rely on solid surfaces, high contrast for readability, and soothing colors."
+  },
+  "typography": {
+    "rules": "DO NOT use Inter or Roboto for headings. Native font scaling applies.",
+    "fonts": {
+      "heading": "Manrope",
+      "body": "IBM Plex Sans"
+    },
+    "hierarchy": {
+      "h1": "text-4xl (32px), tracking-tight, font-bold",
+      "h2": "text-2xl (24px), tracking-tight, font-bold",
+      "h3": "text-xl (20px), font-semibold",
+      "body": "text-base (16px), leading-relaxed, font-normal",
+      "label": "text-xs (12px), uppercase, tracking-[0.2em], font-bold"
+    }
+  },
+  "color_palette": {
+    "light_mode": {
+      "background": "#FAFAFA",
+      "surface": "#FFFFFF",
+      "primary": "#0F766E",
+      "primary_active": "#115E59",
+      "secondary": "#0369A1",
+      "accent": "#14B8A6",
+      "text_primary": "#0F172A",
+      "text_secondary": "#64748B",
+      "border": "#E2E8F0",
+      "success_start": "#10B981",
+      "danger_end": "#EF4444"
+    },
+    "dark_mode": {
+      "background": "#0F172A",
+      "surface": "#1E293B",
+      "primary": "#134E4A",
+      "primary_active": "#0F766E",
+      "secondary": "#0369A1",
+      "accent": "#2DD4BF",
+      "text_primary": "#F8FAFC",
+      "text_secondary": "#94A3B8",
+      "border": "#334155",
+      "success_start": "#34D399",
+      "danger_end": "#F87171"
+    }
+  },
+  "spacing_and_layout": {
+    "philosophy": "Generous Spacing Philosophy with nesting.",
+    "scale": "Tailwind standard (4px base) via NativeWind or StyleSheet.",
+    "container_padding": "p-6 (24px) for main screens, p-4 (16px) for cards.",
+    "border_radius": "Flat or subtle: max 8px (rounded-lg) for cards/buttons to avoid looking overly playful. Precision is key.",
+    "alignment": "Left-align forms, labels, and text data. Center-align hero images and major CTAs."
+  },
+  "components": {
+    "buttons": "Solid backgrounds for Primary (Primary Teal). Text MUST contrast (White). Hover/Active states must use slightly darker/lighter hue.",
+    "cards": "Cardless or purely flat rectangular with 1px border. NO soft floating shadows (Neumorphism) as health apps must prevent visual refraction. Use Solid surfaces.",
+    "navigation": "Bottom Tabs (Home, Exercises, Live Analysis, Progress, Profile) + Drawer Navigation. Active tab uses accent color.",
+    "icons": "lucide-react-native. Strict rule: NO EMOJIS."
+  },
+  "screens_blueprints": {
+    "Splash_Onboarding": {
+      "layout": "Full-screen brand logo. Onboarding carousel explaining AI analysis. Role selector: Patient, Doctor, Admin."
+    },
+    "Auth_Flow": {
+      "layout": "Role-specific Login/Register forms. Left-aligned inputs with strict borders. 'Forgot Password' link below. Primary CTA button full-width. data-testid='login-submit-button'."
+    },
+    "Patient_Dashboard": {
+      "layout": "Header with greeting. Top: 'Today\\'s Exercises' horizontal scroll list. Middle: Progress Score circular chart (Recovery Trend). Bottom: Last Analysis summary, Notifications list."
+    },
+    "Doctor_Dashboard": {
+      "layout": "Header with Doctor Profile. KPI row (Active Patients, Avg Compliance). List of Patients with Risk Flags (Red/Yellow/Green indicators). 'Assign Exercises' button via bottom sheet."
+    },
+    "Admin_Panel": {
+      "layout": "System health metrics (uptime, active users). Data tables/lists for 'Manage Users' and 'Manage Exercise Library'."
+    },
+    "Exercise_Library": {
+      "layout": "Category Tabs (Upper Limb, Lower Limb, Spine, Facial). Grid of exercise cards containing: animation thumbnail, title, target ROM. Clicking opens a bottom-sheet with instructions, correct path description. Facial Rehab UI includes before vs after comparison."
+    },
+    "Live_Camera_Analysis_HUD": {
+      "hero_status": "This is the flagship hero screen. Immersive camera background.",
+      "layout": {
+        "top": "Status bar (Exercise name), Voice feedback toggle, Joint angle readout pills (e.g., 'Elbow: 45°').",
+        "center": "Live Skeleton Overlay (visual lines mapping body). For Facial rehab: Face Mesh placement guide (a dashed oval 'Place face here') with symmetry indicators. Trajectory arcs overlay with Green START marker and Red END marker.",
+        "bottom": "Real-time feedback toast bubbles ('Raise arm higher', 'Too fast', 'Excellent'). Big Record/Start CTA ring. Rep counter circular progress inside the ring. Exit/Cancel button."
+      }
+    },
+    "Session_History_Progress": {
+      "layout": "Segmented control (History | Trends). History: Vertical list of past sessions with ROM/Accuracy/Score. Trends: Line charts mapping ROM improvement and compliance over weeks."
+    },
+    "PDF_Reports": {
+      "layout": "List of downloadable PDFs by date. Viewer overlay for rendering PDF content with a 'Share' CTA."
+    },
+    "Drawer_Navigation": {
+      "layout": "Accessible via header hamburger. Contains: 'Help/Support', 'About Team' (vertical cards of team members with photos), 'Baseline Discharge Videos' (Accordion or nested folders showing video lists)."
+    }
+  },
+  "image_urls": {
+    "hero_and_clinic": [
+      {
+        "url": "https://images.pexels.com/photos/29807423/pexels-photo-29807423.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Two physiotherapists providing treatment - Good for onboarding or help section"
+      },
+      {
+        "url": "https://images.pexels.com/photos/13538710/pexels-photo-13538710.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Adjusting leg strap - Good for exercise library hero"
+      }
+    ],
+    "doctor_avatars": [
+      {
+        "url": "https://images.pexels.com/photos/32160037/pexels-photo-32160037.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Young male doctor - Patient's doctor profile view"
+      },
+      {
+        "url": "https://images.pexels.com/photos/6129500/pexels-photo-6129500.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Confident male doctor - Doctor dashboard profile"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NTYxOTJ8MHwxfHNlYXJjaHwxfHxkb2N0b3IlMjBwb3J0cmFpdHxlbnwwfHx8fDE3ODA5ODczNjl8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Male doctor with glasses - Admin panel user management avatar"
+      }
+    ],
+    "exercise_thumbnails": [
+      {
+        "url": "https://images.unsplash.com/photo-1562771379-eafdca7a02f8?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2Mzl8MHwxfHNlYXJjaHwxfHxzdHJldGNoaW5nJTIwZXhlcmNpc2V8ZW58MHx8fHwxNzgwOTg3MzY5fDA&ixlib=rb-4.1.0&q=85",
+        "description": "Upper/Lower limb stretching - Thumbnail for exercise library"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1621691211095-fe4b38f21788?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2Mzl8MHwxfHNlYXJjaHwzfHxzdHJldGNoaW5nJTIwZXhlcmNpc2V8ZW58MHx8fHwxNzgwOTg3MzY5fDA&ixlib=rb-4.1.0&q=85",
+        "description": "Spine/Core stretching - Thumbnail for spine exercises"
+      }
+    ]
+  },
+  "motion_and_interactions": {
+    "rules": "Avoid distracting animations. Focus on medical precision. Feedback bubbles should pop in (spring animation) and fade out. Transitions between tabs should be instant or cross-fade. Camera AR markers (Skeleton/Face) must have smooth interpolation (if mocking, use gentle floating animation)."
+  },
+  "accessibility_and_testing": {
+    "contrast": "Text over backgrounds MUST meet 4.5:1 ratio. Overlays in the Camera HUD must have drop-shadows or translucent dark backing to ensure readability over varied video feeds.",
+    "testing": "All interactive and key informational elements MUST include a data-testid attribute. Examples: data-testid='login-submit-button', data-testid='btn-start-analysis', data-testid='tab-exercises', data-testid='input-patient-email'."
+  },
+  "instructions_to_main_agent": "Use ONLY .js files for React Native Expo (no .tsx). Apply these guidelines strictly. Implement mock data for all 3 personas (Patient, Doctor, Admin). Build the Bottom Tabs and Drawer Nav exactly as described. The Live Camera Analysis screen is the highest priority 'Hero' screen; construct the UI overlays (Face oval, Skeleton, Trajectory Arcs, Feedback bubbles, Angle pills) accurately over a camera placeholder. Ensure strict adherence to the defined medical teal/blue color palette."
+}

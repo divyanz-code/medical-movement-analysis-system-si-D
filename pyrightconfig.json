@@ -1,0 +1,7 @@
+{
+  "venvPath": "services/backend",
+  "venv": "venv",
+  "extraPaths": [
+    "services/backend"
+  ]
+}

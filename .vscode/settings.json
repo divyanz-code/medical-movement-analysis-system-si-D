@@ -1,0 +1,10 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/services/backend/venv/bin/python",
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/services/backend"
+  ],
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.autoImportCompletions": true,
+  "json.schemaDownload.enable": false
+}
+
