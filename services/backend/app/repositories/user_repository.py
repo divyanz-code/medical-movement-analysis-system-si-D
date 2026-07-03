@@ -28,7 +28,9 @@ class UserRepository:
         self.session.refresh(user)
         return user
 
-    def upsert_profile(self, *, user: User, age: int, gender: str, affected_limb: str) -> User:
+    def upsert_profile(self, *, user: User, age: int, gender: str, affected_limb: str, name: str | None = None) -> User:
+        if name is not None:
+            user.name = name
         if user.profile is None:
             user.profile = Profile(user_id=user.id)
 

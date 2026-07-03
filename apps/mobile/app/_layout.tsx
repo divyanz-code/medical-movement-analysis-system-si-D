@@ -8,6 +8,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { useIconFonts } from "@/src/hooks/use-icon-fonts";
 import { ThemeProvider, useTheme } from "@/src/theme/ThemeProvider";
+import { UserProvider } from "@/src/context/UserContext";
 
 // Suppress deprecation warnings from internal navigation structures
 LogBox.ignoreLogs([
@@ -50,7 +51,9 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <ThemeProvider>
-          <ThemedStack />
+          <UserProvider>
+            <ThemedStack />
+          </UserProvider>
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

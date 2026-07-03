@@ -21,4 +21,5 @@ class ProfileService:
             age=payload.age,
             gender=payload.gender,
             affected_limb=payload.affected_limb,
+            name=payload.name,
         )

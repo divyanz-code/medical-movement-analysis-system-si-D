@@ -23,20 +23,28 @@ import {
   TODAY_EXERCISES,
 } from "@/src/data/mock";
 import { useTheme } from "@/src/theme/ThemeProvider";
+import { useUser } from "@/src/context/UserContext";
 
 export default function PatientHome() {
   const { palette, radii, spacing, shadow } = useTheme();
+  const { profile, refreshProfile } = useUser();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+
+  React.useEffect(() => {
+    refreshProfile();
+  }, []);
 
   const completed = TODAY_EXERCISES.filter((e) => e.status === "completed").length;
   const progressPct = Math.round((completed / TODAY_EXERCISES.length) * 100);
   const unread = NOTIFICATIONS.filter((n) => n.unread).length;
 
+  const firstName = profile?.name ? profile.name.split(" ")[0] : "Patient";
+
   return (
     <View style={{ flex: 1, backgroundColor: palette.background }}>
       <ScreenHeader
-        title="Hello, Aarav"
+        title={`Hello, ${firstName}`}
         subtitle="Let's keep recovering today."
         showMenu
         rightIcon="notifications-outline"

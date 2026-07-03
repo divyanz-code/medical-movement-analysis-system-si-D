@@ -18,9 +18,11 @@
     "node": ">=22.0.0",
     "npm": ">=10.0.0"
   },
-  "dependencies": {},
   "overrides": {
     "react-native-worklets": "0.5.1",
     "@types/react": "~18.3.12"
+  },
+  "devDependencies": {
+    "license-checker": "^25.0.1"
   }
 }

@@ -18,6 +18,7 @@ import { FormField } from "@/src/components/FormField";
 import { useTheme } from "@/src/theme/ThemeProvider";
 import { storage } from "@/src/utils/storage";
 import { patientFlow } from "@/src/runtime/client";
+import { useUser } from "@/src/context/UserContext";
 
 type Role = "patient" | "doctor" | "admin";
 
@@ -30,6 +31,7 @@ const ROLE_META: Record<Role, { title: string; sub: string; icon: keyof typeof I
 export default function Login() {
   const router = useRouter();
   const { palette, spacing, radii } = useTheme();
+  const { refreshProfile } = useUser();
   const params = useLocalSearchParams<{ role?: string }>();
   const role: Role = (params.role as Role) || "patient";
   const meta = ROLE_META[role];
@@ -52,6 +54,9 @@ export default function Login() {
       await patientFlow.login(email.trim().toLowerCase(), password);
       await storage.setItem("medmove.role", role);
       await storage.setItem("medmove.email", email.trim().toLowerCase());
+      if (role === "patient") {
+        await refreshProfile();
+      }
       setLoading(false);
       if (role === "patient") router.replace("/(patient)/(tabs)");
       else if (role === "doctor") router.replace("/(doctor)/(tabs)");

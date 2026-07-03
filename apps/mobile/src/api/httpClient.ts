@@ -64,9 +64,18 @@ export class FetchHttpClient implements HttpClient {
       let code = "HTTP_ERROR";
 
       try {
-        const payload = (await response.json()) as ApiErrorEnvelope;
-        message = payload.error.message;
-        code = payload.error.code;
+        const json = await response.json();
+        if (json && json.error && json.error.message) {
+          message = json.error.message;
+          code = json.error.code ?? "HTTP_ERROR";
+        } else if (json && Array.isArray(json.detail)) {
+          // Parse FastAPI validation details
+          const details = json.detail.map((d: any) => `${d.loc[d.loc.length - 1]}: ${d.msg}`).join("; ");
+          message = `Validation failed - ${details}`;
+          code = "VALIDATION_ERROR";
+        } else if (json && typeof json.detail === "string") {
+          message = json.detail;
+        }
       } catch {
         // keep fallback values
         warn("http", "response:error-non-json", { url, status: response.status });

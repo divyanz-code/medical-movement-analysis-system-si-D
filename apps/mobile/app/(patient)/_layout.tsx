@@ -11,9 +11,11 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useTheme } from "@/src/theme/ThemeProvider";
+import { useUser } from "@/src/context/UserContext";
 
 function CustomDrawer(props: any) {
   const { palette, radii, spacing } = useTheme();
+  const { profile, logout } = useUser();
   const router = useRouter();
   return (
     <View style={{ flex: 1, backgroundColor: palette.surface }}>
@@ -39,10 +41,10 @@ function CustomDrawer(props: any) {
               />
               <View style={{ marginLeft: 12 }}>
                 <Text style={{ color: palette.textPrimary, fontSize: 14, fontWeight: "700" }}>
-                  Aarav Sharma
+                  {profile?.name || "Patient"}
                 </Text>
                 <Text style={{ color: palette.textSecondary, fontSize: 12 }}>
-                  Recovery score 78%
+                  {profile?.affected_limb ? `${profile.affected_limb.toUpperCase()} Recovery` : "Recovery score 78%"}
                 </Text>
               </View>
             </View>
@@ -101,7 +103,10 @@ function CustomDrawer(props: any) {
 
         <Pressable
           testID="logout-button"
-          onPress={() => router.replace("/")}
+          onPress={async () => {
+            await logout();
+            router.replace("/");
+          }}
           style={{
             margin: spacing.md,
             padding: spacing.sm,

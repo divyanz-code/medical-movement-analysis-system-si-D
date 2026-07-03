@@ -209,7 +209,7 @@ export default function PatientProfile() {
                     {it.toggle ? (
                       <Switch
                         value={it.id === "dark" ? mode === "dark" : true}
-                        onValueChange={it.id === "dark" ? toggleMode : () => {}}
+                        onValueChange={it.id === "dark" ? toggleMode : () => { }}
                         trackColor={{ false: palette.surfaceAlt, true: palette.primary }}
                         thumbColor="#fff"
                       />

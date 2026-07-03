@@ -199,7 +199,7 @@ export default function LiveSession() {
     const rep = setInterval(() => {
       if (recording) {
         setReps((r) => Math.min(exercise.reps, r + 1));
-        Haptics.selectionAsync().catch(() => {});
+        Haptics.selectionAsync().catch(() => { });
       }
     }, 4500);
 
@@ -248,13 +248,18 @@ export default function LiveSession() {
       let finalVideoUri = activeUri;
       if (activeUri === "simulated") {
         try {
+          const { Asset } = require("expo-asset");
+          const asset = Asset.fromModule(require("../../assets/images/favicon.png"));
+          await asset.downloadAsync();
+          finalVideoUri = asset.localUri || asset.uri;
+        } catch (err) {
+          console.error("Failed to resolve simulated asset locally", err);
           const { Image } = require("react-native");
           const asset = Image.resolveAssetSource(require("../../assets/images/favicon.png"));
           finalVideoUri = asset.uri;
-        } catch (err) {
-          console.error("Failed to resolve simulated asset", err);
         }
       }
+
 
       const videoFile = {
         uri: finalVideoUri,
@@ -492,7 +497,7 @@ export default function LiveSession() {
           <Pressable
             testID="toggle-record"
             onPress={() => {
-              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => { });
               if (recording) {
                 stopRecording();
               } else {

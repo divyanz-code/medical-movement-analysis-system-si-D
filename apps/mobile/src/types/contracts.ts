@@ -39,6 +39,7 @@ export interface Profile {
 }
 
 export interface ProfileUpdateRequest {
+  name?: string;
   age: number;
   gender: string;
   affected_limb: string;

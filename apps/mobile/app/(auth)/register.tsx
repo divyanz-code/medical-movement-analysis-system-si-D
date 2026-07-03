@@ -19,12 +19,14 @@ import { FormField } from "@/src/components/FormField";
 import { useTheme } from "@/src/theme/ThemeProvider";
 import { storage } from "@/src/utils/storage";
 import { patientFlow } from "@/src/runtime/client";
+import { useUser } from "@/src/context/UserContext";
 
 type Role = "patient" | "doctor" | "admin";
 
 export default function Register() {
   const router = useRouter();
   const { palette, spacing } = useTheme();
+  const { refreshProfile } = useUser();
   const params = useLocalSearchParams<{ role?: string }>();
   const role: Role = (params.role as Role) || "patient";
 
@@ -45,6 +47,30 @@ export default function Register() {
       Alert.alert("Validation Error", "Name, email, and password are required.");
       return;
     }
+
+    if (name.trim().length < 2) {
+      Alert.alert("Validation Error", "Name must be at least 2 characters long.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email.trim())) {
+      Alert.alert("Validation Error", "Please enter a valid email address.");
+      return;
+    }
+
+    if (password.length < 8) {
+      Alert.alert("Validation Error", "Password must be at least 8 characters long.");
+      return;
+    }
+
+    if (role === "patient") {
+      const ageNum = parseInt(age, 10);
+      if (isNaN(ageNum) || ageNum < 1 || ageNum > 120) {
+        Alert.alert("Validation Error", "Please enter a valid age between 1 and 120.");
+        return;
+      }
+    }
     setLoading(true);
     try {
       await patientFlow.registerAndLogin({
@@ -64,6 +90,9 @@ export default function Register() {
 
       await storage.setItem("medmove.role", role);
       await storage.setItem("medmove.email", email.trim().toLowerCase());
+      if (role === "patient") {
+        await refreshProfile();
+      }
       setLoading(false);
       if (role === "patient") router.replace("/(patient)/(tabs)");
       else if (role === "doctor") router.replace("/(doctor)/(tabs)");

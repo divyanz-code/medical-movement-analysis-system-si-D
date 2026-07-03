@@ -42,5 +42,6 @@ cd "$ROOT_DIR"
 if [[ "${1:-}" == "--tunnel" ]]; then
   npm run -w apps/mobile start -- --tunnel
 else
-  npm run -w apps/mobile start
+  npm run -w apps/mobile start -- --offline
 fi
+
