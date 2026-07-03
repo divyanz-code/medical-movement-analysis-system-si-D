@@ -16,6 +16,7 @@ import { ScreenHeader } from "@/src/components/ScreenHeader";
 import { useTheme } from "@/src/theme/ThemeProvider";
 import { patientFlow } from "@/src/runtime/client";
 import type { Profile } from "@/src/types/contracts";
+import { useUser } from "@/src/context/UserContext";
 
 interface Row {
   id: string;
@@ -30,6 +31,7 @@ export default function PatientProfile() {
   const { palette, radii, spacing, shadow, mode, toggleMode } = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { logout } = useUser();
 
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -50,8 +52,8 @@ export default function PatientProfile() {
 
   const handleLogout = async () => {
     try {
-      await patientFlow.logout();
-      router.replace("/");
+      await logout();
+      router.replace({ pathname: "/(auth)/login", params: { role: "patient" } });
     } catch (err) {
       console.error("Logout failed", err);
       router.replace("/");

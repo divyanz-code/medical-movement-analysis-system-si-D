@@ -8,9 +8,11 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useTheme } from "@/src/theme/ThemeProvider";
+import { useUser } from "@/src/context/UserContext";
 
 function CustomDrawer(props: any) {
   const { palette, radii, spacing } = useTheme();
+  const { logout } = useUser();
   const router = useRouter();
   return (
     <View style={{ flex: 1, backgroundColor: palette.surface }}>
@@ -97,7 +99,10 @@ function CustomDrawer(props: any) {
         </DrawerContentScrollView>
         <Pressable
           testID="doctor-logout"
-          onPress={() => router.replace("/")}
+          onPress={async () => {
+            await logout();
+            router.replace({ pathname: "/(auth)/login", params: { role: "doctor" } });
+          }}
           style={{
             margin: spacing.md,
             padding: spacing.sm,

@@ -105,7 +105,7 @@ function CustomDrawer(props: any) {
           testID="logout-button"
           onPress={async () => {
             await logout();
-            router.replace("/");
+            router.replace({ pathname: "/(auth)/login", params: { role: "patient" } });
           }}
           style={{
             margin: spacing.md,

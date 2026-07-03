@@ -6,11 +6,22 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ScreenHeader } from "@/src/components/ScreenHeader";
 import { useTheme } from "@/src/theme/ThemeProvider";
+import { useUser } from "@/src/context/UserContext";
 
 export default function AdminProfile() {
   const { palette, radii, spacing, mode, toggleMode } = useTheme();
+  const { logout } = useUser();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      router.replace({ pathname: "/(auth)/login", params: { role: "admin" } });
+    } catch (err) {
+      router.replace("/");
+    }
+  };
 
   const rows: { label: string; icon: keyof typeof Ionicons.glyphMap; toggle?: boolean; destructive?: boolean; onPress?: () => void }[] = [
     { label: "Workspace settings", icon: "construct-outline" },
@@ -18,7 +29,7 @@ export default function AdminProfile() {
     { label: "Billing", icon: "card-outline" },
     { label: "Dark mode", icon: "moon-outline", toggle: true },
     { label: "Help & support", icon: "help-circle-outline", onPress: () => router.push("/(admin)/help") },
-    { label: "Sign out", icon: "log-out-outline", destructive: true, onPress: () => router.replace("/") },
+    { label: "Sign out", icon: "log-out-outline", destructive: true, onPress: handleLogout },
   ];
 
   return (

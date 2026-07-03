@@ -7,11 +7,22 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ScreenHeader } from "@/src/components/ScreenHeader";
 import { useTheme } from "@/src/theme/ThemeProvider";
+import { useUser } from "@/src/context/UserContext";
 
 export default function DoctorProfile() {
   const { palette, radii, spacing, shadow, mode, toggleMode } = useTheme();
+  const { logout } = useUser();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      router.replace({ pathname: "/(auth)/login", params: { role: "doctor" } });
+    } catch (err) {
+      router.replace("/");
+    }
+  };
 
   const rows: { label: string; icon: keyof typeof Ionicons.glyphMap; onPress?: () => void; toggle?: boolean; destructive?: boolean }[] = [
     { label: "Edit profile", icon: "person-outline" },
@@ -20,7 +31,7 @@ export default function DoctorProfile() {
     { label: "Dark mode", icon: "moon-outline", toggle: true },
     { label: "Notifications", icon: "notifications-outline" },
     { label: "Help & support", icon: "help-circle-outline", onPress: () => router.push("/(doctor)/help") },
-    { label: "Sign out", icon: "log-out-outline", destructive: true, onPress: () => router.replace("/") },
+    { label: "Sign out", icon: "log-out-outline", destructive: true, onPress: handleLogout },
   ];
 
   return (
