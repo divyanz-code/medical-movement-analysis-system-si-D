@@ -1,8 +1,8 @@
-// MEDMOVE AI Live Analysis HUD.
-// Real-time camera with MediaPipe-style skeleton overlay (body) or face mesh
-// placement guide (face). True MediaPipe inference will be wired through a
-// native AI service in a development build; this screen mocks the feedback
-// pipeline so the UI behaves identically to production.
+
+
+
+
+
 
 import { Ionicons } from "@expo/vector-icons";
 import { CameraView, useCameraPermissions, useMicrophonePermissions } from "expo-camera";
@@ -84,7 +84,7 @@ export default function LiveSession() {
     );
   }, [pulse]);
 
-  // Request permissions automatically on mount
+  
   useEffect(() => {
     const initPermissions = async () => {
       try {
@@ -169,7 +169,7 @@ export default function LiveSession() {
         "Please record for at least 5 seconds to ensure accurate movement analysis.",
         [{ text: "OK" }]
       );
-      return false; // Did not stop
+      return false; 
     }
 
     cameraRef.current?.stopRecording();
@@ -177,7 +177,7 @@ export default function LiveSession() {
     return true;
   };
 
-  // Drive mock feedback loop and elapsed seconds timer
+  
   useEffect(() => {
     if (!recording) return;
     const t = setInterval(() => {
@@ -215,7 +215,7 @@ export default function LiveSession() {
     if (recording) {
       const stopped = stopRecording();
       if (!stopped) {
-        return; // Don't finish if recording was too short and couldn't be stopped
+        return; 
       }
       setUploading(true);
       setUploadProgressText("Processing recording...");
@@ -331,7 +331,7 @@ export default function LiveSession() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "#000" }}>
-      {/* Camera background */}
+      
       {permission && permission.granted && !isSimulated ? (
         <CameraView ref={cameraRef} style={StyleSheet.absoluteFill} mode="video" facing={facing} mute={!micPermission?.granted} />
       ) : isSimulated ? (
@@ -364,7 +364,7 @@ export default function LiveSession() {
         </View>
       )}
 
-      {/* Overlays */}
+      
       {isSimulated || (permission && permission.granted) ? (
         <View style={[StyleSheet.absoluteFill, { pointerEvents: "none" }]}>
           {isFacial ? (
@@ -372,7 +372,7 @@ export default function LiveSession() {
           ) : (
             <SkeletonOverlay width={stageWidth} height={stageHeight} color={palette.accent} accent={palette.primary} />
           )}
-          {/* Trajectory arc + start/end markers */}
+          
           <Svg width={stageWidth} height={stageHeight} style={{ position: "absolute" }}>
             <Defs>
               <LinearGradient id="arcGrad" x1="0" y1="0" x2="1" y2="0">
@@ -398,7 +398,7 @@ export default function LiveSession() {
       ) : null}
 
       <SafeAreaView style={{ flex: 1 }} edges={["top", "bottom"]}>
-        {/* Top HUD */}
+        
         <View style={styles.topRow}>
           <Pressable
             testID="exit-live"
@@ -441,7 +441,7 @@ export default function LiveSession() {
           </View>
         </View>
 
-        {/* Joint angle pills */}
+        
         <View style={styles.pillsRow}>
           <AnglePill label={isFacial ? "Symmetry" : exercise.joint} value={isFacial ? `${82}%` : `${angle}°`} />
           <AnglePill label="Score" value={String(score)} accent={palette.success} />
@@ -454,7 +454,7 @@ export default function LiveSession() {
 
         <View style={{ flex: 1 }} />
 
-        {/* Feedback bubble */}
+        
         <View
           style={{
             alignSelf: "center",
@@ -481,7 +481,7 @@ export default function LiveSession() {
           </Text>
         </View>
 
-        {/* Bottom control bar */}
+        
         <View style={[styles.bottomBar, { backgroundColor: "rgba(0,0,0,0.55)" }]}>
           <View style={{ flex: 1 }}>
             <Text style={{ color: "rgba(255,255,255,0.7)", fontSize: 11, fontWeight: "700", letterSpacing: 1.2 }}>
@@ -532,7 +532,7 @@ export default function LiveSession() {
         </View>
       </SafeAreaView>
 
-      {/* Uploading Overlay */}
+      
       {uploading && (
         <View style={[StyleSheet.absoluteFill, { backgroundColor: "rgba(0,0,0,0.85)", justifyContent: "center", alignItems: "center", zIndex: 999 }]}>
           <ActivityIndicator size="large" color={palette.primary} />

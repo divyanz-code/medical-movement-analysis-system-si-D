@@ -44,7 +44,7 @@ export default function ExerciseDetail() {
             <Image source={{ uri: exercise.thumbnail }} style={{ width: "100%", height: 200 }} contentFit="cover" />
           </View>
 
-          {/* Quick stats */}
+          
           <View style={{ flexDirection: "row", marginTop: spacing.md, gap: 10 }}>
             <Stat label="Target ROM" value={exercise.targetROM} icon="git-branch" />
             <Stat label="Reps" value={String(exercise.reps)} icon="repeat" />

@@ -47,7 +47,7 @@ export default function PatientHome() {
         contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero recovery card */}
+        
         <View style={{ paddingHorizontal: spacing.lg, marginTop: 4 }}>
           <LinearGradient
             colors={[palette.primary, palette.accent]}
@@ -90,7 +90,7 @@ export default function PatientHome() {
           </LinearGradient>
         </View>
 
-        {/* Quick KPIs */}
+        
         <View style={{ paddingHorizontal: spacing.lg, marginTop: spacing.md }}>
           <View style={{ flexDirection: "row", gap: 10 }}>
             <MetricCard
@@ -134,7 +134,7 @@ export default function PatientHome() {
           </View>
         </View>
 
-        {/* Today's exercises */}
+        
         <View style={{ paddingHorizontal: spacing.lg, marginTop: spacing.lg }}>
           <View style={styles.sectionRow}>
             <Text style={{ color: palette.textPrimary, fontSize: 17, fontWeight: "800" }}>
@@ -168,7 +168,7 @@ export default function PatientHome() {
           </View>
         </View>
 
-        {/* Recovery trend chart */}
+        
         <View style={{ paddingHorizontal: spacing.lg, marginTop: spacing.lg }}>
           <View
             style={[
@@ -200,7 +200,7 @@ export default function PatientHome() {
           </View>
         </View>
 
-        {/* Last analysis */}
+        
         <View style={{ paddingHorizontal: spacing.lg, marginTop: spacing.lg }}>
           <Text style={{ color: palette.textPrimary, fontSize: 17, fontWeight: "800", marginBottom: 10 }}>
             Last analysis

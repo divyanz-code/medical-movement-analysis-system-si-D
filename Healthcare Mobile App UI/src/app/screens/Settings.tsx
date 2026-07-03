@@ -39,13 +39,13 @@ export function Settings() {
 
   return (
     <div className="min-h-screen bg-secondary pb-20">
-      {/* Header */}
+      
       <div className="bg-background border-b border-border px-6 pt-12 pb-6">
         <h1 className="text-2xl font-semibold">Settings</h1>
       </div>
 
       <div className="px-6 py-6 max-w-md mx-auto space-y-6">
-        {/* Preferences */}
+        
         <div>
           <h2 className="text-sm font-semibold text-muted-foreground mb-3 px-1">
             PREFERENCES
@@ -106,7 +106,7 @@ export function Settings() {
           </Card>
         </div>
 
-        {/* Privacy & Security */}
+        
         <div>
           <h2 className="text-sm font-semibold text-muted-foreground mb-3 px-1">
             PRIVACY & SECURITY
@@ -150,7 +150,7 @@ export function Settings() {
           </Card>
         </div>
 
-        {/* Support */}
+        
         <div>
           <h2 className="text-sm font-semibold text-muted-foreground mb-3 px-1">
             SUPPORT
@@ -206,7 +206,7 @@ export function Settings() {
           </Card>
         </div>
 
-        {/* Account Actions */}
+        
         <div>
           <h2 className="text-sm font-semibold text-muted-foreground mb-3 px-1">
             ACCOUNT
@@ -225,7 +225,7 @@ export function Settings() {
         </div>
       </div>
 
-      {/* Logout Confirmation Dialog */}
+      
       <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>

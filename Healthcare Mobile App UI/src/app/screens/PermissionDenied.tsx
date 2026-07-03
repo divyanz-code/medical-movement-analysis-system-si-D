@@ -40,7 +40,7 @@ export function PermissionDenied() {
             size="lg"
             className="w-full"
             onClick={() => {
-              // In a real app, this would open system settings
+              
               alert("This would open system settings");
             }}
           >

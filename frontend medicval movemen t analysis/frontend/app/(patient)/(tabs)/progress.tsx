@@ -45,7 +45,7 @@ export default function PatientProgress() {
         }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Recovery score */}
+        
         <View
           style={[
             {
@@ -111,7 +111,7 @@ export default function PatientProgress() {
           />
         </View>
 
-        {/* Chart */}
+        
         <View
           style={[
             {
@@ -140,7 +140,7 @@ export default function PatientProgress() {
           </View>
         </View>
 
-        {/* Recent sessions */}
+        
         <Text style={{ color: palette.textPrimary, fontSize: 17, fontWeight: "800", marginTop: spacing.lg, marginBottom: 10 }}>
           Recent sessions
         </Text>

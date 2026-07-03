@@ -17,7 +17,7 @@ from app.core.rate_limit import InMemoryRateLimiter
 from app.db.base import build_engine, build_session_factory, init_db
 from app.services.analysis_engine import MediaPipeAnalyzer, MovementAnalyzer
 from app.services.storage_service import CloudinaryVideoStorage, LocalVideoStorage, VideoStorage
-import app.models  # noqa: F401
+import app.models
 
 
 def create_app(

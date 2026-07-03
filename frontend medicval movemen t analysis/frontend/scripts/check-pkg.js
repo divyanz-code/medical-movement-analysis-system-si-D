@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Banned packages list. Used by preinstall hook and install-guard.sh.
+
 
 const fs = require("fs");
 const path = require("path");
@@ -33,7 +33,7 @@ function report(name, recovery) {
   console.error("");
 }
 
-// --args mode: scan CLI args for banned package names (with optional @version).
+
 if (process.argv[2] === "--args") {
   for (const arg of process.argv.slice(3)) {
     for (const name of Object.keys(BANNED)) {
@@ -46,7 +46,7 @@ if (process.argv[2] === "--args") {
   process.exit(0);
 }
 
-// Default mode: scan package.json on disk.
+
 const pkg = JSON.parse(
   fs.readFileSync(path.join(__dirname, "..", "package.json"), "utf8"),
 );

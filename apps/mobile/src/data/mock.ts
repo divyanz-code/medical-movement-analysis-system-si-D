@@ -1,5 +1,5 @@
-// Mock data for MEDMOVE AI - covers exercises, patients, doctors, sessions,
-// notifications, reports, team members, baseline videos.
+
+
 
 export interface ExerciseTemplate {
   id: string;
@@ -264,7 +264,7 @@ export const EXERCISES: ExerciseTemplate[] = [
 export interface AssignedExercise {
   id: string;
   exerciseId: string;
-  due: string; // ISO date
+  due: string; 
   status: "pending" | "completed" | "missed";
   scheduledAt: string;
 }

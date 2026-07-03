@@ -46,7 +46,7 @@ export default function LiveEntry() {
         }}
         showsVerticalScrollIndicator={false}
       >
-        {/* Hero preview */}
+        
         <View
           style={[
             {
@@ -101,7 +101,7 @@ export default function LiveEntry() {
           </View>
         </View>
 
-        {/* Exercise picker */}
+        
         <Text
           style={{
             color: palette.textPrimary,

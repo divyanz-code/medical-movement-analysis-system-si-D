@@ -24,13 +24,13 @@ export function RecordButton({ isRecording, onPress }: RecordButtonProps) {
       }}
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
     >
-      {/* Outer ring */}
+      
       <div
         className={`w-20 h-20 rounded-full border-4 flex items-center justify-center transition-colors ${
           isRecording ? "border-destructive" : "border-white"
         }`}
       >
-        {/* Inner button */}
+        
         <motion.div
           className={`rounded-full transition-colors ${
             isRecording ? "bg-destructive" : "bg-white"
@@ -44,7 +44,7 @@ export function RecordButton({ isRecording, onPress }: RecordButtonProps) {
         />
       </div>
 
-      {/* Recording pulse animation */}
+      
       {isRecording && (
         <motion.div
           className="absolute w-20 h-20 rounded-full border-4 border-destructive"

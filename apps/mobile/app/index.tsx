@@ -8,7 +8,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useTheme } from "@/src/theme/ThemeProvider";
 import { tokenStore } from "@/src/runtime/client";
 import { storage } from "@/src/utils/storage";
-import { useUser } from "@/src/context/UserContext";
 
 type Role = "patient" | "doctor" | "admin";
 
@@ -23,7 +22,6 @@ interface RoleOption {
 export default function Index() {
   const router = useRouter();
   const { palette, radii, spacing, shadow } = useTheme();
-  const { profile } = useUser();
   const [checkingAuth, setCheckingAuth] = useState(true);
 
   useEffect(() => {
@@ -50,7 +48,7 @@ export default function Index() {
       }
     }
     checkAuth();
-  }, [router, profile]);
+  }, [router]);
 
   if (checkingAuth) {
     return (

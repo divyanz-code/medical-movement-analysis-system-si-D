@@ -7,7 +7,7 @@ import { useTheme } from "@/src/theme/ThemeProvider";
 interface Props {
   size?: number;
   strokeWidth?: number;
-  value: number; // 0-100
+  value: number; 
   label?: string;
   caption?: string;
   testID?: string;

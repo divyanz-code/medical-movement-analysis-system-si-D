@@ -1,6 +1,6 @@
-// Animated SVG body skeleton overlay used on the Live Camera Analysis screen.
-// This is a visual mock of MediaPipe Pose landmarks until the native AI service
-// is integrated. Joints gently breathe to feel live.
+
+
+
 
 import React, { useEffect } from "react";
 import Animated, {
@@ -13,7 +13,7 @@ import Animated, {
 } from "react-native-reanimated";
 import Svg, { Circle, Line } from "react-native-svg";
 
-// Normalized 0-1 landmark coordinates (MediaPipe-style skeleton)
+
 const LANDMARKS = {
   head: [0.5, 0.16],
   neck: [0.5, 0.24],

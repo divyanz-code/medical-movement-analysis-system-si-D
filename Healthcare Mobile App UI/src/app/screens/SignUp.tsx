@@ -17,7 +17,7 @@ export function SignUp() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate API call
+    
     await new Promise((resolve) => setTimeout(resolve, 1500));
     setIsLoading(false);
     navigate("/edit-profile?onboarding=true");
@@ -25,7 +25,7 @@ export function SignUp() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
+      
       <div className="sticky top-0 bg-background border-b border-border px-4 py-4 flex items-center gap-3">
         <button
           onClick={() => navigate(-1)}
@@ -36,7 +36,7 @@ export function SignUp() {
         <h1 className="text-xl font-semibold">Create Account</h1>
       </div>
 
-      {/* Form */}
+      
       <div className="px-6 py-8 max-w-md mx-auto">
         <div className="mb-8">
           <h2 className="text-2xl font-semibold mb-2">Sign Up</h2>

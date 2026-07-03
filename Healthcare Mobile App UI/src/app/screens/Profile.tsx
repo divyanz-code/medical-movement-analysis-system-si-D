@@ -34,7 +34,7 @@ export function Profile() {
 
   return (
     <div className="min-h-screen bg-secondary pb-20">
-      {/* Header */}
+      
       <div className="bg-gradient-to-br from-primary to-accent pt-12 pb-16 px-6">
         <div className="max-w-md mx-auto text-center">
           <Avatar className="w-24 h-24 mx-auto mb-4 border-4 border-white/20">
@@ -52,7 +52,7 @@ export function Profile() {
         </div>
       </div>
 
-      {/* Profile Info */}
+      
       <div className="px-6 -mt-8 max-w-md mx-auto space-y-6">
         <Card className="p-6">
           <div className="flex items-center justify-between mb-4">
@@ -87,7 +87,7 @@ export function Profile() {
           </div>
         </Card>
 
-        {/* Medical Profile */}
+        
         <Card className="p-6">
           <h2 className="text-lg font-semibold mb-4">Medical Profile</h2>
           <div className="space-y-4">
@@ -117,7 +117,7 @@ export function Profile() {
           </div>
         </Card>
 
-        {/* Quick Actions */}
+        
         <Card className="p-4">
           <button
             onClick={() => navigate("/history")}

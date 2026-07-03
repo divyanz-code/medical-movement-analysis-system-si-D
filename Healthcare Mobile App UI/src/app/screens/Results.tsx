@@ -14,7 +14,7 @@ export function Results() {
 
   return (
     <div className="min-h-screen bg-secondary">
-      {/* Header */}
+      
       <div className="sticky top-0 bg-background border-b border-border px-4 py-4 flex items-center justify-between z-10">
         <div className="flex items-center gap-3">
           <button
@@ -41,7 +41,7 @@ export function Results() {
       </div>
 
       <div className="px-6 py-6 max-w-md mx-auto space-y-6">
-        {/* Score Card */}
+        
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -103,7 +103,7 @@ export function Results() {
           </Card>
         </motion.div>
 
-        {/* Key Metrics */}
+        
         <div>
           <h3 className="text-lg font-semibold mb-3">Key Metrics</h3>
           <div className="grid grid-cols-2 gap-3">
@@ -134,7 +134,7 @@ export function Results() {
           </div>
         </div>
 
-        {/* Compensation Warning */}
+        
         {assessment.compensationDetected && assessment.notes && (
           <Card className="p-4 border-warning/20 bg-warning/5">
             <div className="flex gap-3">
@@ -149,7 +149,7 @@ export function Results() {
           </Card>
         )}
 
-        {/* Insights */}
+        
         <Card className="p-6">
           <h3 className="font-semibold mb-4">Movement Insights</h3>
           <div className="space-y-4">
@@ -195,7 +195,7 @@ export function Results() {
           </div>
         </Card>
 
-        {/* Actions */}
+        
         <div className="space-y-3 pb-6">
           <Button
             size="lg"

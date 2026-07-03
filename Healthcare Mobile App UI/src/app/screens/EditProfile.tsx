@@ -38,7 +38,7 @@ export function EditProfile() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
+      
       <div className="sticky top-0 bg-background border-b border-border px-4 py-4 flex items-center gap-3 z-10">
         <button
           onClick={() => navigate(-1)}

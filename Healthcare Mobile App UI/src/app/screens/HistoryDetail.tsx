@@ -15,7 +15,7 @@ export function HistoryDetail() {
 
   return (
     <div className="min-h-screen bg-secondary">
-      {/* Header */}
+      
       <div className="sticky top-0 bg-background border-b border-border px-4 py-4 flex items-center justify-between z-10">
         <div className="flex items-center gap-3">
           <button
@@ -37,7 +37,7 @@ export function HistoryDetail() {
       </div>
 
       <div className="px-6 py-6 max-w-md mx-auto space-y-6">
-        {/* Session Info */}
+        
         <Card className="p-6">
           <div className="flex items-start justify-between mb-4">
             <div>
@@ -72,7 +72,7 @@ export function HistoryDetail() {
           </div>
         </Card>
 
-        {/* Score Overview */}
+        
         <Card className="p-6">
           <h3 className="font-semibold mb-4">Movement Score</h3>
           <div className="flex items-end gap-6 mb-6">
@@ -115,7 +115,7 @@ export function HistoryDetail() {
           </div>
         </Card>
 
-        {/* Metrics Grid */}
+        
         <div className="grid grid-cols-2 gap-3">
           <MetricCard
             icon={Calendar}
@@ -140,7 +140,7 @@ export function HistoryDetail() {
           </div>
         </div>
 
-        {/* Notes */}
+        
         {assessment.notes && (
           <Card className="p-6">
             <h3 className="font-semibold mb-3">Clinical Notes</h3>
@@ -150,7 +150,7 @@ export function HistoryDetail() {
           </Card>
         )}
 
-        {/* Comparison */}
+        
         {previousAssessment && (
           <Card className="p-6">
             <h3 className="font-semibold mb-4">Comparison with Previous</h3>
@@ -197,7 +197,7 @@ export function HistoryDetail() {
           </Card>
         )}
 
-        {/* Actions */}
+        
         <div className="space-y-3 pb-6">
           <Button
             size="lg"

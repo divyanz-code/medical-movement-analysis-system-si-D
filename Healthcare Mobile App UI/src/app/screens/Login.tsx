@@ -16,21 +16,21 @@ export function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulate API call
+    
     await new Promise((resolve) => setTimeout(resolve, 1500));
     setIsLoading(false);
     navigate("/home");
   };
 
   const handleBiometric = async () => {
-    // Simulate biometric authentication
+    
     await new Promise((resolve) => setTimeout(resolve, 1000));
     navigate("/home");
   };
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
+      
       <div className="sticky top-0 bg-background border-b border-border px-4 py-4 flex items-center gap-3">
         <button
           onClick={() => navigate(-1)}
@@ -41,7 +41,7 @@ export function Login() {
         <h1 className="text-xl font-semibold">Sign In</h1>
       </div>
 
-      {/* Form */}
+      
       <div className="px-6 py-8 max-w-md mx-auto">
         <div className="mb-8">
           <h2 className="text-2xl font-semibold mb-2">Welcome Back</h2>

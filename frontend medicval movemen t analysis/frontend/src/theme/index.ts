@@ -1,4 +1,4 @@
-// MEDMOVE AI design tokens. Clean medical teal/blue palette with light + dark modes.
+
 
 export type ThemeMode = "light" | "dark";
 

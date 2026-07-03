@@ -19,12 +19,12 @@ export function CameraRecord() {
     if (isRecording) {
       interval = setInterval(() => {
         setRecordingTime((prev) => prev + 0.1);
-        // Simulate changing joint angle
+        
         setJointAngle((prev) => {
           const newAngle = prev + (Math.random() - 0.5) * 10;
           return Math.max(20, Math.min(120, newAngle));
         });
-        // Simulate alignment detection
+        
         const random = Math.random();
         if (random > 0.8) {
           setAlignmentStatus("compensatory");
@@ -56,9 +56,9 @@ export function CameraRecord() {
 
   return (
     <div className="relative w-full h-screen bg-black overflow-hidden">
-      {/* Camera View (simulated with gradient) */}
+      
       <div className="absolute inset-0 bg-gradient-to-br from-gray-800 to-gray-900">
-        {/* Simulated camera feed placeholder */}
+        
         <div className="w-full h-full flex items-center justify-center">
           <div className="text-white/30 text-center">
             <p className="text-sm mb-2">Camera Feed</p>
@@ -67,10 +67,10 @@ export function CameraRecord() {
         </div>
       </div>
 
-      {/* Joint Overlay Graphics */}
+      
       {isRecording && (
         <>
-          {/* Joint Point */}
+          
           <motion.div
             className="absolute w-4 h-4 bg-accent rounded-full border-2 border-white"
             style={{
@@ -88,7 +88,7 @@ export function CameraRecord() {
             }}
           />
 
-          {/* Angle Arc */}
+          
           <svg
             className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
             width="200"
@@ -102,7 +102,7 @@ export function CameraRecord() {
             />
           </svg>
 
-          {/* Angle Value Display */}
+          
           <motion.div
             className="absolute left-1/2 top-1/3 -translate-x-1/2 bg-black/60 backdrop-blur px-4 py-2 rounded-lg"
             initial={{ opacity: 0, y: -10 }}
@@ -115,7 +115,7 @@ export function CameraRecord() {
         </>
       )}
 
-      {/* Top Controls */}
+      
       <div className="absolute top-0 left-0 right-0 pt-12 px-6 z-10">
         <div className="flex items-start justify-between">
           <button
@@ -139,7 +139,7 @@ export function CameraRecord() {
         </div>
       </div>
 
-      {/* Center Guidance */}
+      
       {!isRecording && recordingTime === 0 && (
         <motion.div
           initial={{ opacity: 0 }}
@@ -159,7 +159,7 @@ export function CameraRecord() {
         </motion.div>
       )}
 
-      {/* Timer Display */}
+      
       {isRecording && (
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
@@ -172,7 +172,7 @@ export function CameraRecord() {
         </motion.div>
       )}
 
-      {/* Bottom Controls */}
+      
       <div className="absolute bottom-12 left-0 right-0 px-6">
         <div className="flex items-center justify-center gap-8">
           <RecordButton isRecording={isRecording} onPress={handleRecord} />
@@ -185,7 +185,7 @@ export function CameraRecord() {
         )}
       </div>
 
-      {/* Live Metrics (when recording) */}
+      
       {isRecording && (
         <motion.div
           initial={{ y: 20, opacity: 0 }}

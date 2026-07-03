@@ -48,7 +48,7 @@ export function AssessmentSetup() {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      {/* Header */}
+      
       <div className="sticky top-0 bg-background border-b border-border px-4 py-4 flex items-center gap-3 z-10">
         <button
           onClick={() => navigate(-1)}
@@ -60,14 +60,14 @@ export function AssessmentSetup() {
       </div>
 
       <div className="px-6 py-6 max-w-md mx-auto">
-        {/* Step indicator */}
+        
         <div className="flex items-center gap-2 mb-6">
           <div className="flex-1 h-1 bg-accent rounded-full" />
           <div className="flex-1 h-1 bg-muted rounded-full" />
           <div className="flex-1 h-1 bg-muted rounded-full" />
         </div>
 
-        {/* Joint Selection */}
+        
         <div className="mb-8">
           <h2 className="text-lg font-semibold mb-2">Select Joint</h2>
           <p className="text-sm text-muted-foreground mb-4">
@@ -102,7 +102,7 @@ export function AssessmentSetup() {
           </div>
         </div>
 
-        {/* Task Selection */}
+        
         <div className="mb-8">
           <h2 className="text-lg font-semibold mb-2">Select Movement Task</h2>
           <p className="text-sm text-muted-foreground mb-4">
@@ -138,7 +138,7 @@ export function AssessmentSetup() {
         </div>
       </div>
 
-      {/* Fixed Bottom CTA */}
+      
       <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border px-6 py-4">
         <div className="max-w-md mx-auto">
           <Button

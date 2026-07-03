@@ -29,11 +29,11 @@ export function History() {
 
   return (
     <div className="min-h-screen bg-secondary pb-20">
-      {/* Header */}
+      
       <div className="bg-background border-b border-border px-6 pt-12 pb-4">
         <h1 className="text-2xl font-semibold mb-4">Assessment History</h1>
 
-        {/* Search */}
+        
         <div className="relative mb-4">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
           <Input
@@ -45,7 +45,7 @@ export function History() {
           />
         </div>
 
-        {/* Filter Tabs */}
+        
         <Tabs value={filterTab} onValueChange={setFilterTab}>
           <TabsList className="w-full">
             <TabsTrigger value="all" className="flex-1">
@@ -61,7 +61,7 @@ export function History() {
         </Tabs>
       </div>
 
-      {/* History List */}
+      
       <div className="px-6 py-6 max-w-md mx-auto">
         <div className="flex items-center justify-between mb-4">
           <p className="text-sm text-muted-foreground">
@@ -81,7 +81,7 @@ export function History() {
               onClick={() => navigate(`/history/${assessment.id}`)}
             >
               <div className="flex items-start gap-4">
-                {/* Date Circle */}
+                
                 <div className="flex-shrink-0 w-16 h-16 bg-accent/10 rounded-full flex flex-col items-center justify-center">
                   <p className="text-2xl font-semibold text-accent">
                     {new Date(assessment.date).getDate()}
@@ -93,7 +93,7 @@ export function History() {
                   </p>
                 </div>
 
-                {/* Content */}
+                
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between mb-2">
                     <div>

@@ -24,7 +24,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
       const data = await patientFlow.getProfile();
       setProfile(data);
       return data;
-      // Note: we can keep isAuthenticated updated automatically as it is a derived state from profile
+      
     } catch (err) {
       console.log("UserContext: Failed to load profile", err);
       return null;

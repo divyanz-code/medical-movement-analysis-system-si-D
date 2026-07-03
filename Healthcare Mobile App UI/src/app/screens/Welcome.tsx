@@ -31,7 +31,7 @@ export function Welcome() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header with gradient */}
+      
       <div className="bg-gradient-to-br from-primary to-accent pt-16 pb-12 px-6 text-center">
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
@@ -48,7 +48,7 @@ export function Welcome() {
         </motion.div>
       </div>
 
-      {/* Features */}
+      
       <div className="flex-1 px-6 py-8">
         <div className="max-w-md mx-auto space-y-6">
           {features.map((feature, index) => {
@@ -78,7 +78,7 @@ export function Welcome() {
         </div>
       </div>
 
-      {/* CTA Buttons */}
+      
       <div className="px-6 pb-8 space-y-3 max-w-md mx-auto w-full">
         <Button
           size="lg"

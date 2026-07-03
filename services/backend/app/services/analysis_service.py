@@ -44,7 +44,7 @@ def process_analysis_for_video(*, session_factory, analyzer: MovementAnalyzer, v
 
         analysis_repo.set_processing(analysis.id)
 
-        # Retrieve the video and eager-load user profile to identify the target joint
+
         from sqlalchemy.orm import joinedload
         from app.models.video import Video
         from app.models.user import User
@@ -56,7 +56,7 @@ def process_analysis_for_video(*, session_factory, analyzer: MovementAnalyzer, v
             analysis_repo.set_failed(analysis_id=analysis.id, error_code='VIDEO_NOT_FOUND', error_message='Video not found')
             return
 
-        # Choose analyzer based on analysis_type
+
         from app.services.analysis_engine import (
             MediaPipeAnalyzer, FaceMeshAnalyzer, JOINT_LANDMARK_TRIPLETS,
             JointNotVisibleError, FaceNotDetectedError,
@@ -65,7 +65,7 @@ def process_analysis_for_video(*, session_factory, analyzer: MovementAnalyzer, v
         if analysis.analysis_type == 'facial_expression':
             analyzer = FaceMeshAnalyzer(frame_step=5)
         elif isinstance(analyzer, MediaPipeAnalyzer):
-            # Dynamically instantiate MediaPipeAnalyzer for the user's affected limb
+
             target_joint = "left_elbow"
             if video.user and video.user.profile and video.user.profile.affected_limb:
                 limb = video.user.profile.affected_limb.lower().strip()

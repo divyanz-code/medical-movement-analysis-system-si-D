@@ -16,7 +16,7 @@ export function DesignSystem() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
+      
       <div className="sticky top-0 bg-background border-b border-border px-4 py-4 flex items-center gap-3 z-10">
         <button
           onClick={() => navigate("/")}
@@ -35,7 +35,7 @@ export function DesignSystem() {
             <TabsTrigger value="medical">Medical</TabsTrigger>
           </TabsList>
 
-          {/* Colors Tab */}
+          
           <TabsContent value="colors" className="space-y-6">
             <div>
               <h2 className="text-2xl font-semibold mb-4">Color System</h2>
@@ -94,13 +94,13 @@ export function DesignSystem() {
             </div>
           </TabsContent>
 
-          {/* Components Tab */}
+          
           <TabsContent value="components" className="space-y-8">
             <div>
               <h2 className="text-2xl font-semibold mb-4">Core Components</h2>
 
               <div className="space-y-8">
-                {/* Buttons */}
+                
                 <div>
                   <h3 className="font-semibold mb-4">Buttons</h3>
                   <div className="flex flex-wrap gap-3">
@@ -117,7 +117,7 @@ export function DesignSystem() {
                   </div>
                 </div>
 
-                {/* Status Chips */}
+                
                 <div>
                   <h3 className="font-semibold mb-4">Status Chips</h3>
                   <div className="flex flex-wrap gap-3">
@@ -129,7 +129,7 @@ export function DesignSystem() {
                   </div>
                 </div>
 
-                {/* Cards */}
+                
                 <div>
                   <h3 className="font-semibold mb-4">Cards</h3>
                   <div className="grid md:grid-cols-2 gap-4">
@@ -151,7 +151,7 @@ export function DesignSystem() {
             </div>
           </TabsContent>
 
-          {/* Medical Components Tab */}
+          
           <TabsContent value="medical" className="space-y-8">
             <div>
               <h2 className="text-2xl font-semibold mb-4">Medical Components</h2>
@@ -160,7 +160,7 @@ export function DesignSystem() {
               </p>
 
               <div className="space-y-8">
-                {/* Metric Cards */}
+                
                 <div>
                   <h3 className="font-semibold mb-4">Metric Cards</h3>
                   <div className="grid md:grid-cols-2 gap-4">
@@ -194,7 +194,7 @@ export function DesignSystem() {
                   </div>
                 </div>
 
-                {/* Record Button */}
+                
                 <div>
                   <h3 className="font-semibold mb-4">Record Button</h3>
                   <div className="bg-black/90 rounded-xl p-8 flex items-center justify-center">
@@ -208,7 +208,7 @@ export function DesignSystem() {
                   </p>
                 </div>
 
-                {/* Angle Visualizer */}
+                
                 <div>
                   <h3 className="font-semibold mb-4">Angle Visualizer</h3>
                   <div className="flex flex-wrap gap-8 items-start justify-center p-6 bg-secondary rounded-xl">
@@ -233,7 +233,7 @@ export function DesignSystem() {
                   </div>
                 </div>
 
-                {/* Empty State */}
+                
                 <div>
                   <h3 className="font-semibold mb-4">Empty State</h3>
                   <Card className="p-6">

@@ -7,7 +7,7 @@ export function VideoPreview() {
 
   return (
     <div className="relative w-full h-screen bg-black">
-      {/* Video Preview (simulated) */}
+      
       <div className="absolute inset-0 bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
         <div className="text-center">
           <Play className="w-16 h-16 text-white/50 mx-auto mb-4" />
@@ -16,7 +16,7 @@ export function VideoPreview() {
         </div>
       </div>
 
-      {/* Top Bar */}
+      
       <div className="absolute top-0 left-0 right-0 pt-12 px-6 z-10">
         <div className="flex items-center justify-between">
           <button
@@ -30,7 +30,7 @@ export function VideoPreview() {
         </div>
       </div>
 
-      {/* Bottom Actions */}
+      
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent pt-12 pb-8 px-6">
         <div className="max-w-md mx-auto space-y-3">
           <Button

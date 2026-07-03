@@ -24,32 +24,32 @@ from typing import Protocol
 logger = logging.getLogger(__name__)
 
 
-# ---------------------------------------------------------------------------
-# Landmark triplet definitions (point_a, vertex, point_b)
-# Angle is computed AT the vertex between the two arms.
-# MediaPipe Pose landmark indices:
-#   https://developers.google.com/mediapipe/solutions/vision/pose_landmarker
-# ---------------------------------------------------------------------------
+
+
+
+
+
+
 JOINT_LANDMARK_TRIPLETS: dict[str, tuple[int, int, int]] = {
-    "left_elbow":    (11, 13, 15),  # L-shoulder → L-elbow → L-wrist
-    "right_elbow":   (12, 14, 16),  # R-shoulder → R-elbow → R-wrist
-    "left_knee":     (23, 25, 27),  # L-hip → L-knee → L-ankle
-    "right_knee":    (24, 26, 28),  # R-hip → R-knee → R-ankle
-    "left_shoulder": (13, 11, 23),  # L-elbow → L-shoulder → L-hip
-    "right_shoulder":(14, 12, 24),  # R-elbow → R-shoulder → R-hip
-    "left_hip":      (11, 23, 25),  # L-shoulder → L-hip → L-knee
-    "right_hip":     (12, 24, 26),  # R-shoulder → R-hip → R-knee
+    "left_elbow":    (11, 13, 15),
+    "right_elbow":   (12, 14, 16),
+    "left_knee":     (23, 25, 27),
+    "right_knee":    (24, 26, 28),
+    "left_shoulder": (13, 11, 23),
+    "right_shoulder":(14, 12, 24),
+    "left_hip":      (11, 23, 25),
+    "right_hip":     (12, 24, 26),
 }
 
 DEFAULT_JOINT = "left_elbow"
-VISIBILITY_THRESHOLD = 0.5   # landmarks below this confidence are skipped
-FRAME_SAMPLE_STEP = 5        # analyse every Nth frame (controls speed vs. detail)
-MIN_VALID_FRAMES = 2         # raise ValueError if fewer valid angles found
+VISIBILITY_THRESHOLD = 0.5
+FRAME_SAMPLE_STEP = 5
+MIN_VALID_FRAMES = 2
 
 
-# ---------------------------------------------------------------------------
-# Data contract
-# ---------------------------------------------------------------------------
+
+
+
 
 class JointNotVisibleError(ValueError):
     """Exception raised when MediaPipe cannot find the target joint in enough frames."""
@@ -64,17 +64,17 @@ class AnalysisResult:
     raw_json: dict = field(default_factory=dict)
 
 
-# ---------------------------------------------------------------------------
-# Protocol (interface)
-# ---------------------------------------------------------------------------
+
+
+
 
 class MovementAnalyzer(Protocol):
     def analyze(self, *, video_url: str) -> AnalysisResult: ...
 
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
+
+
+
 
 def _angle_between_three_points(
     ax: float, ay: float,
@@ -85,7 +85,7 @@ def _angle_between_three_points(
     Return the angle (in degrees) at point B formed by the vectors B→A and B→C.
     Uses the dot-product formula to avoid atan2 quadrant issues.
     """
-    # Vectors from vertex B to A and C
+
     vba_x, vba_y = ax - bx, ay - by
     vbc_x, vbc_y = cx - bx, cy - by
 
@@ -94,7 +94,7 @@ def _angle_between_three_points(
     mag_c = math.hypot(vbc_x, vbc_y)
 
     if mag_a < 1e-9 or mag_c < 1e-9:
-        return 0.0  # degenerate — points are co-located
+        return 0.0
 
     cos_angle = max(-1.0, min(1.0, dot / (mag_a * mag_c)))
     return math.degrees(math.acos(cos_angle))
@@ -106,7 +106,7 @@ def _download_video(url: str) -> str:
     Supports both http(s):// remote URLs and file:// local paths (useful for
     testing without Cloudinary).
     """
-    # Handle local file:// URLs (e.g. from test/E2E stubs)
+
     if url.startswith("file://"):
         src_path = url[len("file://"):]
         suffix = os.path.splitext(src_path)[1] or ".mp4"
@@ -116,10 +116,10 @@ def _download_video(url: str) -> str:
         shutil.copy2(src_path, tmp.name)
         return tmp.name
 
-    import requests  # imported here so test stubs can patch easily
+    import requests
 
     suffix = ".mp4"
-    # Preserve original extension when discernible
+
     path_part = url.split("?")[0]
     if "." in os.path.basename(path_part):
         suffix = "." + os.path.basename(path_part).rsplit(".", 1)[-1]
@@ -128,7 +128,7 @@ def _download_video(url: str) -> str:
     try:
         with requests.get(url, stream=True, timeout=30, allow_redirects=True) as resp:
             resp.raise_for_status()
-            for chunk in resp.iter_content(chunk_size=1 << 16):  # 64 KB chunks
+            for chunk in resp.iter_content(chunk_size=1 << 16):
                 tmp.write(chunk)
     finally:
         tmp.close()
@@ -137,11 +137,11 @@ def _download_video(url: str) -> str:
 
 
 HAND_CONNECTIONS = [
-    (0, 1), (1, 2), (2, 3), (3, 4),        # Thumb
-    (0, 5), (5, 6), (6, 7), (7, 8),        # Index
-    (0, 9), (9, 10), (10, 11), (11, 12),   # Middle
-    (0, 13), (13, 14), (14, 15), (15, 16), # Ring
-    (0, 17), (17, 18), (18, 19), (19, 20)  # Pinky
+    (0, 1), (1, 2), (2, 3), (3, 4),
+    (0, 5), (5, 6), (6, 7), (7, 8),
+    (0, 9), (9, 10), (10, 11), (11, 12),
+    (0, 13), (13, 14), (14, 15), (15, 16),
+    (0, 17), (17, 18), (18, 19), (19, 20)
 ]
 
 
@@ -150,22 +150,22 @@ def _generate_ref_hand_landmarks(wx: float, wy: float, is_left: bool) -> list[tu
     Generate 21 hand landmarks relative to the wrist coordinate.
     """
     import math
-    # Wrist at index 0
+
     landmarks = [(wx, wy)]
     
-    # Fingers pointing downwards and slightly outwards
-    base_angle = math.pi / 2.0  # 90 degrees (downward)
+
+    base_angle = math.pi / 2.0
     
-    # Thumb, Index, Middle, Ring, Pinky
-    # Spread out from the wrist
+
+
     if is_left:
-        # Left wrist is at x = 0.70. Fingers spread to the left (outward) and right (inward)
+
         finger_angles = [-0.6, -0.2, 0.0, 0.2, 0.4]
     else:
-        # Right wrist is at x = 0.30. Mirror the spread
+
         finger_angles = [0.6, 0.2, 0.0, -0.2, -0.4]
         
-    # Standard distances for hand landmark segments: MCP, PIP, DIP, TIP
+
     for f_idx in range(5):
         angle = base_angle + finger_angles[f_idx]
         for joint_idx in range(1, 5):
@@ -181,7 +181,7 @@ def _draw_skeleton(frame, pose_landmarks, left_hand_landmarks, right_hand_landma
     import cv2
     h, w, _ = frame.shape
     
-    # If we need transparency, copy frame
+
     draw_target = frame.copy() if alpha < 1.0 else frame
     
     pts = {}
@@ -189,22 +189,22 @@ def _draw_skeleton(frame, pose_landmarks, left_hand_landmarks, right_hand_landma
         if pt is not None:
             pts[idx] = (int(pt[0] * w), int(pt[1] * h))
             
-    # Draw Pose connections
+
     def draw_line(idx1, idx2):
         if idx1 in pts and idx2 in pts:
             cv2.line(draw_target, pts[idx1], pts[idx2], color, thickness)
             
-    draw_line(11, 12)  # Shoulder-Shoulder
-    draw_line(11, 13)  # Left Shoulder-Elbow
-    draw_line(13, 15)  # Left Elbow-Wrist
-    draw_line(12, 14)  # Right Shoulder-Elbow
-    draw_line(14, 16)  # Right Elbow-Wrist
+    draw_line(11, 12)
+    draw_line(11, 13)
+    draw_line(13, 15)
+    draw_line(12, 14)
+    draw_line(14, 16)
     
-    # Draw Pose circles
+
     for idx, pt_pixel in pts.items():
         cv2.circle(draw_target, pt_pixel, thickness + 3, color, -1)
         
-    # Draw Hands
+
     def draw_hand(hand_lms):
         if not hand_lms:
             return
@@ -227,10 +227,10 @@ def _draw_hud(frame, status_text, feedback_text=None, alert_text=None, metrics=N
     h, w, _ = frame.shape
     overlay = frame.copy()
     
-    # Draw a semi-transparent black banner at the top
+
     cv2.rectangle(overlay, (0, 0), (w, 100), (20, 20, 20), -1)
     
-    # If there is a bottom HUD needed for metrics
+
     if metrics:
         cv2.rectangle(overlay, (0, h - 80), (w, h), (20, 20, 20), -1)
         
@@ -238,18 +238,18 @@ def _draw_hud(frame, status_text, feedback_text=None, alert_text=None, metrics=N
     
     font = cv2.FONT_HERSHEY_SIMPLEX
     
-    # Status
+
     cv2.putText(frame, status_text, (20, 35), font, 0.7, status_color, 2, cv2.LINE_AA)
     
-    # Feedback / Guidance
+
     if feedback_text:
         cv2.putText(frame, f"Guidance: {feedback_text}", (20, 75), font, 0.55, (0, 255, 255), 1, cv2.LINE_AA)
         
-    # Alerts
+
     if alert_text:
         cv2.putText(frame, f"ALERT: {alert_text}", (20, 75), font, 0.55, (0, 0, 255), 2, cv2.LINE_AA)
         
-    # Metrics
+
     if metrics:
         metric_str = " | ".join([f"{k}: {v}" for k, v in metrics.items()])
         cv2.putText(frame, metric_str, (20, h - 35), font, 0.5, (255, 255, 255), 1, cv2.LINE_AA)
@@ -281,26 +281,26 @@ def _extract_frame_angles(
     total_sampled = 0
     frames_with_landmarks = 0
 
-    # Calibration state machine variables
+
     calibration_success = False
     consecutive_aligned_frames = 0
     calibrated_pose_center = None
 
-    # Milestone frame buffers
+
     first_frame_processed_bytes = None
     calibration_frame_bytes = None
     success_frame_bytes = None
     tracking_frame_bytes = None
     max_tracking_confidence = -1.0
 
-    # Define reference pose landmarks
+
     ref_pose = {
-        11: (0.60, 0.35),  # Left Shoulder
-        12: (0.40, 0.35),  # Right Shoulder
-        13: (0.65, 0.55),  # Left Elbow
-        14: (0.35, 0.55),  # Right Elbow
-        15: (0.70, 0.75),  # Left Wrist
-        16: (0.30, 0.75),  # Right Wrist
+        11: (0.60, 0.35),
+        12: (0.40, 0.35),
+        13: (0.65, 0.55),
+        14: (0.35, 0.55),
+        15: (0.70, 0.75),
+        16: (0.30, 0.75),
     }
     ref_left_hand = _generate_ref_hand_landmarks(0.70, 0.75, is_left=True)
     ref_right_hand = _generate_ref_hand_landmarks(0.30, 0.75, is_left=False)
@@ -347,15 +347,15 @@ def _extract_frame_angles(
             pose_result = pose_analyzer.process(rgb_frame)
             hands_result = hands_analyzer.process(rgb_frame)
 
-            # Extracted landmarks
+
             lm = pose_result.pose_landmarks.landmark if pose_result.pose_landmarks else None
             
-            # Check visibility of all required Pose landmarks
+
             pose_ok = lm is not None and all(
                 lm[i].visibility >= visibility_threshold for i in [11, 12, 13, 14, 15, 16]
             )
 
-            # Calculate target joint angle if visible, independent of calibration state
+
             target_joint_visible = lm is not None and (
                 lm[idx_a].visibility >= visibility_threshold and
                 lm[idx_b].visibility >= visibility_threshold and
@@ -372,12 +372,12 @@ def _extract_frame_angles(
                 angles.append(angle_val)
                 frames_with_landmarks += 1
 
-            # Extract hand landmarks
+
             left_hand_lms = None
             right_hand_lms = None
             if hands_result.multi_hand_landmarks and hands_result.multi_handedness:
                 for hand_lms, handedness in zip(hands_result.multi_hand_landmarks, hands_result.multi_handedness):
-                    label = handedness.classification[0].label  # "Left" or "Right"
+                    label = handedness.classification[0].label
                     lms_list = [(pt.x, pt.y) for pt in hand_lms.landmark]
                     if label == "Left":
                         left_hand_lms = lms_list
@@ -386,23 +386,23 @@ def _extract_frame_angles(
 
             hands_ok = left_hand_lms is not None and right_hand_lms is not None
 
-            # Render frame
+
             rendered_frame = frame.copy()
 
             if not first_frame_processed_bytes:
-                # Save very first frame as absolute fallback
+
                 ret_enc, enc_img = cv2.imencode('.png', frame)
                 if ret_enc:
                     first_frame_processed_bytes = enc_img.tobytes()
 
             if not calibration_success:
-                # Calibration Phase
+
                 if not pose_ok:
                     feedback = "Align upper body in frame"
                 elif not hands_ok:
                     feedback = "Show both hands in frame"
                 else:
-                    # Perform alignment checks
+
                     shoulder_center_x = (lm[11].x + lm[12].x) / 2.0
                     ref_center_x = 0.50
                     shoulder_dist = abs(lm[11].x - lm[12].x)
@@ -431,13 +431,13 @@ def _extract_frame_angles(
                 else:
                     consecutive_aligned_frames = 0
 
-                # Draw state: Calibrating (red reference skeleton)
+
                 _draw_skeleton(
                     rendered_frame, ref_pose, ref_left_hand, ref_right_hand,
                     (0, 0, 255), thickness=3, alpha=0.4
                 )
 
-                # Draw actual landmarks (white) for guidance
+
                 actual_pose = {}
                 if lm:
                     for i in [11, 12, 13, 14, 15, 16]:
@@ -449,7 +449,7 @@ def _extract_frame_angles(
                 )
 
                 if calibration_success:
-                    # State transitioned to Success: Draw Green
+
                     success_frame = frame.copy()
                     _draw_skeleton(
                         success_frame, ref_pose, ref_left_hand, ref_right_hand,
@@ -460,19 +460,19 @@ def _extract_frame_angles(
                     if ret_enc:
                         success_frame_bytes = enc_img.tobytes()
                 else:
-                    # Draw calibrating HUD
+
                     _draw_hud(
                         rendered_frame, "Status: Calibrating",
                         feedback_text=feedback, status_color=(0, 0, 255)
                     )
-                    # Capture first calibration frame
+
                     if not calibration_frame_bytes and pose_ok:
                         ret_enc, enc_img = cv2.imencode('.png', rendered_frame)
                         if ret_enc:
                             calibration_frame_bytes = enc_img.tobytes()
 
             else:
-                # Tracking Phase
+
                 drift_alert = None
                 if not pose_ok:
                     drift_alert = "Lost Tracking"
@@ -482,10 +482,10 @@ def _extract_frame_angles(
                     if drift > 0.08:
                         drift_alert = "Reposition Yourself"
 
-                # Use pre-calculated joint angle
+
                 pass
 
-                # Draw live tracking skeleton (gorgeous solid teal connections)
+
                 actual_pose = {}
                 if lm:
                     for i in [11, 12, 13, 14, 15, 16]:
@@ -496,7 +496,7 @@ def _extract_frame_angles(
                     (235, 178, 78), thickness=3, alpha=1.0
                 )
 
-                # Draw angle text at the vertex
+
                 if pose_ok and lm[idx_b].visibility >= visibility_threshold:
                     vx = int(lm[idx_b].x * rendered_frame.shape[1])
                     vy = int(lm[idx_b].y * rendered_frame.shape[0])
@@ -505,7 +505,7 @@ def _extract_frame_angles(
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1, cv2.LINE_AA
                     )
 
-                # Calculate movement velocity & status
+
                 if len(angles) >= 2:
                     angular_vel = abs(angles[-1] - angles[-2]) * sampled_fps
                     movement_status = "Active" if angular_vel > 15.0 else "Stable"
@@ -513,7 +513,7 @@ def _extract_frame_angles(
                     angular_vel = 0.0
                     movement_status = "Stable"
 
-                # Prepare tracking HUD metrics
+
                 avg_vis = sum(lm[i].visibility for i in [11, 12, 13, 14, 15, 16]) / 6.0 if pose_ok else 0.0
                 metrics = {
                     "Confidence": f"{avg_vis:.2f}",
@@ -527,7 +527,7 @@ def _extract_frame_angles(
                     metrics=metrics, status_color=(235, 178, 78)
                 )
 
-                # Save the tracking frame with highest confidence / visibility
+
                 if avg_vis > max_tracking_confidence:
                     max_tracking_confidence = avg_vis
                     ret_enc, enc_img = cv2.imencode('.png', rendered_frame)
@@ -539,7 +539,7 @@ def _extract_frame_angles(
         hands_analyzer.close()
         cap.release()
 
-    # Apply robust fallbacks to guarantee 3 valid base64 images
+
     if not calibration_frame_bytes:
         calibration_frame_bytes = first_frame_processed_bytes
     if not success_frame_bytes:
@@ -550,9 +550,9 @@ def _extract_frame_angles(
     return angles, total_sampled, frames_with_landmarks, calibration_frame_bytes, success_frame_bytes, tracking_frame_bytes
 
 
-# ---------------------------------------------------------------------------
-# Concrete implementations
-# ---------------------------------------------------------------------------
+
+
+
 
 class MediaPipeAnalyzer:
     """
@@ -621,10 +621,10 @@ class MediaPipeAnalyzer:
 
         min_angle = round(min(angles), 2)
         max_angle = round(max(angles), 2)
-        rom = max_angle - min_angle  # range of motion in degrees
+        rom = max_angle - min_angle
 
-        # Normalise ROM to 0–1 movement score.
-        # A full 180° arc = perfect score 1.0; 0° = 0.0.
+
+
         movement_score = round(min(rom / 180.0, 1.0), 4)
 
         logger.info(
@@ -684,17 +684,17 @@ class LocalHeuristicAnalyzer:
         )
 
 
-# ---------------------------------------------------------------------------
-# Face Mesh — Facial Expression Analysis
-# ---------------------------------------------------------------------------
+
+
+
 
 class FaceNotDetectedError(ValueError):
     """Exception raised when MediaPipe cannot detect a face in enough frames."""
     pass
 
 
-# Mapping of friendly expression names to MediaPipe blendshape category names.
-# Each expression is scored as the *average* of its constituent blendshapes.
+
+
 EXPRESSION_BLENDSHAPES: dict[str, list[str]] = {
     "smile": ["mouthSmileLeft", "mouthSmileRight"],
     "frown": ["mouthFrownLeft", "mouthFrownRight"],
@@ -706,10 +706,10 @@ EXPRESSION_BLENDSHAPES: dict[str, list[str]] = {
     "cheek_puff": ["cheekPuff"],
 }
 
-# Minimum number of frames with a detected face to produce a valid result.
+
 MIN_FACE_FRAMES = 2
 
-# Default path to the face_landmarker.task model file (relative to repo root).
+
 _DEFAULT_MODEL_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "models")
 _DEFAULT_MODEL_PATH = os.path.join(_DEFAULT_MODEL_DIR, "face_landmarker.task")
 
@@ -727,12 +727,12 @@ def _extract_face_blendshapes(
                     Each entry in per_frame_blendshapes is a dict mapping blendshape
     category name → score (0.0–1.0).
     """
-    import cv2  # type: ignore
-    from mediapipe import Image, ImageFormat  # type: ignore
-    from mediapipe.tasks.python import BaseOptions  # type: ignore
-    from mediapipe.tasks.python.vision import FaceLandmarker, FaceLandmarkerOptions  # type: ignore
-    from mediapipe.tasks.python.vision.core.vision_task_running_mode import VisionTaskRunningMode as VisionRunningMode  # type: ignore
-    from mediapipe.python.solutions.face_mesh_connections import FACEMESH_TESSELATION  # type: ignore
+    import cv2
+    from mediapipe import Image, ImageFormat
+    from mediapipe.tasks.python import BaseOptions
+    from mediapipe.tasks.python.vision import FaceLandmarker, FaceLandmarkerOptions
+    from mediapipe.tasks.python.vision.core.vision_task_running_mode import VisionTaskRunningMode as VisionRunningMode
+    from mediapipe.python.solutions.face_mesh_connections import FACEMESH_TESSELATION
 
     options = FaceLandmarkerOptions(
         base_options=BaseOptions(model_asset_path=model_path),
@@ -768,7 +768,7 @@ def _extract_face_blendshapes(
                 total_sampled += 1
                 frame_index += 1
 
-                # MediaPipe expects RGB
+
                 rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 mp_image = Image(
                     image_format=ImageFormat.SRGB,
@@ -781,15 +781,15 @@ def _extract_face_blendshapes(
 
                 frames_with_face += 1
 
-                # Extract all blendshape scores for this frame
+
                 frame_scores: dict[str, float] = {}
                 for bs in result.face_blendshapes[0]:
                     frame_scores[bs.category_name] = round(bs.score, 4)
 
                 per_frame.append(frame_scores)
 
-                # Determine the expression score for the best frame
-                # (average of tracked expressions to find the most active frame)
+
+
                 if frame_scores:
                     expr_score = sum(frame_scores.values()) / len(frame_scores)
                     if expr_score > max_expression_score:
@@ -800,12 +800,12 @@ def _extract_face_blendshapes(
     finally:
         cap.release()
 
-    # Draw landmarks on the best frame
+
     landmark_image_bytes: bytes | None = None
     if best_frame is not None and best_landmarks is not None:
         h, w, _ = best_frame.shape
 
-        # 1. Draw green triangular mesh connections (Tessellation)
+
         connections = FACEMESH_TESSELATION
         for start_idx, end_idx in connections:
             if start_idx < len(best_landmarks) and end_idx < len(best_landmarks):
@@ -815,14 +815,14 @@ def _extract_face_blendshapes(
                 x2, y2 = int(pt2.x * w), int(pt2.y * h)
                 cv2.line(best_frame, (x1, y1), (x2, y2), (0, 200, 0), 1)
 
-        # 2. Draw Joint Landmarks (Blue circles) and index labels (Blue text)
+
         for idx, lm in enumerate(best_landmarks):
             cx = int(lm.x * w)
             cy = int(lm.y * h)
-            # Draw a solid blue dot on the BGR frame
+
             cv2.circle(best_frame, (cx, cy), 1, (255, 0, 0), -1)
 
-            # Draw the blue landmark index numbers (very small to look clean and high precision!)
+
             cv2.putText(
                 best_frame,
                 str(idx),
@@ -849,7 +849,7 @@ def _compute_expression_stats(
     """
     stats: dict[str, dict[str, float]] = {}
     for expr_name, bs_names in EXPRESSION_BLENDSHAPES.items():
-        # Collect the average score of constituent blendshapes per frame
+
         values: list[float] = []
         for frame_scores in per_frame:
             scores = [frame_scores.get(bs, 0.0) for bs in bs_names]
@@ -926,20 +926,20 @@ class FaceMeshAnalyzer:
                 "Ensure your face is clearly visible in the video."
             )
 
-        # Compute per-expression statistics
+
         expression_stats = _compute_expression_stats(per_frame)
 
-        # Overall expression intensity: average of all peak scores
+
         peaks = [s["peak"] for s in expression_stats.values()]
         overall_intensity = round(sum(peaks) / len(peaks), 4) if peaks else 0.0
 
-        # Map to AnalysisResult fields:
-        # min_angle → minimum overall intensity across frames
-        # max_angle → maximum overall intensity across frames
-        # movement_score → overall expression intensity (0–1)
+
+
+
+
         frame_intensities = []
         for frame_scores in per_frame:
-            # Average all blendshape scores in this frame
+
             all_scores = list(frame_scores.values())
             avg = sum(all_scores) / len(all_scores) if all_scores else 0.0
             frame_intensities.append(avg)

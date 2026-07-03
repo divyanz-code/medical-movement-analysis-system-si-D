@@ -27,7 +27,7 @@ export function SessionCard({
       onClick={onClick}
     >
       <div className="flex items-center gap-4">
-        {/* Date Circle */}
+        
         <div className="flex-shrink-0 w-14 h-14 bg-accent/10 rounded-full flex flex-col items-center justify-center">
           <p className="text-xl font-semibold text-accent">
             {new Date(assessment.date).getDate()}
@@ -39,7 +39,7 @@ export function SessionCard({
           </p>
         </div>
 
-        {/* Content */}
+        
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between mb-2">
             <div>

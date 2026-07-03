@@ -16,7 +16,7 @@ export function Home() {
 
   return (
     <div className="min-h-screen bg-secondary pb-20">
-      {/* Header */}
+      
       <div className="bg-gradient-to-br from-primary to-accent pt-12 pb-8 px-6">
         <div className="max-w-md mx-auto">
           <p className="text-white/80 mb-1">Welcome back,</p>
@@ -24,7 +24,7 @@ export function Home() {
             {mockUser.name}
           </h1>
 
-          {/* Latest Score Card */}
+          
           <Card className="bg-white/95 backdrop-blur p-6">
             <div className="flex items-start justify-between mb-4">
               <div>
@@ -70,9 +70,9 @@ export function Home() {
         </div>
       </div>
 
-      {/* Main Content */}
+      
       <div className="px-6 py-6 max-w-md mx-auto space-y-6">
-        {/* Quick Action */}
+        
         <Button
           size="lg"
           className="w-full h-14"
@@ -82,7 +82,7 @@ export function Home() {
           New Assessment
         </Button>
 
-        {/* Key Metrics */}
+        
         <div>
           <h2 className="text-lg font-semibold mb-3">Today's Metrics</h2>
           <div className="grid grid-cols-2 gap-3">
@@ -103,7 +103,7 @@ export function Home() {
           </div>
         </div>
 
-        {/* Trend Chart */}
+        
         <Card className="p-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold">Progress Trend</h3>
@@ -139,7 +139,7 @@ export function Home() {
           </ResponsiveContainer>
         </Card>
 
-        {/* Recent Sessions */}
+        
         <div>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-semibold">Recent Sessions</h2>

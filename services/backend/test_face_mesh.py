@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 """
 Quick test to verify FaceMeshAnalyzer loads properly and the
 FaceLandmarker model works. Creates a synthetic image with a face-like
@@ -48,12 +48,12 @@ options = FaceLandmarkerOptions(
 with FaceLandmarker.create_from_options(options) as landmarker:
     print("    FaceLandmarker model loaded successfully")
 
-    # Step 3: Test with a synthetic image
+
     print("\n[3] Testing with a synthetic RGB image (480x640)...")
     import numpy as np
-    # Create a blank image
+
     test_image = np.zeros((480, 640, 3), dtype=np.uint8)
-    test_image[:] = (200, 180, 160)  # skin-like color
+    test_image[:] = (200, 180, 160)
     
     mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=test_image)
     result = landmarker.detect(mp_image)
@@ -67,7 +67,7 @@ with FaceLandmarker.create_from_options(options) as landmarker:
         for bs in blendshapes[:5]:
             print(f"      {bs.category_name}: {bs.score:.4f}")
 
-# Step 4: Verify expression stats computation
+
 print("\n[4] Testing _compute_expression_stats with mock data...")
 mock_frames = [
     {"mouthSmileLeft": 0.8, "mouthSmileRight": 0.7, "eyeBlinkLeft": 0.1, "eyeBlinkRight": 0.05, "jawOpen": 0.3, "mouthFrownLeft": 0.0, "mouthFrownRight": 0.0, "browOuterUpLeft": 0.2, "browOuterUpRight": 0.25, "mouthPucker": 0.1, "cheekPuff": 0.05},

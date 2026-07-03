@@ -79,7 +79,7 @@ class CloudinaryVideoStorage(VideoStorage):
 class LocalVideoStorage(VideoStorage):
     def __init__(self, settings: Settings) -> None:
         import os
-        # Create an uploads folder inside the backend directory
+
         base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         self._dir = os.path.join(base_dir, "uploads")
         os.makedirs(self._dir, exist_ok=True)

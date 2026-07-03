@@ -19,10 +19,10 @@ export function AngleVisualizer({
   const centerX = size / 2;
   const centerY = size / 2;
 
-  // Convert angle to radians for visualization
+  
   const angleRad = (angle * Math.PI) / 180;
 
-  // Calculate arc path
+  
   const largeArcFlag = angle > 180 ? 1 : 0;
   const endX = centerX + radius * Math.cos(angleRad - Math.PI / 2);
   const endY = centerY + radius * Math.sin(angleRad - Math.PI / 2);
@@ -30,7 +30,7 @@ export function AngleVisualizer({
   return (
     <div className="relative inline-block">
       <svg width={size} height={size}>
-        {/* Background circle */}
+        
         <circle
           cx={centerX}
           cy={centerY}
@@ -41,7 +41,7 @@ export function AngleVisualizer({
           className="text-muted/20"
         />
 
-        {/* Angle arc */}
+        
         <motion.path
           d={`M ${centerX} ${centerY - radius} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${endX} ${endY}`}
           fill="none"
@@ -54,10 +54,10 @@ export function AngleVisualizer({
           transition={{ duration: 0.8, ease: "easeOut" }}
         />
 
-        {/* Center point */}
+        
         <circle cx={centerX} cy={centerY} r="4" className="fill-accent" />
 
-        {/* Start line */}
+        
         <line
           x1={centerX}
           y1={centerY}
@@ -68,7 +68,7 @@ export function AngleVisualizer({
           className="text-foreground/40"
         />
 
-        {/* End line */}
+        
         <line
           x1={centerX}
           y1={centerY}
@@ -80,7 +80,7 @@ export function AngleVisualizer({
         />
       </svg>
 
-      {/* Angle label */}
+      
       {showLabel && (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center">
@@ -89,7 +89,7 @@ export function AngleVisualizer({
         </div>
       )}
 
-      {/* Min/Max indicators */}
+      
       {(minAngle !== undefined || maxAngle !== undefined) && (
         <div className="absolute -bottom-6 left-0 right-0 flex justify-between text-xs text-muted-foreground">
           {minAngle !== undefined && <span>Min: {minAngle}°</span>}

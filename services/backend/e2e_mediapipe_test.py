@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 """
 e2e_mediapipe_test.py
 ---------------------
@@ -56,7 +56,7 @@ app = create_app(settings, video_storage=LocalFileStorage(),
 with TestClient(app) as client:
     print("     App ready")
 
-    # Register + login
+
     print("\n[3] Register + login...")
     r = client.post("/api/v1/auth/register",
                     json={"name":"E2E","email":"e2e@example.com","password":"TestPass123!"})
@@ -67,7 +67,7 @@ with TestClient(app) as client:
     H = {"Authorization": f"Bearer {r.json()['access_token']}"}
     print("    Authenticated")
 
-    # Upload
+
     print("\n[4] Uploading video...")
     with open(LOCAL_VIDEO, "rb") as vf:
         r = client.post("/api/v1/videos", headers=H,
@@ -77,7 +77,7 @@ with TestClient(app) as client:
     vid_id = r.json()["video_id"]
     print(f"     video_id={vid_id}  (MediaPipe running in background...)")
 
-    # Poll
+
     print("\n[5] Polling — MediaPipe running pose detection frame by frame...\n")
     result = {}
     for elapsed in range(0, 180, 5):
@@ -92,7 +92,7 @@ with TestClient(app) as client:
     else:
         print("\n     Timed out"); sys.exit(1)
 
-    # Results
+
     raw = json.loads(result.get("raw_json") or "{}")
     pf  = raw.get("per_frame_angles", [])
     print(f"\n{'='*60}")

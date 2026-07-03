@@ -13,7 +13,7 @@ export function UploadProgress() {
   );
 
   useEffect(() => {
-    // Simulate upload
+    
     const uploadInterval = setInterval(() => {
       setUploadProgress((prev) => {
         if (prev >= 100) {
@@ -30,7 +30,7 @@ export function UploadProgress() {
 
   useEffect(() => {
     if (stage === "processing") {
-      // Simulate analysis
+      
       const analysisInterval = setInterval(() => {
         setAnalysisProgress((prev) => {
           if (prev >= 100) {
@@ -103,7 +103,7 @@ export function UploadProgress() {
           )}
         </motion.div>
 
-        {/* Progress Bars */}
+        
         <div className="space-y-6">
           <div>
             <div className="flex items-center justify-between mb-2">
@@ -126,7 +126,7 @@ export function UploadProgress() {
           </div>
         </div>
 
-        {/* Processing Steps */}
+        
         {stage === "processing" && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
