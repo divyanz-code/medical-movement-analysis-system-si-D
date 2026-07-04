@@ -54,16 +54,16 @@ export default function PatientProgress() {
   const validRoms = history.filter((h) => h.range_of_motion !== null);
   
   
-  const currentRom = validRoms.length > 0 ? Math.round(validRoms[validRoms.length - 1].range_of_motion || 0) : PROGRESS_WEEKLY.at(-1)!.rom;
+  const currentRom = validRoms.length > 0 ? Math.round(validRoms[validRoms.length - 1].range_of_motion || 0) : PROGRESS_WEEKLY[PROGRESS_WEEKLY.length - 1].rom;
   const prevRom = validRoms.length > 1 ? Math.round(validRoms[0].range_of_motion || 0) : PROGRESS_WEEKLY[0].rom;
   const romDelta = currentRom - prevRom;
 
-  const currentAcc = validScores.length > 0 ? Math.round((validScores[validScores.length - 1].movement_score || 0) * 100) : PROGRESS_WEEKLY.at(-1)!.accuracy;
+  const currentAcc = validScores.length > 0 ? Math.round((validScores[validScores.length - 1].movement_score || 0) * 100) : PROGRESS_WEEKLY[PROGRESS_WEEKLY.length - 1].accuracy;
   const prevAcc = validScores.length > 1 ? Math.round((validScores[0].movement_score || 0) * 100) : PROGRESS_WEEKLY[0].accuracy;
   const accDelta = currentAcc - prevAcc;
 
   
-  const currentComp = PROGRESS_WEEKLY.at(-1)!.compliance;
+  const currentComp = PROGRESS_WEEKLY[PROGRESS_WEEKLY.length - 1].compliance;
   const prevComp = PROGRESS_WEEKLY[0].compliance;
   const compDelta = currentComp - prevComp;
 

@@ -28,9 +28,9 @@ export default function PatientProgress() {
   const [range, setRange] = useState("1m");
 
   const stats = {
-    rom: { val: PROGRESS_WEEKLY.at(-1)!.rom, prev: PROGRESS_WEEKLY[0].rom },
-    acc: { val: PROGRESS_WEEKLY.at(-1)!.accuracy, prev: PROGRESS_WEEKLY[0].accuracy },
-    comp: { val: PROGRESS_WEEKLY.at(-1)!.compliance, prev: PROGRESS_WEEKLY[0].compliance },
+    rom: { val: PROGRESS_WEEKLY[PROGRESS_WEEKLY.length - 1].rom, prev: PROGRESS_WEEKLY[0].rom },
+    acc: { val: PROGRESS_WEEKLY[PROGRESS_WEEKLY.length - 1].accuracy, prev: PROGRESS_WEEKLY[0].accuracy },
+    comp: { val: PROGRESS_WEEKLY[PROGRESS_WEEKLY.length - 1].compliance, prev: PROGRESS_WEEKLY[0].compliance },
   };
 
   return (
