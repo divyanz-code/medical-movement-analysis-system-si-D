@@ -2,10 +2,42 @@ from fastapi import APIRouter, HTTPException, Response
 
 from app.api.deps import CurrentUserId, DbSession
 from app.repositories.analysis_repository import AnalysisRepository
-from app.schemas.analysis import AnalysisHistoryResponse, AnalysisResponse
+from app.schemas.analysis import AnalysisHistoryItemResponse, AnalysisHistoryResponse, AnalysisResponse
 from app.services.analysis_service import AnalysisService
 
 router = APIRouter(prefix='/api/v1/analysis', tags=['analysis'])
+
+
+def _to_history_response(record) -> AnalysisHistoryItemResponse:
+    import json as _json
+
+    range_of_motion = None
+    if record.min_angle is not None and record.max_angle is not None:
+        range_of_motion = round(record.max_angle - record.min_angle, 2)
+
+    expression_summary = None
+    analysis_type = getattr(record, 'analysis_type', 'movement') or 'movement'
+    if record.raw_json and analysis_type == 'facial_expression':
+        try:
+            raw = _json.loads(record.raw_json)
+            expression_summary = raw.get('expression_summary')
+        except (ValueError, TypeError):
+            pass
+
+    return AnalysisHistoryItemResponse(
+        video_id=record.video_id,
+        analysis_type=analysis_type,
+        status=record.status,
+        min_angle=record.min_angle,
+        max_angle=record.max_angle,
+        range_of_motion=range_of_motion,
+        movement_score=record.movement_score,
+        expression_summary=expression_summary,
+        error_code=record.error_code,
+        error_message=record.error_message,
+        created_at=record.created_at,
+        updated_at=record.updated_at,
+    )
 
 
 def _to_response(record) -> AnalysisResponse:
@@ -61,7 +93,7 @@ def _to_response(record) -> AnalysisResponse:
 def get_analysis_history(user_id: CurrentUserId, db: DbSession) -> AnalysisHistoryResponse:
     service = AnalysisService(AnalysisRepository(db))
     items = service.list_for_user(user_id)
-    return AnalysisHistoryResponse(items=[_to_response(item) for item in items])
+    return AnalysisHistoryResponse(items=[_to_history_response(item) for item in items])
 
 
 @router.get('/{video_id}', response_model=AnalysisResponse)
